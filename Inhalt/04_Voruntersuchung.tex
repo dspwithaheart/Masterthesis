@@ -1,0 +1,112 @@
+\chapter{Voruntersuchungen}
+\label{Voruntersuchungen}
+	Im Rahmen dieser Masterarbeit werden mehrere Kommunikationswege über verschiedene Geräte verwendet.
+	So ist es ein Ziel, das Framework ROS2 zu verwenden.
+		
+	\section{Testsetup}
+	\label{Voruntersuchungen:Testsetup}
+		Mithilfe einer Testumgebung können verschiedene Konfigurationen getestet und entwickelt werden.
+		Notwendig ist, dass das Testsetup entscheidende Merkmale des Netzwerkes in der realen Umgebung beibehält.
+		So ist die Aufteilung der Teilnehmer in zwei verschiedene Netzwerke wichtig, da die zu entwickelnde Edge App auf die Netzwerkeinstellung "host" verzichten soll.
+		Ebenfalls wird dadurch eine sehr viel höhere Flexibilität der Netzwerkstruktur ermöglicht. 
+				
+		\subsection{Host Only}
+		\label{Voruntersuchungen:Testsetup:HostOnly}
+			Das Erste der beiden Testnetzwerke erstellt drei Virtuelle Maschinen: VM A, VM B und VM Router.
+			Die Virtuelle Maschine VM A ist dem Subnetz 192.168.64.0/24 zugeordnet. VM B dem Subnetz 192.168.80.0/24.
+			Als Brücke beider Subnetze dient VM Router, welche eine Verbindung zu beiden Netzwerken aufbaut und sämtliche Pakete an das jeweils andere Netz schickt.
+			
+			%\begin{table}[H]
+			%	\centering
+			%	\begin{tabular}{|l|p{2.5cm}|}
+			%		\hline
+			%		Virtuelle Maschine & IP Adresse\\
+			%		\hline
+			%		VM A & 192.168.64.20\\
+			%		\hline
+			%		VM B & 192.168.80.20\\
+			%		\hline
+			%		VM Router & 192.168.64.1  192.168.80.1 \\
+			%		\hline					
+			%	\end{tabular}
+			%	\caption{\label{tab:VoruntersuchungenNetzwerke:Testsetup:HostOnly}IP Adressen des Host Only Setups.}
+			%\end{table}
+			\begin{figure}[H]
+				\centering
+				\input{"Bilder/tikz/Voruntersuchungen/struktur-host-only.tex"}
+				\caption{Testsetup Host Only}
+				\label{fig:Voruntersuchungen:Testsetup:HostOnly:Setup}					
+			\end{figure}
+			
+			In Abbildung \ref{fig:Voruntersuchungen:Testsetup:HostOnly:Setup} sind die IP Adressen dieses Testsetups dargestellt.
+					
+		\subsection{Bridged}
+		\label{Voruntersuchungen:Testsetup:Bridged}
+		
+			\begin{figure}[H]
+				\centering
+				\input{"Bilder/tikz/Voruntersuchungen/struktur-bridged.tex"}
+				\caption{Testsetup Bridged}
+				\label{fig:Voruntersuchungen:Testsetup:Bridged:Setup}					
+			\end{figure}
+			- Verwendet ein Bridged Netzwerk\\
+			- Applikationen in Dockercontainern auf VM A\\
+			- VM A und VM B im Bridged Netzwerk\
+		
+	\section{Lösungskonzepte}
+	\label{Voruntersuchungen:Lösungskonzepte}
+		\subsection{Initial Peers UDP}
+		\label{Voruntersuchungen:Lösungskonzepte:InitialPeersUDP}
+			- Im Discovery prozess von DDS wird eine Liste mit Partnern mitgegeben.\\
+		
+		\subsection{Initial Peers TCP}
+		\label{Voruntersuchungen:Lösungskonzepte:InitialPeersTPC}
+		 	- Eine liste mit TCP adressen $\rightarrow$ Voraussichtlich geht NAT einfacher\\
+		
+		\subsection{Server Client Discovery}
+		\label{Voruntersuchungen:Lösungskonzepte:ServerClientDiscovery}
+			- Ein eigener Discovery Server, der alle anmeldenden clients verbindet\\
+		
+		\subsection{Routing Service}
+		\label{Voruntersuchungen:Lösungskonzepte:RoutingService}
+			- Service von RTI, der gezielte Topics aus einer Domain in eine andere Domain überführen kann.\\
+			- Andere Domain kann mittels TCP Stream WAN tauglich gemacht werden.\\
+			- Quality of Service Einstellungen werden nicht automatisch erkannt. Bei besonderen Topics manuell einstellen. (Verweis auf meinen Forumsbeitrag ?).\\
+			- Asymmetrische Konfiguration.\\
+		
+
+		
+	\section{Erste Erkenntnisse}
+	\label{VoruntersuchungenNetzwerke:Erkenntnisse}
+		- Tabellarisch aufführen was geht und was nicht.
+	
+	\section{Proof of Concept}
+	\label{VoruntersuchungenNetzwerke:ProofofConcept}
+		Die in \ref{VoruntersuchungenNetzwerke:Erkenntnisse} vorgestellten Erkenntnisse sind für einen ersten Testlauf sehr interessant. Nachfolgend wird die Fähigkeit des Routing services anhand eines Proof of Concepts unter Beweis gestellt.
+		Abbildung \ref{fig:VoruntersuchungenNetzwerke:ProofofConcept:Struktur} zeigt den prinzipiellen Versuchsaufbau.
+		\begin{figure}[H]
+			\centering
+			\input{"Bilder/tikz/Voruntersuchungen/struktur-proof-of-concept.tex"}
+			\caption{Setup für Proof of Concept}
+			\label{fig:VoruntersuchungenNetzwerke:ProofofConcept:Struktur}					
+		\end{figure}
+		
+		
+		Auf dem Laptop sind mehrere Programme Installiert, so ist ein lokaler IEM eingerichtet, ein ROS2-Knoten, der die Tastatureingaben in ein \textit{/cmd\_vel} umwandelt.
+		Anschließend wird das topic \textit{/cmd\_vel} in ein AGV spezifisches Topic der Form \textit{/cmd\_vel\_key/AGV*} umgewandelt, damit nur ein AGV gleichzeitig angesprochen wird.
+		Diese Umwandlung geschieht in einen von Antonello Pastore bereitgestellten NodeRed Knoten.
+		[SCREENSHOT]\\
+		Die Routing Services von AGV 1 und AGV 2 bauen jeweils eine Verbindung zu dem Routing Service auf.
+		Der Routing Service auf dem Laptop stellt für die AGV's die Topics \textit{*/cmd\_vel\_key/AGV*} bereit.
+		Das '*' ist eine Wildcard und bildet die Filterregel, dass alle Topics, die \textit{/cmd\_vel\_key/AGV} haben, zu.
+		Entsprechend erhält AGV 1 auch das nicht das AGV bestimmte Topic \textit{/cmd\_vel\_key/AGV2} und AGV 2 entsprechend \textit{/cmd\_vel\_key/AGV1}.
+		Ein ROS2 Demultiplexer, der AGV spezifisch eingestellt ist, filtert nun das für das AGV relevante topic und setzt das topic \textit{/cmd\_vel\_key/AGV1} auf \textit{/cmd\_vel\_key} um.
+		In den Eingang des twist multiplexers, dessen Ausgang die Bewegungssteuerung des AGV's vorgibt, ist nun \textit{/cmd\_vel\_key} als zusätzlicher Eingang konfiguriert.
+		
+		Dieses Setup ermöglicht eine Auswahl des AGV's, welcher vom Laptoop aus gesteuert werden soll und behält die Steuerbarkeit mittels Joystick, welcher als Bluetooth Gerät im internen Netzwerk des AGV's angeschlossen ist bei.
+
+		
+	
+		
+		
+	

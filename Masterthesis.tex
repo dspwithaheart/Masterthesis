@@ -1,0 +1,144 @@
+% ------------------------------------------------------------------------------
+% Formatvorlage für Masterarbeiten an der Ohm-Hochschule N�rnberg
+% ------------------------------------------------------------------------------
+% Dokumentenkopf ---------------------------------------------------------------
+%   Diese Vorlage basiert auf "scrreprt" aus dem koma-script.
+% ------------------------------------------------------------------------------
+\documentclass[
+    12pt, % Schriftgröße
+    DIV=10,
+    % ngerman, % fürUmlaute, Silbentrennung etc.
+    a4paper, % Papierformat
+    oneside, % einseitiges Dokument
+    titlepage, % es wird eine Titelseite verwendet
+   	%parskip=half, % Abstand zwischen Absätzen (halbe Zeile)
+   	%parskip=full-,
+   	parskip=false,
+    %headings=normal, % Größe der Überschriften verkleinern\l
+    toc=chapterentrydotfill,
+    listof=totoc, % Verzeichnisse im Inhaltsverzeichnis aufführen
+    bibliography=totoc, % Literaturverzeichnis im Inhaltsverzeichnis aufführen
+    index=totoc, % Index im Inhaltsverzeichnis aufführen
+    numbers=noenddot, %Gliederung wird ohne Punkt nach Gliederungszahl dargestellt
+    captions=tableheading, % Beschriftung von Tabellen unterhalb ausgeben
+    final % Status des Dokuments (final/draft) 
+]{scrreprt}
+
+% Hier sind Metainformationen drinnen
+% Titel, Betreuer, Studiengang etc
+\input{Präambel/Meta}
+
+
+% Hier sind alle Pakete drinnen
+\input{Präambel/Pakete}
+
+
+% In Seitenstil wird das Layout der Seiten festgelegt
+% Sachen wie Seitenränder, Zeilenabstand, Layout Inhaltsverzeichnis
+\input{Präambel/Seitenstil}
+
+% Biblographie hinzufügen
+\addbibresource{Quellen/Quellen_Online.bib}
+\addbibresource{Quellen/Quellen_Buecher.bib}
+\addbibresource{Quellen/Quellen_Verschiedenes.bib}
+% Glossar erstellen
+% Index erstellen
+\makeindex
+% Datei einbinden
+\loadglsentries{Inhalt/00_Glossar.tex}
+% Glossar generieren
+\makeglossaries
+
+% Da Von Römisch - Arabisch - Römisch gewechselt wird, wird ein Speicher benötigt
+\newcounter{SeitenzahlSpeicher}
+
+
+
+\begin{document}
+	 % Leider muss laut vorgabe zwischen zwei Layouts gewechselt werden...
+	 % Daher auch hier einzelne Befehle die nicht einheitlich für das gesamte Dokument sind
+
+	
+	% Sprache festlegen
+	\selectlanguage{english}
+	% \englishcontentsname{Table of Contents}
+
+	% Leerseite und Deckblatt
+	\include{Deckblatt}
+	
+	
+	% Hier mit Römisch Seitenzählen anfangen
+	\pagenumbering{Roman}
+	\setcounter{page}{2}
+	
+	% Prüfungsrechtliche Erklärung
+	%\includepdf[pages={1}]{SB_0500_Ausgefuellt.pdf} %Erklärung zur veröffentlichung
+	
+	% Hier Römische Seitenzahlen auch angeben
+	\ofoot{\pagemark}
+	
+	% Abstract
+	% Inhaltsverzeichnis
+ 	\tableofcontents
+	
+	% Glossar
+	% Alle Einträge ausgeben
+	\glsaddall
+	% Glossar darstellen
+	\printglossary
+	% \label{sec:Glossar}
+	
+	% Abkürzungsverzeichnis
+	\printglossary[type=\acronymtype, title=Abkürzungsverzeichnis, style=mylong]
+
+	% Aufräumen und Seitenanzahl speichern
+   	\clearpage
+   	\setcounter{SeitenzahlSpeicher}{\value{page}}
+   	\label{Ende_Vorgeplaenkel}
+   	
+	% Inhalt
+	% Hier wieder umstellen auf arabisches Seitenzählen
+	\pagenumbering{arabic}
+	\ofoot*{{\pagemark} von \pageref{Ende}}
+	
+	\input{Inhalt/01_Einleitung}
+	
+	% \input{Inhalt/02_Stand_der_Technik}
+	
+	% \input{Inhalt/03_Grundlagen}
+	
+	% \input{Inhalt/04_Voruntersuchung}
+	
+	% \input{Inhalt/05_Implementierung}
+	
+	% \input{Inhalt/06_Proof_Of_Concept}	
+	
+	% \input{Inhalt/07_Ausblick}	
+	
+	% \input{Inhalt/08_Fazit}
+	
+	\label{Ende} % Wichtig für Fußnote "Seite X von Y"	
+	\clearpage
+			
+	% Für Anhang wieder umstellen auf Römische Seitenzähler
+
+	\pagenumbering{Roman}
+	\setcounter{page}{\value{SeitenzahlSpeicher}}
+	\ofoot{\pagemark}
+	
+	% Literaturverzeichnis
+	\printbibliography[title={Literaturverzeichnis}]
+	
+	% Abbildungsverzeichnis
+	\listoffigures 
+	
+	% Tabellenverzeichnis
+	\listoftables
+	
+	% Listing-Verzeichnis
+	% Namen definieren
+	% \renewcommand{\lstlistlistingname}{Verzeichnis der Listings}
+	\lstlistoflistings
+	
+	
+\end{document}

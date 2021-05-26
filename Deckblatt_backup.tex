@@ -1,0 +1,42 @@
+%Leerseite
+\newpage
+\thispagestyle{empty}
+\section*{}
+\newpage
+
+%Deckblatt
+\thispagestyle{empty}
+
+\newgeometry{left=25mm, right=15mm, top=15mm, bottom=5mm}
+\begin{titlepage}
+	
+	
+	% Textteil
+	\begin{center}
+		% OHM Logo statt Text
+		\begin{figure}
+			\centering
+			\includegraphics[width=\textwidth]{Bilder/TH_Logo.pdf}
+		\end{figure}
+		% Text
+		%\Large{\hochschule}\\
+		
+		\Large{Fakultät \fakultaet}\\[4ex]
+		
+		\Large{Studiengang \studiengang}\\
+		\Large{Vertiefungsrichtung \studienbereich}\\[7ex]
+		
+		\Large{{\art}  von}\\
+		\Large{\autor}\\[7ex]
+		\Large{\titel}\\[4ex]
+		\Large{\semester}\\
+		
+		\vfill
+		\large{Abgabedatum: \abgabedatum \hfill   \mbox{}}\\		
+		\large{Erstgutachter: \erstgutachter \hfill Betreuer: \firmenbetreuerA \mbox{}}\\
+		\large{Zweitgutachter: \zweitgutachter \hfill \firmenbetreuerB \mbox{}}\\
+		\large{\mbox{}\hfill\firma}\\[2ex]
+	\end{center}		
+	\large{Schlagworte: Docker, Industrial Edge, DDS, Networking}
+\end{titlepage}
+\restoregeometry

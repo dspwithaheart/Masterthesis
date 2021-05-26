@@ -1,0 +1,112 @@
+% Seitenränder
+\geometry{
+	paper=a4paper,
+	right=20mm,		
+	top=20mm,
+	left=30mm,
+	bottom=30mm
+}
+
+% Zeilenabstand 1,5 Zeilen
+\singlespacing
+%\spacing{1.21}
+%\onehalfspacing
+%\doublespacing
+
+
+% Minimal mehr platz nach einem punkt. <-
+\frenchspacing
+
+% Schusterjungen und Hurenkinder vermeiden
+\clubpenalty = 10000
+\widowpenalty = 10000 
+\displaywidowpenalty = 10000
+
+
+% Style der listings
+\definecolor{RoyalBlue}{cmyk}{1, 0.50, 0, 0}
+\lstset{
+	basicstyle=\ttfamily,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{RoyalBlue},
+	commentstyle=\color{green}\ttfamily,
+	stringstyle=\color{mauve},
+	autogobble=true,
+	breaklines=true,
+	breakatwhitespace=true,
+	captionpos = b,
+	frame=single, % box um das listing
+	numbers=left, %nummerierung um das Listing
+	% Nummerierung innerhalb der box
+	framexleftmargin=5.5mm,
+	xleftmargin=19pt,
+	xrightmargin=3.4pt,
+} 
+
+
+%Ligaturen verhindern:
+%\DisableLigatures{}
+%Was sind ligaturen ?:
+%ff und fi ragen ineinander, und auch andere wilde Buchstabenkombinationen
+
+
+% Kopf und Fußzeile
+\pagestyle{scrheadings}
+% Kopf- und Fußzeile auch auf Kapitelanfangsseiten
+\renewcommand*{\chapterpagestyle}{scrheadings}
+% Schriftform der Kopfzeile
+\renewcommand{\headfont}{\normalfont}
+
+% Höhe der Kopfzeile
+\setlength{\headheight}{14mm}
+% Kopfzeile
+\ihead{\headmark}
+\chead{}
+%\ohead{\includegraphics[scale=0.15, trim={2.4cm 24.5cm 2.6cm 2.6cm}, clip]{Bilder/SIEMENS-Logo.pdf}}
+\ohead{\includegraphics[scale=0.08]{Bilder/Siemens_Logo.pdf}}
+%\ohead{\art} % Masterarbeit statt SIEMENS in der Kopfzeile
+
+% Fußzeile
+% Leer, da sich das Layout ändert
+\cfoot{}
+\ifoot{}
+\ofoot{}
+
+% Layout Inhaltsverzeichnis
+\setcounter{tocdepth}{2}  % Inhaltsverzeichnis nur bis 2 Unterelemente auflisten
+\setcounter{secnumdepth}{3} % Numerierungstiefe für Inhaltsverzeichnis
+
+\DeclareTOCStyleEntries[
+% numwidth=1em,					% Abstand Zahl - Überschrift
+rightindent=4em,				% Rand nach Links. Relevant für Überschriften mit Zeilenumbruch im Inhaltsverzeichnis
+pagenumberbox=\pagenumberbox
+]
+{tocline}{chapter, section, subsection, subsubsection, paragraph, subparagraph, figure, table}
+\newcommand*\pagenumberbox[1]{\mbox{\hspace{2pt}#1}} 
+
+%Höhe von Kapiteln im Text					2.3
+%\renewcommand*{\chapterheadstartvskip}{\vspace*{1.0\baselineskip}}% Abstand einstellen
+\renewcommand*{\chapterheadstartvskip}{\vspace*{1\baselineskip}}% Abstand einstellen
+
+% Eigenes Design für Abkürzungsverzeichnis
+\newglossarystyle{mylong}{%
+	\renewenvironment{theglossary}%
+	{\begin{longtable}[l]{llp{\glsdescwidth}p{\glspagelistwidth}}}%
+		{\end{longtable}}%
+	\renewcommand*{\glossaryheader}{}%
+	\renewcommand*{\glsgroupheading}[1]{}%
+	\renewcommand{\glossentry}[2]{%
+		\textsf{\textbf{\glsentryitem{##1}\glstarget{##1}{\glossentryname{##1}}}} &		\glossentrysymbol{##1} &		\glossentrydesc{##1} &		##2\tabularnewline
+	}%
+	\renewcommand{\subglossentry}[3]{%
+		&
+		\glssubentryitem{##2}%
+		\glossentrysymbol{##2} &
+		\glstarget{##2}{\strut}\glossentrydesc{##2} & ##3\tabularnewline
+	}%
+	\renewcommand*{\glsgroupskip}{%
+		\ifglsnogroupskip\else & & &\tabularnewline\fi}%
+}
+
+% Abstand zwischen Bild und Bildunterschrift
+% \setlength\abovecaptionskip{-20pt}

@@ -1,0 +1,54 @@
+%Leerseite
+\newpage
+\thispagestyle{empty}
+\section*{}
+\newpage
+
+%Deckblatt
+\thispagestyle{empty}
+
+\newgeometry{left=25mm, right=15mm, top=15mm, bottom=5mm}
+\begin{titlepage}
+	% Textteil
+	\begin{center}
+		
+		\includegraphics[width=\textwidth]{Bilder/TH_Logo.pdf}\\[0.2cm]
+		\textsc{\LARGE Fakultät efi}\\[1ex]
+		\Large{Studiengang \studiengang}\\
+		% \Large{Vertiefungsrichtung \studienbereich}\\
+		
+		
+		% Titel
+		\vspace*{40mm}
+		\hrule
+		\vspace*{5mm}
+		\LARGE{\textbf{\titelen}}
+		\vspace*{3mm}
+		\hrule
+		
+		% Name
+		\vspace*{15mm}
+		\Large{{\art} von}\\
+		\LARGE{\textsc{\autor}}\\
+		\Large{Matrikel-Nr.: \matrikelnr}\\
+		
+		
+		% Zusätzliche Infos
+		\vspace*{20mm}		
+		\Large{\semester}\\		
+		\Large{Abgabedatum: \abgabedatum }\\
+		
+		\vfill	
+		\large{Betreuer:\hfill   \mbox{}}\\
+		\large{\erstgutachter \hfill \firmenbetreuerA \mbox{}}\\	
+		%\large{Zweitgutachter: \zweitgutachter \hfill \firmenbetreuerB \mbox{}}\\
+		\large{Technische Hochschule Nürnberg \hfill\firma}\\[2ex]
+		
+		% Schlagworte
+		\large{Schlagworte: Docker, Industrial Edge, ROS2\hfill   \mbox{}}
+		
+	\end{center}
+	
+	
+\end{titlepage}
+\restoregeometry

@@ -1,0 +1,149 @@
+% Seitenränder
+\usepackage{geometry}
+
+% Zeilenabstand
+\usepackage{setspace}
+
+% Koma Script - Seitenlayout
+\usepackage[
+    automark, 		% Kapitelangaben in Kopfzeile automatisch erstellen
+	headsepline, 	% Trennlinie unter Kopfzeile
+	ilines 			% Trennlinie linksbündig ausrichten
+]
+{scrlayer-scrpage}
+
+% Koma Script - Inhaltsverzeichnis
+\usepackage{tocbasic}
+
+% Silbentrennung
+% \providehyphenmins{ngerman}{44}
+\providehyphenmins{english}{44}
+
+% Sprachpaket
+% \usepackage[ngerman]{babel}
+\usepackage[english]{babel}
+
+% Zum einbinden anderer PDF Dokumente
+\usepackage{pdfpages}
+
+% Generiert sinnlosen Text
+\usepackage{lipsum}
+
+% Hübschere Tabellen
+\usepackage{tabularx}
+\usepackage{longtable}
+
+% Bilder und Tabellen an exakt dieser Position ( [H] ):
+\usepackage{float} 		
+
+% Sub-figures 
+\usepackage{caption}
+\usepackage{subcaption}
+
+% DVD-Verzeichnis darstellen
+\usepackage{dirtree}
+
+% Listings darstellen
+\usepackage{listings}
+\usepackage{lstautogobble}
+
+% Grafiken einbinden
+\usepackage{graphicx}
+% Biber (Biblography)
+\usepackage[
+	style=numeric, % Loads the bibliography and the citation style 
+	% bibstyle=alphabetic, % load a bibliography style
+	% citestyle=alphabetic, % load a citatio style
+	sorting=none,
+	natbib=true, % define natbib compatible cite commands
+	%%--- Backend --- --- ---
+	backend=biber,   % (bibtex, biber)
+	bibwarn=true,     %
+	texencoding=auto, % auto-detect the input encoding
+]{biblatex}  
+% Other options:
+%  style=numeric, % 
+%  style=numeric-comp,    % [1-3, 7, 8]
+%  style=numeric-verb,    % [2]; [5]; [6]
+%  style=alphabetic,      % [Doe92; Doe95; Jon98]
+%  style=alphabetic-verb, % [Doe92]; [Doe95]; [Jon98]
+%  style=authoryear,      % Doe 1995a; Doe 1995b; Jones 1998
+%  style=authoryear-comp, % Doe 1992, 1995a,b; Jones 1998
+%  style=authoryear-ibid,
+%  style=authoryear-icomp,
+%  style=authortitle,
+%  style=authortitle-comp,
+%  style=authortitle-ibid,
+%  style=authortitle-icomp,
+%  style=authortitle-terse,
+%  style=authortitle-tcomp,
+%  style=authortitle-ticomp,
+
+% UML und Sequenzdiagramme
+\usepackage{pgf-umlsd}
+
+
+% Für schöne, selbstgezeichnete graphiken: tikz
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{shapes.geometric, arrows}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathreplacing}
+
+
+\usepackage{fontawesome}
+
+
+
+
+
+
+% Hyperref für Verlinkungen 
+% ACHTUNG: Als letztes Paket ! (Mit ausnahme von Glossaries)
+% PDF-Optionen -----------------------------------------------------------------
+\usepackage[
+	bookmarks,
+	bookmarksopen=true,
+	colorlinks=true,
+	% diese Farbdefinitionen zeichnen Links im PDF farblich aus
+	% linkcolor=red, % einfache interne Verknüfungen
+	% anchorcolor=black,% Ankertext
+	% citecolor=blue, % Verweise auf Literaturverzeichniseinträge im Text
+	% filecolor=magenta, % Verkrüfungen, die lokale Dateien öffnen
+	% menucolor=red, % Acrobat-Menüpunkte
+	% urlcolor=cyan, 
+	% diese Farbdefinitionen sollten für den Druck verwendet werden (alles schwarz)
+	linkcolor=black, % einfache interne Verknüpfungen
+	anchorcolor=black, % Ankertext
+	citecolor=black, % Verweise auf Literaturverzeichniseinträge im Text
+	filecolor=black, % Verknüfungen, die lokale Dateien öffnen
+	menucolor=black, % Acrobat-Menüpunkte
+	urlcolor=black, 
+	%pagebackref,
+	plainpages=false, % zur korrekten Erstellung der Bookmarks
+	pdfpagelabels, % zur korrekten Erstellung der Bookmarks
+	hypertexnames=false, % zur korrekten Erstellung der Bookmarks
+	%linktocpage % Seitenzahlen anstatt Text im Inhaltsverzeichnis verlinken
+	linktoc=all
+]{hyperref}
+
+\hypersetup{
+	pdftitle={\titel},
+	pdfauthor={\autor},
+	pdfcreator={\autor},
+	pdfsubject={\titel},
+	pdfkeywords={\titel},
+}
+
+% Glossar und Abkürzungsverzeichnis, laut doku nach Hyperref
+\usepackage[
+	acronym, 
+	nonumberlist, 
+	toc,
+	numberline,
+	nopostdot,
+	nogroupskip
+]{glossaries}
