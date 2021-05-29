@@ -4,6 +4,7 @@
 % Dokumentenkopf ---------------------------------------------------------------
 %   Diese Vorlage basiert auf "scrreprt" aus dem koma-script.
 % ------------------------------------------------------------------------------
+\PassOptionsToPackage{table}{xcolor}
 \documentclass[
     12pt, % Schriftgröße
     DIV=10,
@@ -86,10 +87,11 @@
 	\glsaddall
 	% Glossar darstellen
 	\printglossary
-	% \label{sec:Glossar}
+	\label{sec:Glossar}
 	
 	% Abkürzungsverzeichnis
-	\printglossary[type=\acronymtype, title=Abkürzungsverzeichnis, style=mylong]
+	% \printglossary[type=\acronymtype, title=Abkürzungsverzeichnis, style=mylong]
+	% \printglossary
 
 	% Aufräumen und Seitenanzahl speichern
    	\clearpage
@@ -101,21 +103,21 @@
 	\pagenumbering{arabic}
 	\ofoot*{{\pagemark} von \pageref{Ende}}
 	
-	\input{Inhalt/01_Einleitung}
+	\input{Inhalt/01_Introduction}
 	
 	% \input{Inhalt/02_Stand_der_Technik}
 	
-	% \input{Inhalt/03_Grundlagen}
+	\input{Inhalt/03_Background}
 	
-	% \input{Inhalt/04_Voruntersuchung}
+	\input{Inhalt/04_Approach}
 	
-	% \input{Inhalt/05_Implementierung}
+	\input{Inhalt/05_Implementation}
 	
 	% \input{Inhalt/06_Proof_Of_Concept}	
 	
-	% \input{Inhalt/07_Ausblick}	
+	\input{Inhalt/07_Result}	
 	
-	% \input{Inhalt/08_Fazit}
+	\input{Inhalt/08_Discussion}
 	
 	\label{Ende} % Wichtig für Fußnote "Seite X von Y"	
 	\clearpage
