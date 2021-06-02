@@ -49,81 +49,56 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\label{tab:container_vs_vms}
     \end{table}
 
-		\paragraph{Image}
-			Ein Docker-Image ist ein Speicherabbild eines Containers. 
-			Das Image besteht aus mehreren Layern, die schreibgeschützt sind.
-			Images können manuell erstellt werden, oder mit Verwendung eines dockerfiles automatisiert kompilliert werden.
+	The use of containers can decrease the required time for developing, testing, and deploying applications. It makes testing and fault detection less complex as there is no difference between running your application on a test environment and in production. It provides a cost-effective solution and can help reduce operational and development expenses. In most use-cases, container-based virtualization offers several advantages over traditional Virtual Machine based virtualization.
+
+	\section{Docker}
+	\label{Grundlagen:Docker}
+	\textit{Docker is a person who works at a port whose job is to load goods onto and off container ships.} \cite{docker-definition-english}
+
+	Software Docker essentially does the same in the software context. Docker is a collection of open-source tools that quickly wraps up any application and all its unique dependencies in a lightweight, portable, self-sufficient container that can run virtually anywhere on any infrastructure.\cite{docker-definition}
+	Docker was launched as an open-source project by dotCloud, Inc. in
+	2013. it relies heavily on namespaces and cgroups to provide resource isolation and to package an application along with its dependencies. This bundling of dependencies into one package allows an application to run across different platforms and still support a level of portability. This provides flexibility to developers to develop in the desired language and platform. It has drawn a lot of interest in recent years.\cite[P.~10]{Kinnary2018}
+
+	Docker consists of several parts. The following section gives an overview of the main components of Docker.
+
+
+		\subsection{The Docker Runtime and Orchestration Engine (Docker Engine)} 
+		\label{Grundlagen:Docker:Docker Engine}
+		The Docker engine is the software for the infrastructure that runs and orchestrates containers. All other Docker, Inc. and third-party products connect to and develop around the Docker Engine. It provides a workflow for building and managing the application stack. It builds and runs containers using other Docker components and services. It consists of the Docker daemon; a REST API that specifies the interfaces that programs can use to communicate with the daemon; and the CLI, the command-line interface that communicates with the Docker daemon via the API. Docker Engine creates and runs the Docker container from the Docker image file.\\
+		\\
+		Following Diagramm illustrates the Docker System Architecture.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.9\textwidth]{"Bilder/DockerArchitecture.png"}
+			\caption{Docker System Architecture \cite{dockerOverwiew}}
+			\label{fig:Background:DockerEngine:Architecture}					
+		\end{figure}
+
+		\paragraph{Docker daemon (dockerd)}  is a server process that runs
+		in the background. It continuously listens to the REST API interface
+		and listens for incoming requests and manages Docker objects (images, containers, networks, and volumes).  A daemon also has the ability to communicate with other daemons to manage Docker services.\cite{dockerOverwiew}
+
+		\paragraph{Docker client} represents the primary means for most users to interface with Docker. The commands run through the command-line interface are sent to the Docker daemon through the Docker API interface. The Docker daemon(dockerd) then executes these commands. The Docker client has the ability to connect with multiple Docker daemons.\cite[P.~32]{Kinnary2018}
+		
+		\paragraph{Docker registry} The images created by the Docker daemon are stored in the Docker registry. Docker looks for images in the Docker Hub by default, but it is possible to have a self hosted private registry. Docker Hub is a public registry and is freely accessible.\cite[P.~33]{Kinnary2018}
 			
-		\paragraph{Container}
-			Ein Container ist die aktive ausgeführte Instanz eines Images.
-			Es läuft immer ein Prozess innerhalb des Containers.
-			Somit wird ein Container beendet, sobald er kein Programm ausführt oder das Programm mit seinem Auftrag fertig ist.
+		\subsection{Docker Objects}
+		\label{Grundlagen:Docker:Docker Objects}
+		\paragraph{Images}
+		\paragraph{Containers}
+		\paragraph{Networks}
+		\paragraph{Volumes}
 			
-		\paragraph{Dockerfile}
-			Ein Dockerfile ist eine Textdatei mit Anweisungen zum erstellen eines Containers.
-			Jeder Schritt erstellt einen neuen Layer, der dem Image hinzugefügt wird.
-			Mit einem Dockerfile lässt sich das erstellen von Images automatisieren.
+			
+		\paragraph{Dockerfiles}
+			
 		
 		\paragraph{Docker-Compose}
-			Mit Docker-Compose lassen sich die Startparameter eines Containers in einer .yaml -Datei festlegen.
-			Es lassen sich mehrere Docker-Container gleichzeitig starten, sowie umfangreiche Einstellungen bei dem Start des Containers treffen.
-		
-		\subsection{Netzwerke}
-		\label{Grundlagen:Docker:Netzwerke}
-			Docker bietet auch die Netzwerkkapselung für die Container an.
-			Somit lässt sich das Netzwerk eines Containers von dem Rest des Systems oder anderen Containern trennen.
-			Es können auch eigene Netzwerke definiert werden, um mehrere Container miteinander Kommunizieren zu lassen.
-			Sie spannen so ein eigenes Netzwerk auf, was vergleichbar mit einem lokalen Netzwerk ist.
-			Zwei Netzwerktypen die Docker anbietet, werden nachfolgend erläutert.
-			\paragraph{Bridged}
-				Das Bridged Netzwerk kapselt das Netzwerk des Containers von dem des Host Systems, bietet aber noch eine Netzwerk-Brücke, damit der Container Teilnehmer in höherliegenden Netzen erreichen kann.
-				Es lassen sich Ports des Host-Computers an einen Container weiterleiten, um so eine Erreichbarkeit des Containers aus einem höherliegendem Netz zu ermöglichen.
-				
-			\paragraph{Host}
-				Die Netzwerkeinstellung Host verzichtet auf eine Kapselung der Netze.
-				Hier verwendet der Container die IP Adresse des Host-Computers und ist entsprechend teil des Host-Netzes.
-				Für weitere Teilnehmer des Netzwerkes, ist der Host-PC des Docker-Containers und der Container selbst, dasselbe Gerät.
-				Eine Portweiterleitung zum ermöglichen von Diensten ist hier nicht notwendig.
-				
-			\subsection{Datenspeicherung}
-			\label{Grundlagen:Docker:Datenspeicherung}
-				Nach beenden des Containers werden die Daten, die während dem ausführen des Containers angefallen sind, gelöscht.
-				Um eine Persistente Speicherung, zu ermöglichen, bietet Docker mehrere Möglichkeiten an, um über die Laufzeit des Containers hinaus Daten zu speichern, oder auch um auf Daten innerhalb des Containers zuzugreifen. 
-				Nachfolgend werden die wichtigsten kurz vorgestellt.
-				
-				\begin{figure}[H]
-					\centering
-					% \input{"Bilder/tikz/Grundlagen/docker-types-of-mounts.tex"}
-					\includegraphics[width=0.70\textwidth]{"Bilder/DockerSpeichertypenpng.png"}
-					\caption{Verschiedene Datenspeichermöglichkeiten. \cite{dockerStorage}}
-					\label{fig:Grundlagen:Docker:Datenspeicherung}					
-				\end{figure}
-										
-				\paragraph{Volumes}
-					Volumes werden auf dem Dateisystem des Hosts gespeichert (In Linux unter \textit{/var/lib/docker/volumes/}).
-					Ein Volume kann in mehrere Container eingebunden werden, dadurch ist eine containerübergreifende Dateiablage möglich.
-					Volumes werden nicht automatisch gelöscht, sobald alle Container gestoppt sind, welches das Volume eingebunden hatten.
-					Sie eignen sich am besten, um Daten Persistent zu speichern. \cite{dockerStorage}
-				
-				\paragraph{Bind mounts}
-					Bind mounts können überall auf dem Hostsystem gespeichert sein.
-					So können wichtige Systempfade (zum Beispiel \textit{/dev/}) dem Container zugänglich gemacht werden. \cite{dockerStorage}
-				
-				\paragraph{tmpfs mounts}
-					Hier werden die Dateien nicht auf dem Dateisystem des Hosts gespeichert, sondern auf dem Arbeitsspeicher des System.
-					Dadurch entsteht eine nicht persistente Datenspeicherung, um geheime Informationen zwischen Containern auszutauschen. \cite{dockerStorage}
-					
+			
 				
 	\section{Industrial Edge}
 	\label{Grundlagen:IndustrialEdge}
-		Industrial Edge ist eine Entwicklung von Siemens, die ermöglicht, im Prozess anfallende Daten bereits auf dem Gerät zu analysieren.
-		Es wird lokales Engineering mit Cloud Engineering kombiniert. \cite{siemensIEM_gettingStarted}
-		Dadurch werden unnötige Datentransporte zwischen dem Endgerät und Server vermieden und erst bereits aufbereitete Daten zum Server geschickt.
-		Die Rechenlast fließt so vom Server in Richtung des Endgerätes.
-		Hierfür werden Applikationen (Apps) bereitgestellt, die einen festen Funktionsumfang enthalten und mit der Industrial Edge Infrastruktur auf das jeweilige Endgerät (Edge Device) gespielt werden können.
-		Diese Apps basieren auf der Docker Technologie.
-		Industiral Edge ermöglicht die zentrale Verwaltung von
-		In der nachfolgenden Abbildung \ref{fig:Grundlagen:IndustrialEdge:Ueberblick} ist eine typische Infrastruktur von dem obersten Server, bis zu den Endgeräten dargestellt, die im Nachfolgenden näher erläutert wird.
+		
 		\begin{figure}[h]
 			\centering
 			%\input{"Bilder/tikz/Grundlagen/industrial-edge-overwiev.tex"}
@@ -136,32 +111,19 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		%- Graphen die das IE-Hub, IEM, Docker Device erklärt\\
 			
 		\paragraph{Industrial Edge Hub}
-			Das \gls{IEH} ist die oberste, von Siemens bereitgestellte Serverebene.
-			Hier bietet Siemens eigene entwickelte Applikationen an, die gegen eine Lizenzgebühr auf das \gls{IEM} geladen werden können.
-			Von hier aus lassen sich ebenfalls benötigte Softwarepakete und Dokumentation herunterladen, die das Entwickeln von eigenen Apps und das Aufsetzen und betreiben von einem eigenen \gls{IEM} ermöglicht. \cite{siemensIEM_gettingStarted}
+			Das \gls{IEH} 
 			
 		\paragraph{Industrial Edge Management System}
-			Das \gls{IEM} ist ein Server, welcher in einem Lokalen Netz selbstständig betrieben werden kann.
-			Der Anwender hat hiermit die Möglichkeit, einen Server zu erstellen, damit z.B. sensible Daten, die zwischen dem Edge Device und dem \gls{IEM} ausgetauscht werden, nicht über das Internet transportiert werden müssen.
-			Zudem lassen sich die Endgeräte über diesen Server verwalten, es können Apps sowie Softwareupdates aufgespielt werden, sowie lassen sich weitere Analysen durchführen.
-			Eine selbst entwickelte App lässt sich auf das \gls{IEM} aufspielen, welches Diese wiederum an die Edge Devices verteilen kann.
-			\cite{siemensIEM_gettingStarted}
+			Das \gls{IEM} 
 			
 		\paragraph{Industrial Edge App}
-			Eine Edge App dient zur intelligenten Verarbeitung von Automatisierungsaufgaben. \cite{siemensIEM_gettingStarted}
-			Neben den von Siemens im \gls{IEH} angebotenen Apps lassen sich auch eigene Applikationen entwickeln.
-			Diese und eigene entwickelte Apps sind Docker basierte Images, welche auf dem \gls{IED} ausgeführt werden.
-			Als oberste Beschreibungsebene wird eine docker-compose Datei angelegt, in welcher beschrieben wird, wie die docker Images zu starten sind, sowie welche Netzwerkkonfiguartion (Kapitel \ref{Grundlagen:Docker:Netzwerke}) und welche Art der Datenspeicherung (Kapitel \ref{Grundlagen:Docker:Datenspeicherung}) verwendet wird.
+			
 	
 		\paragraph{Edge Device}
-			Ein \gls{IED} führt die einzelnen Edge Apps aus. Sie können Automatisierungsdaten lokal speichern und nach Bedarf abrufen. 
-			Ebenfalls lassen sich diese Daten an eine Cloud-Infrastruktur übermitteln. Ein \gls{IED} muss bei einem \gls{IEM} aktiviert werden.
-			\cite{siemensIEM_gettingStarted}
+			
 			
 		\paragraph{Industrial Edge Publisher}
-			Der Industrial Edge Publishers ist ein Tool, mit dem Docker Images in Edge Apps überführt und in das \gls{IEM} hochgeladen werden.
-			Es lassen sich ebenfalls bereits erstellte Apps verwalten, verändern oder löschen.
-			\cite{siemensIE_App}
+			
 
 	
 	\section{ROS 2}
@@ -170,8 +132,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\cite{ros2Basic}
 		\gls{ROS2}
 	
-	
-	
+
 		\subsection{Nachrichtentypen}
 		\label{Grundlagen:ROS2:Nachrichtentypen}
 			- Message (topics)\\
@@ -180,11 +141,6 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 			
 		\subsection{ROS 2-web Bridge}
 		\label{Grundlagen:ROS2:2WebBridge}
-			- Stellt einen websocket bereit, der mittels JSON requests verarbeitet. 
-			- Basiert auf RclNodeJS, welches eine brücke zwischen javascript und ros2 bildet\\
-			- Basiert auf NodeJS. NodeJs ist eine JavaScript Runtime, die JS Code serverseitig ausführen lässt.
-			Das ist hier nicht weiter von relevanz.\\
-			- Verwendet wird für die Anwendung ebenfalls roslibjs. Dies ist eine javascript bibliothek, welche in der html eingebunden wird. Sie stellt Befehle zum erstellen von ROS Subscriber/Publisher und Services bereit.\\
 			
 		\subsection{roslibjs}
 		\label{Grundlagen:ROS2:RosLibJS}
@@ -196,9 +152,6 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		- Wenn das hier geht, geht auch ROS2!
 		- Verschiedene Systemanbieter, näher wird RTI und Fastrtps untersucht: https://ros.org/reps/rep-2000.html  (Beide TIER 1)
 		
-		ROS2 verwendet als Kommunikationsschnittstelle DDS.
-		DDS funktioniert gut in lokalen Netzwerken, sobald allerdings ein NAT-Router dazwischen ist, funktioniert der standardmäßige Discovery Mechanismus nicht.
-		Da das Ziel eine Edge Applikation ist, soll das Verhalten von DDS in der Docker Umgebung, bzw. in unterschiedlichen Netzwerken untersucht werden.
 	
 		
 		
