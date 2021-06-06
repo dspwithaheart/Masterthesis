@@ -85,16 +85,27 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\subsection{Docker Objects}
 		\label{Grundlagen:Docker:Docker Objects}
 		\paragraph{Images}
+		A Docker image is a read-only file system that contains instructions to create a container in which an application can run. In most cases, a Docker Image is based on another image and is customized. You can either use existing images published in public repositories such as Docker Hub or Create your image.
+		A Dockerfile is used to create a Docker image. A Dockerfile contains simple instructions that can be understood by the Docker daemon to	create the image and run it. Docker images are layers that correspond to each instruction in the Dockerfile. Part of what makes a Docker image super easy is that when you change a part of the Dockerfile, only that layer is changed, and not the entire image.
+
 		\paragraph{Containers}
+		A Docker container is an instance of an image. An image runs inside a container. You can manage a container with the stop, start, and delete commands to manage it. Multiple containers can be connected over a network. They can be connected to the memory, and they can also communicate with each other. Containers are much more lightweight than VMs because their startup times are very fast. To create a container, in addition to the container's configuration and settings, you also create an image Configuration and settings an image is created. When a container is deleted everything related to the container is also deleted, including state and memory.
+
+		\paragraph{Services}
+		In a distributed application, different functionalities of the app provide different services. For example, if you are building an application that suggestions based on keywords that the user enters, you might want to have A front-end service that takes the word and sends it to the service that will Verifies the legitimacy of the word. This in turn could be sent to another service that runs an algorithm to generate the suggestions, etc., which are then returned to the service. These are all different services on different Docker containers, sitting Sit behind different Docker daemons. These Docker daemons are all connected over the network and interact with each other.
+		All these services work together as a swarm, managed by different Managers and workers to manage. Each swarm contains a Docker daemon. These Daemons communicate with each other using the Docker API. A Docker Compose YAML file is used to get all these services running together. together to get them running. 
+
 		\paragraph{Networks}
+
 		\paragraph{Volumes}
 			
 			
 		\paragraph{Dockerfiles}
-			
+		Dockerfile is a text document that contains a set of instructions or commands for assembling an image that is understood by the build engine. The build engine understands. The Dockerfile defines what goes into the environment inside your container. Accessing resources, mapping volumes, passing arguments, copying files that need to be inside your container are defined in this file. According to Dockerfile created, you need to build it to create the image of the container. Create container image. The image is just a snapshot of all the executed statements in the Dockerfile. Once this application image is created, you can expect that it will run on any machine that uses the same kernel. 
 		
 		\paragraph{Docker-Compose}
-			
+		Docker Compose is the tool for running multi-container Docker applications. It is essentially a YAML file that can be thought of as a Compose of multiple Dockerfile containers, which can be used to put commands into a single file. This Docker Compose YAML file contains configurations of multiple services. Then, with a single command, you can run all services to run in Docker containers at the same time.
+		Docker Compose can be used to create a microservices architecture and link the containers together, or it can be used for a single service. In addition, Docker Compose can create images, scale containers, and re-run containers that have been stopped. All of these functions are part of Docker. Docker-compose is just a higher-level abstraction of container execution commands. Everything that a compose file can do, can likewise be performed with simple Docker commands, except that this requires more memory and additional overhead to execute any additional commands, to connect to the network, etc. . Docker-compose helps to simplify this process.
 				
 	\section{Industrial Edge}
 	\label{Grundlagen:IndustrialEdge}
@@ -103,7 +114,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 			\centering
 			%\input{"Bilder/tikz/Grundlagen/industrial-edge-overwiev.tex"}
 			\includegraphics[width=0.70\textwidth]{"Bilder/Edge_uebersicht.jpg"}
-			\caption{Überblick über Industrial Edge. \cite{siemensIEM_gettingStarted}}
+			\caption{Industrial Edge overview \cite{siemensIEM_gettingStarted}}
 			\label{fig:Grundlagen:IndustrialEdge:Ueberblick}					
 		\end{figure}
 	
