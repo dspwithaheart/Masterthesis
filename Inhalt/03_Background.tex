@@ -110,6 +110,10 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\section{Industrial Edge}
 	\label{Grundlagen:IndustrialEdge}
 		
+	Industrial Edge is a development from Siemens that makes it possible to analyze data generated in various industrial processes on the device itself. It combines local engineering with cloud engineering.\cite{siemensIndustrialEdge}
+
+	This eliminates unnecessary data transport between the end device and the server, only processed data is sent to the server. The processing load is in this way directed from the server towards the end device. Edge applications serve this purpose, they contain a fixed set of functions and can be accessed with the edge infrastructure on the respective end device (edge device). These apps are based on Docker technology and run one or more Docker containers in them. Figure \ref{fig:Grundlagen:IndustrialEdge:Ueberblick} shows a typical infrastructure from the top server to the end devices.
+
 		\begin{figure}[h]
 			\centering
 			%\input{"Bilder/tikz/Grundlagen/industrial-edge-overwiev.tex"}
@@ -121,29 +125,70 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		%- Management tool für Docker Container auf Geräten (Device)\\
 		%- Graphen die das IE-Hub, IEM, Docker Device erklärt\\
 			
-		\paragraph{Industrial Edge Hub}
-			Das \gls{IEH} 
-			
 		\paragraph{Industrial Edge Management System}
-			Das \gls{IEM} 
-			
+			The \gls{IEM} is a server, which can be operated independently in a local network. It allows the user to create their own server which avoids the transmission of raw sensitive data exchanged between the edge device and the IEM over the Internet.
+
+			In addition, the end(edge) devices can be managed via this server, which includes the installation of apps and software updates and further analysis of individual apps. A self-developed Application can be uploaded to the IEM, which in turn can distribute it to the edge devices.\cite{siemensIndustrialEdge}
+
+		\paragraph{Industrial Edge Hub}
+			The \gls{IEH} 
+			is the top server-level Application hub provided by Siemens. On this platform, Siemens offers applications developed in-house. These can be loaded onto the IEM for a license fee. Any required software packages and documentation can be downloaded from here. This streamlines the development process of custom applications including deployment, and operation on desired IEM.\cite{siemensIndustrialEdge}
 		\paragraph{Industrial Edge App}
-			
+			An \gls{IEA} (edge app) is used for the intelligent processing of industrial automation tasks.\cite{siemensIndustrialEdge} It is a Docker-based image, which is runs on the IED. A docker-compose file acts as the top description level file, it specifies various parameters and the sequence in which the Docker images are started. The parameters include network configuration, data storage, and other application-specific configurations. It supports all Docker-compose version 2.4 settings. Modification of this docker-compose file allows configuring any Edge app, even after it has been already downloaded to an edge device. An Edge App can be downloaded to an edge device through the IEM.
 	
 		\paragraph{Edge Device}
-			
+		Edge devices are required in order to run individual edge apps. The edge device is a custom Linux Machine running the Industrial Edge OS. For test and simulation purposes it can also be run in a Virtual machine(VM). Edge devices can save automation data locally and retrieve it when required. In addition, edge devices can upload this data into the cloud infrastructure and retrieve it at any moment. After proper configuration and connection,  an Edge Device can be activated through IEM using an Edge Device configuration file.
 			
 		\paragraph{Industrial Edge Publisher}
+		The Industrial Edge Publishers is a tool that converts Docker images into Edge Apps and uploads them to the IEM. It can also be used to manage, modify or delete apps that have already been created.\cite{siemensIE_App} A prerequisite for creating an app is a docker-compose file, which contains the startup parameters of a Docker container. These parameters can also be configured through a menu within the Edge Publisher.
 			
 
 	
-	\section{ROS 2}
-	\label{Grundlagen:ROS2}
-		Ein asdfasdasd
-		\cite{ros2Basic}
-		\gls{ROS2}
+	\section{ROS}
+	\label{Grundlagen:ROS2}		
+	This chapter covers the basics of the robot operating system (ROS) and all the tools necessary to create, debug, and understand robot applications. This chapter describes some high-level concepts and low-level API commands which enable developers to develop, maintain and support multi-robot applications. \\
 	
+	The software stack of a typical robot system requires several software tools which include hardware drivers, network modules, communication architecture, and several application-specific algorithms. ROS provides these tools in one package, which saves developers a lot of time and redundant work. ROS includes several sub-packages for robot navigation, vision, control, simulation.\\
+	
+	The Robot Operating System (ROS) has long been one of the most widely used middleware for robotic. The large open-source robotics community has contributed to a lot of new features since the introduction of ROS 1 in 2007, limitations of ROS1 have led to the development of ROS2.\cite{ros2Basic}\\
 
+	\subsection{ROS2} 
+	\label{Grundlagen:ROS:ROs2}
+	\gls{ROS2} was launched with an improved architecture and upgraded features. It is new and various organizations and open-source communities are trying to port existing packages to ROS 2.\cite{ros2Basic} \\
+	
+	Table \ref{tab:ros1_vs_ros2} illustrates the key differences between ROS1 and ROS2
+	\begin{table}[H]
+        \centering
+		\rowcolors{1}{}{gray!25}
+        \begin{tabular}{{p{3cm}|p{5cm}|p{6cm}}}
+            \toprule
+            Parameters & ROS1 & ROS2\\
+            \midrule
+            Networking & Utilizes the TCPROS communication protocol & Uses DDS (Data Distribution System) for communication.\\
+            ROS Master & Uses ROS Master for centralized discovery and registration. The whole communication system fails if the master fails. & Uses the distributed DDS discovery. ROS 2 provides a custom API to get all information about nodes and topics. \\
+            Compatibility & ROS runs only in Ubuntu. & ROS 2 is compatible with Ubuntu, Windows 10, and OS X.\\
+            Programming language  & Uses C++ 03 and Python2. & Uses C++ 11 and Python3.\\
+            Build system  & ROS uses only the CMake build system and has a combined build for multiple packages via a single CMakeLists.txt file & ROS 2 offers options to use other build systems. Supports isolated independent builds for packages to better handle dependencies between packages.\\
+            Default values & Data types in message files do not support default values. & Data types in message files support default values.\\
+            roslaunch & roslaunch files are written in XML. & roslaunch files are written in Python which makes it more configurable and and supports conditional execution.\\
+            Realtime Support & Does not support Real-time behavior. & Supports real-time responses with a suitable RTOS.\\
+			\bottomrule
+        \end{tabular}
+		\caption{Differences between ROS1 and ROS2 \cite{ros1vsros2}}
+		\label{tab:ros1_vs_ros2}
+    \end{table}
+
+	\subsection{ROS2 Structure}
+	\label{Grundlagen:ROS2:ROS2_Structure}
+	The key ROS2 feature is that it uses DDS (Data Distribution System) for communication. It eliminates ROS Master and utilizes distributed DDS discovery.	A set of related nodes located on the same computer are called a hub, where one or more hubs can be present on the same computer. ROS hubs are considered to have an accompanying set of bridging nodes that pass messages between ROS and ROS2.\cite*[P.7]{Koubaa2021}
+	\begin{figure}[H]
+		\centering
+		% \input{"Bilder/tikz/Grundlagen/docker-types-of-mounts.tex"}
+		\includegraphics[width=0.5\textwidth]{"Bilder/Ros2_Architecture.png"}
+		\caption{ROS2 Architecture \cite{ros1vsros2}}
+		\label{fig:Background:Containers:Ros2_Architecture}					
+	\end{figure}
+	
 		\subsection{Nachrichtentypen}
 		\label{Grundlagen:ROS2:Nachrichtentypen}
 			- Message (topics)\\
@@ -155,7 +200,9 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 			
 		\subsection{roslibjs}
 		\label{Grundlagen:ROS2:RosLibJS}
-	
+		
+		\subsection*{Ros Lifecycle nodes}
+		\label{Grundlagen:ROS2:Lifecycle}
 	\section{DDS}
 	\label{Grundlagen:DDS}
 		- Grundlage für Kommunikation von ROS2\\
