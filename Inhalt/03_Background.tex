@@ -184,26 +184,47 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\begin{figure}[H]
 		\centering
 		% \input{"Bilder/tikz/Grundlagen/docker-types-of-mounts.tex"}
-		\includegraphics[width=0.5\textwidth]{"Bilder/Ros2_Architecture.png"}
-		\caption{ROS2 Architecture \cite{ros1vsros2}}
+		\includegraphics[width=0.8\textwidth]{"Bilder/ros-architecture.jpg"}
+		\caption{ROS2 Architecture \cite{ros-2-architecture}}
 		\label{fig:Background:Containers:Ros2_Architecture}					
 	\end{figure}
 	
-		\subsection{Nachrichtentypen}
-		\label{Grundlagen:ROS2:Nachrichtentypen}
-			- Message (topics)\\
-			- Service\\
-			- Action
-			
-		\subsection{ROS 2-web Bridge}
-		\label{Grundlagen:ROS2:2WebBridge}
-			
-		\subsection{roslibjs}
-		\label{Grundlagen:ROS2:RosLibJS}
+	\subsection{ROS2 Client Library}
+	\label{Grundlagen:ROS2:ROS2ClientLibrary}
+
+	\subsection{ROS2 Nodes}
+	\label{Grundlagen:ROS2:ROS2Nodes}
+
+	\subsection{ROS2 Communication Patterns}
+	\label{Grundlagen:ROS2:CommunicationPatterns}
+		- Topics(->Messages)\\
+		- Service\\
+		- Action
+	
+	\subsection{Important ROS2 Concepts}
+	\label{Grundlagen:ROS2:Concepts}
+
 		
-		\subsection*{Ros Lifecycle nodes}
-		\label{Grundlagen:ROS2:Lifecycle}
-	\section{DDS}
+		The \text{ROS DOMAIN ID}\\
+		About different ROS 2 DDS/RTPS vendors\\	
+		About logging and logger configuration\\
+		About ROS 2 client libraries\\
+		About ROS 2 interfaces\\
+		About parameters in ROS 2\\
+		About topic statistics\\
+		Introspection with command line tools\\
+		About Composition\\
+		On the mixing of ament and catkin (catment)\\
+
+	\subsection{ROS2 Web Bridge}
+	\label{Grundlagen:ROS2:2WebBridge}
+		
+	\subsection{roslibjs}
+	\label{Grundlagen:ROS2:RosLibJS}
+	
+	
+
+	\subsection{DDS}
 	\label{Grundlagen:DDS}
 		- Grundlage für Kommunikation von ROS2\\
 		- Realisiert die eigentliche Kommunikation\\
@@ -211,5 +232,244 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		- Verschiedene Systemanbieter, näher wird RTI und Fastrtps untersucht: https://ros.org/reps/rep-2000.html  (Beide TIER 1)
 		
 	
-		
+	\section{Ros Lifecycle nodes}
+	\label{Grundlagen:ROS2:Lifecycle}
+
+	\section{Vue JS}
+	\label{Grundlagen:Vue}
+	Vue is described as a progressive web framework. This means that it adapts to the needs of the developer. While other frameworks require a complete adoption of a technology by a developer or team and often require an existing application to be rewritten because of certain framework-specific conventions. Vue can be introduced to an application with a simple script tag and can grow with requirements, from a small web component to managing the entire view layer. Vue is a scalable JavaScript framework for building user interfaces. Unlike other frameworks, Vue is designed from the ground up to be incrementally customizable. The core library is view-only and easily integrates with other libraries or existing projects. In combination with modern tools and additional libraries, Vue is capable of running sophisticated single-page applications \cite{Vue019:Intro:Online}.
+	It is not necessary to have prior knowledge of Webpack, Babel, npm or the like to get started with Vue. HTML, CSS, and the basics of JavaScript are enough to get started with Vue.
+
+	The leap from a pure HTML and CSS-based website to a sophisticated web application is very simple and can be learned during the development process. This is a strong selling point, especially in the current ecosystem of JavaScript front-end frameworks and libraries, which makes newcomers and even experienced developers feel lost in the ocean of possibilities and choices. The goal of Vue is to be able to create reasonable web applications with minimal prior knowledge.
+	
+	\subsection{Main Features of Vue}
+	\label{Grundlagen:VueFeatures}
+	Together with React and Angular, Vue is one of the most popular frameworks in the web development landscape. The following features characterize the Vue framework:
+
+
+	
+	\paragraph*{Components:} Vue components extend basic \gls{HTML} elements to encapsulate reusable code. The Vue component system is an abstraction that enables the creation of large applications from small, self-contained, and often reusable components.
+	\paragraph*{Templates:} Vue.js uses an HTML/\gls{CSS}-based template syntax. Vue compiles the templates into Virtual DOM render functions. In combination with the reactivity system, Vue can intelligently determine the minimum number of components that need to be updated. This minimizes the number of DOM manipulations when the application changes state.
+	\paragraph*{Reactivity:} Vue has a reactivity system that uses pure JavaScript objects and optimizes rendering. Each component keeps track of its reactive dependencies during rendering. This allows the system to intelligently and optimally re-render the components.
+	\paragraph*{Integration:} It is very easy to integrate Vue into existing projects or to add third-party libraries to Vue. All JavaScript libraries that use ES6+ can be used within Vue. For example, Bootstrap, Material Design, ThreeJS, Web Sensors API, etc.  Vue also offers the possibility to use TypeScript instead of JavaScript.
+	\cite{VueGuide:Online}
+
+
+	\subsection{Vue in comparision to Angular und React}
+	\label{sec:VueAngularReact}
+	Vue borrowed some of the Angular templating syntaxes but removed the complex stack that Angular required. This made it very powerful. Vue took many good ideas from React, especially the virtual DOM.  But Vue implements it with a kind of automatic dependency management that tracks which components are affected by a change in the state so that only those components are re-rendered when the state property changes. In React, on the other hand, if any part of the state that affects a component changes, that component is re-rendered, and thus any associated child components are also re-rendered. This is an advantage for Vue in terms of usability and performance enhancement \cite{VueComparision:Online}.
+
+\begin{table}[H]
+	\centering
+	\caption{Vue vs React vs Angular}
+	\label{tab:table_VueJS}
+	\begin{tabular}{{p{3cm}|p{3cm}|p{3cm}|p{3cm}}}
+    \toprule
+    Criterion & \includegraphics[width=0.05\textwidth]{Bilder/img/vue.png} & \includegraphics[width=0.05\textwidth]{Bilder/img/react.png} & \includegraphics[width=0.05\textwidth]{Bilder/img/angular.png}\\
+     & Vue & React & Angular\\
+    \midrule
+    Focus & Usability & Flexibility & TypeScript \\
+    Complexity & Low & Medium & High\\
+    Size & 80 KB & 100 KB & 500+ KB\\
+    Release & 2014 & 2013 & 2010 \\
+    Developed by & Evan You & Facebook & Google \\
+    Language & JavaScript & JavaScript & TypeScript\\
+    Model & virtual DOM & virtual DOM & \gls{MVC}\\
+    Supported by & Open Source & Facebook & Google \\
+    Latest version & 2.6.11 & 16.13.1 & 9.1.11\\
+		\bottomrule
+	\end{tabular}
+\end{table}
+\cite{ComparisonVue:Online}
+
+\subsection{Structure of a Vue.js project}
+\label{sec:StructureofVue.jsProject}
+Vue has a very intuitive project structure. In addition to the core framework, it includes a lot of utilities that make front-end development with Vue very enjoyable.
+Like most JavaScript projects, NodeJS is used for Vue development. Vue provides the core library and the add-on utilities via \texttt{\textbf{\gls{npm}} (node package manager)}.
+
+\paragraph{NodeJS} is a JavaScript runtime environment based on Chrome's V8 JavaScript engine. It allows JavaScript code to be executed outside of a web browser. NodeJS allows developers to use JavaScript to write command-line tools and execute scripts server-side to generate dynamic web page content before the page is sent to the user's web browser. NodeJS supports unifying web application development around a single programming language, rather than using different languages for server-side and client-side scripting \cite{NodeJS:Online}.
+
+\paragraph{npm (node package manager)} is the largest software registry in the world. Open-source developers from every continent use npm to share and access packages, and many organizations also use npm to manage private development \cite{NPM:Online}.
+
+\paragraph*{Vue-CLI:} Vue provides an official CLI(Command Line Interface) for quickly setting up modern single-page applications. It provides a comprehensive build setup for a modern front-end workflow. It takes just minutes to get up and running with hot-reload, lint-on-save, and production build.
+
+\paragraph{Installation}
+The installation of the required packages is done with NodeJS and npm. The following commands must be executed to create a basic Vue application:
+\begin{itemize}
+	\item Install the Vue CLI globally:
+	\begin{lstlisting}[language=bash]
+		npm install -g @vue/cli
+	\end{lstlisting}
+	\item The Vue-\gls{CLI} is used to create a new Vue project.
+	\begin{lstlisting}[language=bash]
+		vue create example_vue_app
+	\end{lstlisting}
+	This opens a CLI where the desired configuration for a Vue project can be set.
+	\item To start the development server, the following command is executed:
+	\begin{lstlisting}[language=bash]
+		npm run serve
+	\end{lstlisting}
+	\item To create a production build for the app, the following command is executed:
+	\begin{lstlisting}[language=bash]
+		npm run build
+	\end{lstlisting} 
+\end{itemize} 
+
+
+A typical Vue project with Vue-Router and Vuex has the following structure:
+
+\begin{table}[H]
+	\centering
+	\caption{Structure of the project folder}
+	\label{tab:table_VueJS}
+	\begin{tabular}{{p{4cm}p{9cm}}}
+		\toprule
+		Files/Folders & Description\\
+		\midrule
+    	public/index.html & This is the main app file loaded by the browser. The file contains only a simple HTML tag in the body: \texttt{ \textcolor{red}{<div id=app> </div>}}. 
+		This is the element that attaches the Vue application to the DOM. \\
+		\hline
+		src/main.js & This is the JavaScript file responsible for configuring the Vue.js application. It is also used to register all third-party packages. \\
+		\hline
+		src/App.vue & This is the root component that contains the HTML content that is displayed to the user. \\
+		\hline
+		/package.json & In this file npm stores the names and versions of the package it installed. \\
+		\hline
+		src/components/ & This folder contains the additional components. \\
+		\hline
+			src/assets/ & This folder is used to store static content, such as images. \\
+		\hline
+			src/router/ & This folder contains the implementation of Vue-Router. \\
+			\hline
+			src/store/ & The folder contains the implementation of Vuex-Store. \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsection{Vue Instance} Every Vue application begins by creating a new Vue instance (root instance) with the Vue function. When a Vue instance is created, it adds to Vue's reactivity system all the properties found in its data object(described in table \ref{tab:table_data}).  All \texttt{Vue.js} internal modules and external plugins to be used are imported in the \texttt{(main.js)} file with ES6(ECMAScript 2015) import syntax ('import'). The dependencies are defined as global parameters and are accessible by all components.  
+% A typical VueJS project has a structure as shown in \ref{fig:vue_project_structure}. 
+In the main.js file, the main Vue component (\texttt{App.vue}) is registered. 
+
+\begin{lstlisting}[language=JavaScript, caption=main.js]
+    import Vue from 'vue'
+    import App from './App'
+    import router from './router'
+
+    // Root Instance
+    new Vue({
+        el: '#app',
+        router,
+        template: '<App/>',
+        components: { App }
+    })
+
+\end{lstlisting}
+
+\subsection{Vue Component}The most important criterion for choosing this framework \texttt{(Vue.js)} is the modularity of the individual components. The components are one of the strongest features of \texttt{Vue.js}. They allow basic HTML elements to be extended to encapsulate reusable code. At a high level, components are custom elements to which the \texttt{Vue.js} compiler attaches a specific behavior \cite{Vue019:Intro:Online}. Each component is defined in a file with \texttt{.vue} extension. The definition contains an HTML-based template that specifies the design of the component and the JavaScript code that specifies all other functionality or behavior of the component. Each component is also a Vue instance.
+
+Typically, a Vue.js app is organized in a tree of nested components. For example, it consists of components for a header, sidebar, and content area, each containing other components for navigation links, blog posts, etc. The component architecture simplifies such nesting.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{Bilder/img/components.png}  
+  \caption{ \textit{Organization of Componenten} \cite{VueComponents:Online}}%
+\label{fig:OrganisationvonKomponenten}
+\end{figure}
+
+% Die grundlegende Struktur einer \texttt{Vue.js} Komponente ist im Listing \ref{lst:label} dargestellt. 
+
+The template element contains the HTML template and the script element contains the JavaScript part of the component.
+\begin{labeling}{Template element::}
+	\item [Template element:] The design of the user interface is implemented in this element. Standard HTML and CSS technology are used for this. User-defined HTML elements, as well as HTML elements from external plug-ins, can be integrated very easily. The HTML-based template syntax of Vue.js allows binding the rendered DOM declaratively to the data of the underlying Vue instance. All Vue. js templates are valid HTML.
+	
+	The simplest form of data binding is text interpolation using the \textit{mustache} syntax (double curly braces):
+	\begin{lstlisting}[language=html,label={lst:label}, caption=Templateelement]
+        <template>
+            <div>
+                <h1>Data: {{ beispielData }}</h1>
+                <BeispielComponent/>
+            </div>
+        </template>    
+        \end{lstlisting}
+		\item [Script element:] This element contains the implementation of the desired functionalities of the component with \texttt{VueJS} specific construct. Further components can be imported and registered here. These are then available in the template element, which allows the nesting of components to be realized.
+	\begin{lstlisting}[language=JavaScript,label={lst:label}, caption=Skriptelement]
+        
+        <script>
+          import BeispielComponent from 'components/BeispielComponent'
+          export default {
+            components: {
+              BeispielComponent
+            },
+            props : [],
+            data () {
+              return {
+                beispielData: 'Beispiel String'
+              }
+            },
+            methods: {
+                beispielFunction: function () { }
+            },
+            computed: {
+            }
+          }
+        </script>
+        
+        \end{lstlisting}
+\end{labeling}
+
+
+The most important parts of a component are described in the table \ref{tab:table_data}.
+\begin{table}[H]
+	\centering
+	\caption{Parameters responsible for data manipulation}
+	\label{tab:table_data}
+	\begin{tabular}{{p{1.7cm}p{4cm}p{8cm}}}
+		\toprule
+		Parameters & Type & Description\\
+        \midrule
+        components & [key: string]: Object &This is a list of custom components to be used. The custom or external components are imported with \texttt{\textcolor{purple}{import}} command to import them from the ES6 specification.\\
+		data & Object or Function & This is a JavaScript object or function that allows the storage of the necessary attributes for the component. Within the component, the original data object can be accessed with \texttt{\textcolor{purple}{this.data}} directive can be accessed.\\
+		props & Array\(<string>\) or Object & This is a list/hash of attributes intended to hold data from the parent component. It has a simple array-based syntax and an alternative object-based syntax that allows advanced configurations such as type checking, custom validation and default values. \\
+        methods & [key: string]: Function & This is a list of methods that allow the realisation of different functionalities of the component.  All methods can be called within the component as a standard JavaScript method.\\
+        computed & [key: string]: Function & This is a list of methods that will be called automatically when the reactive dependencies change. The attributes within these parameters are cached and only recomputed on reactive dependency changes. \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+\subsection{instance lifecycle hooks} When created, each Vue instance goes through a series of initialization steps, e.g. it needs to set up data observation, compile the template, including the instance in the DOM and update the DOM when the data changes. In parallel, it also runs functions called lifecycle hooks that allow users to add their functions at certain stages of the instance lifecycle. This allows very precise control of the behavior of individual components.
+
+For example, the \textit{created} hook can be used to execute code after an instance has been created. Other hooks are called at different stages of the instance lifecycle, such as. \textit{mounted}, \textit{updated} and \textit{destroyed}. The figure \ref{fig:OrganisationOfComponents} illustrates the details of the complete lifecycle hook.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{Bilder/img/lifecycle_.png}  
+  \caption{ \textit{Vue Instance-Lifecycle Hooks} \cite{InstancVue:Online}}%
+\label{fig:OrganisationOfComponents}
+\end{figure}
+
+
+
+\subsection{Vuex }
+\label{sec:Vuex}
+Vuex is the official state management library for Vue. Its job is to exchange data between components in a Vue application.
+
+Components in a Vue application can have their state. For example, an input field stores the data entered in it locally. Components can be input fields or a whole page. It becomes very costly to exchange state data between nested components.
+
+Vuex provides central storage(Vuex store) for the state, and the state can be changed by calling functions defined in the Vuex store.
+Each component that depends on a particular piece of state accesses it via a getter function on the Vuex store, ensuring synchronization of data. Vuex-Store is a kind of temporary database for a particular application session \cite{VueGuide:Online}.
+
+
+\subsection{Vue Router }
+\label{sec:Vue Router}
+
+In a web application, a router is a part that synchronizes the currently displayed view with the contents of the browser address bar.
+
+A router is needed when \gls{URL}s need to be synchronized with the views in an application. This is a very common need, and all major modern frameworks now allow routing to be managed.   Vue Router is part of the Vue core library and handles route management in a Vue application \cite{VueGuide:Online}.
+
+
+	\section{Nginx}
+	\label{Grundlagen:Nginx}
+
+
 		
