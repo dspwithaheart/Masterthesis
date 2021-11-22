@@ -101,7 +101,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 			
 			
 		\paragraph{Dockerfiles}
-		Dockerfile is a text document that contains a set of instructions or commands for assembling an image that is understood by the build engine. The build engine understands. The Dockerfile defines what goes into the environment inside your container. Accessing resources, mapping volumes, passing arguments, copying files that need to be inside your container are defined in this file. According to Dockerfile created, you need to build it to create the image of the container. Create container image. The image is just a snapshot of all the executed statements in the Dockerfile. Once this application image is created, you can expect that it will run on any machine that uses the same kernel. 
+		Dockerfile is a text document that contains a set of instructions or commands for assembling an image that is understood by the build engine. The Dockerfile defines what goes into the environment inside your container. Accessing resources, mapping volumes, passing arguments, copying files that need to be inside your container are defined in this file. According to Dockerfile created, you need to build it to create the image of the container. Create container image. The image is just a snapshot of all the executed statements in the Dockerfile. Once this application image is created, you can expect that it will run on any machine that uses the same kernel. 
 		
 		\paragraph{Docker-Compose}
 		Docker Compose is the tool for running multi-container Docker applications. It is essentially a YAML file that can be thought of as a Compose of multiple Dockerfile containers, which can be used to put commands into a single file. This Docker Compose YAML file contains configurations of multiple services. Then, with a single command, you can run all services to run in Docker containers at the same time.
@@ -189,17 +189,73 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\label{fig:Background:Containers:Ros2_Architecture}					
 	\end{figure}
 	
-	\subsection{ROS2 Client Library}
-	\label{Grundlagen:ROS2:ROS2ClientLibrary}
-
-	\subsection{ROS2 Nodes}
+	\subsection{ROS2 Nodes (Application layer)}
 	\label{Grundlagen:ROS2:ROS2Nodes}
 
-	\subsection{ROS2 Communication Patterns}
+	In ROS distributed applications are typically designed as entities referred to as nodes. Each Node in ROS is supposed to be responsible for a single, modular function. In a Robotic Control System, sensors (lidar, camera), motion controllers (motors for movement), and algorithm components (route planners) can each be nodes.  A node can send and receive data to and from other nodes via topics, services, actions, or parameters.
+	ROS 2 separates the node concept from the process structure at the operating system level. Multiple nodes can be created within a process as desired, and these nodes can independently interact with other nodes. All nodes in the system can run on a single computer or they can be distributed and run on multiple computers.
+
+
+	\paragraph[ROS2]{ROS2 Communication Patterns}
 	\label{Grundlagen:ROS2:CommunicationPatterns}
-		- Topics(->Messages)\\
-		- Service\\
-		- Action
+
+	The nodes communicate with each other via topics, service calls, and actions. Topic-based Communication is based on a publish-subscribe architecture, where the data generated and published by a node can be subscribed to by more than one node, and likewise, a Topic can produce data for more than one node. 
+	The distributed architecture of the topic topology offers improvements in terms of performance and fault tolerance. Additionally, the extensive quality of service(QoS) features in the DDS middleware layer make ROS-2 architecture more robust and enable developers to use it in an industrial- /real-life application.
+
+	A comprehensive robotic system has several nodes working together in harmony. In ROS 2 a single executable (C++ program, Python program, etc.) can hold one or more nodes in them. This network of ROS 2 elements running simultaneously and processing data is referred to as a ROS graph. It includes all executables and the connections between them.
+
+
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\textwidth]{"Bilder/ros-nodes.png"}
+		\caption{ROS2 Communication Pattern \cite{ros2Basic}}
+		\label{fig:Background:Ros2Nodes}					
+	\end{figure}
+
+	\begin{labeling}{Messages:}
+		\item [Messages:] 
+		A message is a data file that is sent via a communication channel called. Messages in ROS 2 are of great importance for interoperability. A publisher sends its message to a specific topic. This topic can be subscribed to by one or more subscribers. Several publishers can send messages to a topic and several subscribers can receive them. The communication in messages is unidirectional. A topic must use a message type that is known to all participants. There are predefined standard message types that are supplied with the ROS2 installation. Custom message types can be defined in a .msg- file. A message can contain other message definitions and can be extended using this pattern.\cite*{ros2Tutorials}
+		
+		\item [Topics:] 
+		Topics act as virtual communication channels (bus) through which data is moved between nodes and consequently between various components of the system. Topics aren't just one-to-one connections moreover, they can be many-to-one, one-to-many, and many-to-many connections. Topics are a key element in realizing Publish-Subscribe architecture.
+		Topics define the name and data structure used. Each topic in ROS2 is also an instance that can store historical message data in that topic.
+
+		\item [Service:] 
+		Two-way communication in ROS2 is made possible with services. A request is sent to a service server, which then responds to the request sent by the service client. A single service communication channel can contain several service clients but only one service server. The service server and service client must be both able to recognize the message type used. Custom service message types can be defined with a .srv file. This file defines the request and the response of service communication. A service can contain other service message definitions.
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.8\textwidth]{"Bilder/ros-services.png"}
+			\caption{ROS2 Services \cite{ros2Tutorials}}
+			\label{fig:Background:Ros2Services}					
+		\end{figure}
+		
+		\item [Action:]
+		Actions are an advanced communication pattern in ROS2 that's designed for long-running tasks. They are made up of three parts: a goal, feedback, and result.
+		Topics and services are the building blocks of Actions. Their functionality is similar to that of services, with the difference that actions are interruptible (they can be individually ended during execution). Unlike services, which only return a single response, they provide constant feedback.
+		
+		Actions use a client-server model, similar to the publisher-subscriber model. An "action client" node sends a goal to an "action server" node, which acknowledges the goal and returns a stream of feedback and a result. 
+
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.8\textwidth]{"Bilder/ros-actions.png"}
+			\caption{ROS2 Actions \cite{ros2Tutorials}}
+			\label{fig:Background:Ros2Actions}					
+		\end{figure}
+
+		Figure \ref{fig:Background:Ros2Actions} gives an overview of the inner workings of an Action. The action client makes a Goal Request, which after processing can either be accepted or rejected by the action server. In case, the Goal Request is accepted it is forwarded to the action client. Then a user-defined function is called that executes the desired task of the action server. This Function continuously sends its current status or other custom information as feedback to the action client. Upon completion of the task and achievement of the defined goal, the action server sends the corresponding result response. Within an action communication channel, there can be several action clients, but only one action server. The action message type used must be recognized by all the participants in advance. Own action message types can be defined with a .action file. This contains the definition of Goal, Request, and Feedback. Other message definitions can be used from an existing action definition.		
+		
+	\end{labeling}
+
+	\subsection{ROS2 Client Library}
+	\label{Grundlagen:ROS2:ROS2ClientLibrary}
+	Client libraries are the APIs that users can use to implement their ROS code. Client libraries give users access to ROS concepts such as nodes, themes, services, etc. Client libraries come in a variety of programming languages, so users can write ROS code in the language that best suits their application.
+
+	Nodes written with different client libraries can exchange messages with each other because all client libraries implement code generators that allow users to interact with ROS interface files in the respective language.
+
+	\subsection{ROS Middleware Interface}
+	\label{Grundlagen:ROS2:ROSMiddlewareInterface}
+
 	
 	\subsection{Important ROS2 Concepts}
 	\label{Grundlagen:ROS2:Concepts}
@@ -234,6 +290,17 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	
 	\section{Ros Lifecycle nodes}
 	\label{Grundlagen:ROS2:Lifecycle}
+	Having a managed lifecycle for nodes allows for better control over the state of the ROS system. This ensures that in a ROS2 Robotics System all components have been correctly instantiated before allowing a component to perform its behavior. It also allows nodes to be restarted or replaced online.
+
+	A managed node has a known interface, executes according to a known lifecycle state machine. This allows the application (node) developer to decide how to implement various managed lifecycle functions while securing compatibility with other lifecycle nodes.
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\textwidth]{"Bilder/ros_lifecycle.png"}
+		\caption{ROS2 Lifecycle Statemachine \cite{ros2Tutorials}}
+		\label{fig:Background:Ros2Actions}					
+	\end{figure}
+
 
 	\section{Vue JS}
 	\label{Grundlagen:Vue}

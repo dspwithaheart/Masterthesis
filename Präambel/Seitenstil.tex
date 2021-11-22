@@ -133,3 +133,61 @@ pagenumberbox=\pagenumberbox
   morestring=[b]',
   morestring=[b]"
 }
+
+\lstdefinelanguage{Dockerfile}
+{
+  morekeywords={FROM, RUN, CMD, LABEL, MAINTAINER, EXPOSE, ENV, ADD, COPY,
+    ENTRYPOINT, VOLUME, USER, WORKDIR, ARG, ONBUILD, STOPSIGNAL, HEALTHCHECK,
+    SHELL},
+  morecomment=[l]{\#},
+  morestring=[b]"
+}
+
+% Docker language
+\lstdefinelanguage{docker}{
+	keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+	keywordstyle=\color{blue}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=false,
+	comment=[l]{\#},
+	commentstyle=\color{purple}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+% Dockercompose
+\lstdefinelanguage{docker-compose}{
+	keywords={version, volumes, name, driver, ipam, config, subnet, gateway, services, image, environment, ports, links, restart, build, command, mem\_limit, networks, privileged, group\_add, ipc, network\_mode},
+	sensitive=false,
+	comment=[l]{\#},
+	morestring=[b]',
+	morestring=[b]"
+}
+
+% Ros2 message
+\lstdefinelanguage{msg}{
+	keywords={bool, byte, char, float32, float64, int8, uint8, int16, uint16, int32, uint32, int64, uint64, string, wstring},
+	sensitive=false,
+	comment=[l]{\#},
+	morestring=[b]',
+	morestring=[b]"
+}
+
+% Ros2 service
+\lstdefinelanguage{service}{
+	keywords={bool, byte, char, float32, float64, int8, uint8, int16, uint16, int32, uint32, int64, uint64, string, wstring},
+	sensitive=false,
+	comment=[l]{\#},
+	morestring=[b]',
+	morestring=[b]"
+}
+
+% Ros2 action
+\lstdefinelanguage{action}{
+	keywords={bool, byte, char, float32, float64, int8, uint8, int16, uint16, int32, uint32, int64, uint64, string, wstring},
+	sensitive=false,
+	comment=[l]{\#},
+	morestring=[b]',
+	morestring=[b]"
+}
