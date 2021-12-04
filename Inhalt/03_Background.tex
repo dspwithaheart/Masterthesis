@@ -292,14 +292,406 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\label{Grundlagen:ROS2:Lifecycle}
 	Having a managed lifecycle for nodes allows for better control over the state of the ROS system. This ensures that in a ROS2 Robotics System all components have been correctly instantiated before allowing a component to perform its behavior. It also allows nodes to be restarted or replaced online.
 
-	A managed node has a known interface, executes according to a known lifecycle state machine. This allows the application (node) developer to decide how to implement various managed lifecycle functions while securing compatibility with other lifecycle nodes.
+	A managed node has a known interface, executes according to a known lifecycle state machine. This allows the application (node) developer to decide how to implement various managed lifecycle functions while securing compatibility with other lifecycle nodes.\\
+	
+	The base functionality of a managed lifecycle node is described using a state machine illustrated in figure \ref*{fig:Background:Ros2LifecycleStateMachine}.\\
+
+	\textit{"A state machine is a mathematical abstraction used to design algorithms. A state machine reads a set of inputs and changes to a different state based on those inputs. A state is a description of the status of a system waiting to execute a transition. A transition is a set of actions to execute when a condition is fulfilled or an event received."} \cite*{statemachineDef}\\
+
+	There are 4 primary states (colored blue in figure \ref*{fig:Background:Ros2LifecycleStateMachine}):
+	\begin{itemize}
+		\item Unconfigured
+		\item Inactive
+		\item Active
+		\item Finalized
+	\end{itemize}
+	In addition, there are 6 transition states, which are intermediate states during a requested transition(colored in yellow in figure \ref*{fig:Background:Ros2LifecycleStateMachine} ):
+	\begin{itemize}
+		\item Configuring
+		\item CleaningUp
+		\item Activating
+		\item Deactivating
+		\item ShuttingDown
+		\item ErrorProcessing
+	\end{itemize}
+	There are 7 transitions exposed to the lifecycle management interface, which can be invoked only when the necessary conditions are met. These conditions are described in detail in the next section. The table below lists these transitions with the corresponding behavior invoked during their execution.
+	\begin{table}[H]
+		\centering
+		\rowcolors{1}{}{gray!25}
+		\caption{Availabe Transitions}
+		\label{tab:Valid transitions}
+		\begin{tabular}{|p{2cm}|p{9cm}|}
+			\toprule
+			Transition & Description\\
+			\midrule
+			create & with this transition the node is instantiated, but will not run any code beyond the constructor. On successful execution of the constructor the node is in Unconfigured state. \\
+			configure & \textit{onConfigure()} callback is called\\
+			cleanup & \textit{onCleanup()} callback is called\\
+			activate & \textit{onActivate()} callback is called\\
+			deactivate & \textit{onDeactivate()} callback is called\\
+			shutdown & \textit{onShutdown()} callback is called\\
+			destroy & with this transition the node is destroyed (deallocated). The node is completely removed from the system. \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
 
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.8\textwidth]{"Bilder/ros_lifecycle.png"}
-		\caption{ROS2 Lifecycle Statemachine \cite{ros2Tutorials}}
-		\label{fig:Background:Ros2Actions}					
+		\includegraphics[width=0.95\textwidth]{"Bilder/ros_lifecycle.png"}
+		\caption{ROS2 Lifecycle Statemachine \cite{ros-2-lifecycle}}
+		\label{fig:Background:Ros2LifecycleStateMachine}					
 	\end{figure}
+
+	\subsection{Primary States}	
+	The transition from a primary state requires an action of an external monitoring process, except in the case of an error triggered in the 3rd primary ("active") state.
+	\begin{labeling}{Unconfigured:::::}
+		\item[\textbf{Unconfigured}] This is the starting state of the state machine. When a node is instantiated, it finds itself in this lifecycle state. In case of any unexpected error, a node can be returned to this state. In this state, it is expected that there is no saved state. From this state the following transitions via corresponding transition states are availabe:
+		\begin{table}[H]
+			\centering
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{3cm}|p{3cm}|}
+				\toprule
+				Transition via & Final state\\
+				\midrule
+				configure & Inactive  \\
+				shutdown & Finalized \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{Inactive}] This state represents a node that is not currently operating. The main purpose of this state is to allow reconfiguration of a node (modifying configuration parameters, adding and removing topic publications/subscriptions, etc.) without changing its behavior during operation. In this state, the node does not read topics, process data, respond to functional service requests, etc. In the inactive state, all data arriving in managed topics is not read or processed. 
+		
+		Data storage is subject to the configured QoS policy for the topic. Any managed service requests to a node that is in the inactive state will not be answered (they will fail immediately for the caller). From this state the following transitions via corresponding transition states are availabe:
+		\begin{table}[H]
+			\centering
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{3cm}|p{3cm}|}
+				\toprule
+				Transition via & Final state\\
+				\midrule
+				shutdown & Finalized  \\
+				cleanup & Unconfigured \\
+				activate & Active \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{Active}] It is the central state of the node's lifecycle. In this state, the node performs all processing, responds to service requests, reads and processes data, generates output, etc. All the important user functionality should be implemented in this state.  
+
+		When an error occurs in this state that cannot be handled by the node/system, the node enters the ErrorProcessing state. From this state the following transitions via corresponding transition states are availabe:
+		\begin{table}[H]
+			\centering
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{3cm}|p{3cm}|}
+				\toprule
+				Transition via & Final state\\
+				\midrule
+				 deactivate & Inactive  \\
+				 shutdown & Finalized \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{Finalized}] In this state, the node ends its execution immediately before its deallocation. This state is always final, the only transition from here for a node is to be destroyed and completely removed from the system.
+
+		The main purpose of this state is to support debugging and introspection. A failed node remains visible for introspection in the system and can potentially be examined by debugging tools before being destroyed. If a node is started in a respawn loop or there are known reasons for the cycling into this state, the supervising monitoring process can automatically destroy and recreate the node based on a predefined policy. From this state the following transitions via corresponding transition states are availabe:
+		\begin{table}[H]
+			\centering
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{3cm}|p{3cm}|}
+				\toprule
+				Transition via & Final state\\
+				\midrule
+				 destroy & Deallocated  \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+	\end{labeling}
+
+	\subsection{Transition States} 
+	Application-specific logic is executed in the transition states to determine if the requested transition was successful. The lifecycle management software is notified of success or failure via the lifecycle management interface before transitioning to another state.
+	\begin{labeling}{ErrorProcessing:::::}
+		\item[\textbf{Configuring}] In this transition state, the node's \textit{onConfigure()} callback is invoked to allow the node to load its configuration and make any necessary changes to its settings. Configuring a node typically involves tasks that need to be done once during the node's lifetime, such as allocating permanent memory buffers and setting up topic publications/subscriptions that do not change. The node uses this to set up all the resources it needs to keep throughout its lifetime (whether it is active or inactive). 
+		From this state the following transitions are availabe:
+		\begin{table}[H]
+			\flushright
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{8.5cm}|p{3cm}|}
+				\toprule
+				Transition condition & Final state\\
+				\midrule
+				onConfigure callback succeeds & Inactive  \\
+				onConfigure callback fails with an error code that can be handled by the node/system & Unconfigured \\
+				onConfigure callback fails with an error that cannot be handled by the node/system  & ErrorProcessing \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{CleaningUp}] In this transition state, the node's \textit{onCleanup()} callback is invoked, which is expected to clear all states and return the node to a functionally equivalent state as when it was first created. If the clean-up cannot be performed successfully, the method moves on to ErrorProcessing.
+		From this state the following transitions are availabe:
+		\begin{table}[H]
+			\flushright
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{8.5cm}|p{3cm}|}
+				\toprule
+				Transition condition & Final state\\
+				\midrule
+				onCleanup callback succeeds & Unconfigured \\
+				onCleanup callback fails with an error that cannot be handled by the node/system  & ErrorProcessing \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{Activating}] In this transition state, the node's \textit{onActivate()} callback is invoked to allow the node to make the final preparations before starting execution. This may include obtaining resources necessary when the node is active(e.g. accessing the hardware). Ideally, no time-consuming operations should be made in this callback (e.g. a lengthy hardware initialization).
+		From this state the following transitions are availabe:
+		\begin{table}[H]
+			\flushright
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{8.5cm}|p{3cm}|}
+				\toprule
+				Transition condition & Final state\\
+				\midrule
+				onActivate  callback succeeds & Active \\
+				onActivate callback fails with an error that cannot be handled by the node/system  & ErrorProcessing \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{Deactivating}] In this transition state, the node's \textit{onDeactivate()} callback is invoked, which is expected to do any cleanup necessary to start execution, and is supposed to reverse the changes made by \textit{onActivate()} callback .
+		From this state the following transitions are availabe:
+		\begin{table}[H]
+			\flushright
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{8.5cm}|p{3cm}|}
+				\toprule
+				Transition condition & Final state\\
+				\midrule
+				onDeactivate callback succeeds & Inactive \\
+				onDeactivate callback fails with an error that cannot be handled by the node/system  & ErrorProcessing \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{ShuttingDown}] In this transition state, the node's \textit{onShutdown()} callback is invoked, which is expected to do any cleanup necessary before destruction of the node. It can be transitioned into from any Primary State except Finalized. The originating state is passed to this state as a parameter .
+		From this state the following transitions are availabe:
+		\begin{table}[H]
+			\flushright
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{8.5cm}|p{3cm}|}
+				\toprule
+				Transition condition & Final state\\
+				\midrule
+				onShutdown callback succeeds & Finalized \\
+				onShutdown callback fails with an error that cannot be handled by the node/system  & ErrorProcessing \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+		\item[\textbf{ErrorProcessing}] This state exists in order to be able to clear any unhandled errors.  All error processing functionality should be implemented in this state. This state can be transitioned into from any state where user code is executed. In case of successful error handling, the node can return to the Unconfigured state. If complete clean-up is not possible, the node must fail, and transition to the Finalised state. Transitions to ErrorProcessing can be triggered by errors in callbacks as well as by other methods within a callback or an uncaught exception.
+		From this state the following transitions are availabe:
+		\begin{table}[H]
+			\flushright
+			% \rowcolors{1}{}{gray!25}
+			\label{tab:Valid transitions}
+			\begin{tabular}{|p{8.5cm}|p{3cm}|}
+				\toprule
+				Transition condition & Final state\\
+				\midrule
+				onError callback succeeds & Unconfigured \\
+				onError callback fails & Finalized \\
+				\bottomrule
+			\end{tabular}
+		\end{table}
+
+	\end{labeling}
+
+	\subsection{Management Interface}
+	A managed node is exposed to the ROS ecosystem through the following interface. This interface can be used by applications that perform the actual management. This interface is independent of the lifecycle status of individual nodes and is thus not be subject to any communication restrictions.
+
+	A managed node or lifecycle node has a common pattern which it inherits from a container class that loads a managed node implementation from a library and, through a plug-in architecture, automatically exposes the required management interface by implementing callback methods. 
+
+	A lifecycle node does not inherit from the regular \lstinline{rclcpp::node::Node} but from\\  \lstinline{rclcpp_lifecycle::LifecycleNode}. Every child of LifecycleNodes has a set of callbacks provided. These callbacks go along with the applied state machine attached to them. These callbacks are:
+
+\begin{lstlisting}[language=c++,
+	% caption={dockerfile_startup}, 
+	label={code:DockerTestumgebung}]
+	rclcpp_lifecycle::node_interfaces::
+	LifecycleNodeInterface::CallbackReturn
+	on_configure(const rclcpp_lifecycle::State & previous_state)
+
+	rclcpp_lifecycle::node_interfaces::
+	LifecycleNodeInterface::CallbackReturn
+	on_activate(const rclcpp_lifecycle::State & previous_state)
+
+	rclcpp_lifecycle::node_interfaces::
+	LifecycleNodeInterface::CallbackReturn
+	on_deactivate(const rclcpp_lifecycle::State & previous_state)
+
+	rclcpp_lifecycle::node_interfaces::
+	LifecycleNodeInterface::CallbackReturn
+	on_cleanup(const rclcpp_lifecycle::State & previous_state)
+
+	rclcpp_lifecycle::node_interfaces::
+	LifecycleNodeInterface::CallbackReturn
+	on_shutdown(const rclcpp_lifecycle::State & previous_state)
+
+\end{lstlisting}
+
+These management services can be implemented via attributes and method calls (for local management) and via ROS messages and topics/services (for remote management). In the case of providing a ROS middleware interface, specific topics placed in a suitable namespace are used. Each possible management transition is provided as a ROS service which can be called directly with the ros2 command-line interface. The service reports whether the transition was completed successfully. Following is a list of available services which maybe called from ros CLI or RosLibJS (ROS2 JavaScript API). 
+
+\begin{lstlisting}[language=JavaScript]
+	// Available Services :
+	// /lifecycle_joytovel/change_state
+	// /lifecycle_joytovel/describe_parameters
+	// /lifecycle_joytovel/get_available_states
+	// /lifecycle_joytovel/get_available_transitions
+	// /lifecycle_joytovel/get_parameter_types
+	// /lifecycle_joytovel/get_parameters
+	// /lifecycle_joytovel/get_state
+	// /lifecycle_joytovel/get_transition_graph
+	// /lifecycle_joytovel/list_parameters
+	// /lifecycle_joytovel/set_parameters
+	// /lifecycle_joytovel/set_parameters_atomically
+\end{lstlisting}
+
+\subsection{Lifecycle management CLI} ROS2 developers have developed a basic CLI to interact with the lifecycle nodes and control their specific behaviours. 
+It offers following functionalities and can be used as described below.
+\begin{lstlisting}[language=bash,
+	% caption={dockerfile_startup}, 
+	label={code:DockerTestumgebung}]
+	
+	usage: ros2 lifecycle <command> <options>
+
+	Various lifecycle related sub-commands
+	Commands:
+		get    Get lifecycle state for one or more nodes
+		list   Output a list of available transitions
+		nodes  Output a list of nodes with lifecycle
+		set    Trigger lifecycle state transition
+\end{lstlisting}
+
+Get current lifecycle state
+\begin{lstlisting}[language=bash,
+	% caption={dockerfile_startup}, 
+	label={code:DockerTestumgebung}]
+	
+	usage: ros2 lifecycle get [-h] [--spin-time SPIN_TIME] [--no-daemon][--include-hidden-nodes]                 [node_name]
+
+	Get current lifecycle state
+	
+	positional arguments:
+	node_name             Name of the ROS node
+\end{lstlisting}
+
+Trigger lifecycle state transition
+\begin{lstlisting}[language=bash,
+	% caption={dockerfile_startup}, 
+	label={code:DockerTestumgebung}]
+	
+	usage: ros2 lifecycle set [-h] [--spin-time SPIN_TIME] [--no-daemon][--include-hidden-nodes] node_name transition
+
+	Trigger lifecycle state transition
+
+	positional arguments:
+	node_name             Name of the ROS node
+	transition            The lifecycle transition
+\end{lstlisting}
+
+Output a list of available transitions
+\begin{lstlisting}[language=bash,
+	% caption={dockerfile_startup}, 
+	label={code:DockerTestumgebung}]
+	
+	usage: ros2 lifecycle list [-h] [--spin-time SPIN_TIME] [--no-daemon][--include-hidden-nodes] [-a] node_name
+
+	Output a list of available transitions
+
+	positional arguments:
+	node_name             Name of the ROS node
+	
+\end{lstlisting}
+
+Default values for transitions:
+\begin{lstlisting}[language=bash,
+	% caption={dockerfile_startup}, 
+	label={code:DockerTestumgebung}]
+	# Reserved [0-9], publicly available transitions.
+	# When a node is in one of these primary states, these transitions can be
+	# invoked.
+
+	# This transition will instantiate the node, but will not run any code beyond
+	# the constructor.
+	uint8 TRANSITION_CREATE = 0
+
+
+	# configuration and conduct any required setup.
+	uint8 TRANSITION_CONFIGURE = 1
+
+	# node to load its configuration and conduct any required setup.
+	uint8 TRANSITION_CLEANUP = 2
+
+	# The node's callback onActivate will be executed to do any final preparations
+	# to start executing.
+	uint8 TRANSITION_ACTIVATE = 3
+
+	# The node's callback onDeactivate will be executed to do any cleanup to start
+	# executing, and reverse the onActivate changes.
+	uint8 TRANSITION_DEACTIVATE = 4
+
+	# This signals shutdown during an unconfigured state, the node's callback
+	# onShutdown will be executed to do any cleanup necessary before destruction.
+	uint8 TRANSITION_UNCONFIGURED_SHUTDOWN  = 5
+
+	# This signals shutdown during an inactive state, the node's callback onShutdown
+	# will be executed to do any cleanup necessary before destruction.
+	uint8 TRANSITION_INACTIVE_SHUTDOWN = 6
+
+	# This signals shutdown during an active state, the node's callback onShutdown
+	# will be executed to do any cleanup necessary before destruction.
+	uint8 TRANSITION_ACTIVE_SHUTDOWN = 7
+
+	# This transition will simply cause the deallocation of the node.
+	uint8 TRANSITION_DESTROY = 8
+
+	# Reserved [10-69], private transitions
+	# These transitions are not publicly available and cannot be invoked by a user.
+	
+	# Reserved [90-99]. Transition callback success values.
+	# These return values ought to be set as a return value for each callback.
+	# Depending on which return value, the transition will be executed correctly or
+	# fallback/error callbacks will be triggered.
+
+	# The transition callback successfully performed its required functionality.
+	uint8 TRANSITION_CALLBACK_SUCCESS = 97
+
+	# The transition callback failed to perform its required functionality.
+	uint8 TRANSITION_CALLBACK_FAILURE = 98
+
+	# The transition callback encountered an error that requires special cleanup, if
+	# possible.
+	uint8 TRANSITION_CALLBACK_ERROR = 99
+
+	##
+	## Fields
+	##
+
+	# The transition id from above definitions.
+	uint8 id
+
+	# A text label of the transition.
+	string label
+			
+\end{lstlisting}
 
 
 	\section{Vue JS}
@@ -328,7 +720,8 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 \begin{table}[H]
 	\centering
-	\caption{Vue vs React vs Angular}
+	\caption{Vue vs React vs Angular \cite{ComparisonVue:Online}}
+	% \rowcolors{2}{}{gray!25}
 	\label{tab:table_VueJS}
 	\begin{tabular}{{p{3cm}|p{3cm}|p{3cm}|p{3cm}}}
     \toprule
@@ -347,12 +740,12 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\bottomrule
 	\end{tabular}
 \end{table}
-\cite{ComparisonVue:Online}
+
 
 \subsection{Structure of a Vue.js project}
 \label{sec:StructureofVue.jsProject}
 Vue has a very intuitive project structure. In addition to the core framework, it includes a lot of utilities that make front-end development with Vue very enjoyable.
-Like most JavaScript projects, NodeJS is used for Vue development. Vue provides the core library and the add-on utilities via \texttt{\textbf{\gls{npm}} (node package manager)}.
+Like most JavaScript projects, NodeJS is used for Vue development. Vue provides the core library and the add-on utilities via \texttt{\textbf{\gls{npm}}}.
 
 \paragraph{NodeJS} is a JavaScript runtime environment based on Chrome's V8 JavaScript engine. It allows JavaScript code to be executed outside of a web browser. NodeJS allows developers to use JavaScript to write command-line tools and execute scripts server-side to generate dynamic web page content before the page is sent to the user's web browser. NodeJS supports unifying web application development around a single programming language, rather than using different languages for server-side and client-side scripting \cite{NodeJS:Online}.
 
@@ -388,6 +781,7 @@ A typical Vue project with Vue-Router and Vuex has the following structure:
 \begin{table}[H]
 	\centering
 	\caption{Structure of the project folder}
+	\rowcolors{1}{}{gray!25}
 	\label{tab:table_VueJS}
 	\begin{tabular}{{p{4cm}p{9cm}}}
 		\toprule
@@ -489,6 +883,7 @@ The most important parts of a component are described in the table \ref{tab:tabl
 \begin{table}[H]
 	\centering
 	\caption{Parameters responsible for data manipulation}
+	\rowcolors{1}{}{gray!25}
 	\label{tab:table_data}
 	\begin{tabular}{{p{1.7cm}p{4cm}p{8cm}}}
 		\toprule

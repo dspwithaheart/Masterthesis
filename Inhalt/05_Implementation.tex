@@ -182,23 +182,48 @@ a working directory for the Vue Application is created, the the package.json is 
 	label={code:DockerTestumgebung}]
 	
 	# install ros2-web-bridge
-	
+
 	# set workdirectory as /root
 	WORKDIR /root
 
-	#for automatic launch when container gets startet 
-	CMD nginx && . /opt/ros/foxy/setup.sh && . /root/colcon_ws/install/setup.sh && npm install ros2-web-bridge && node node_modules/ros2-web-bridge/bin/rosbridge.js 
-	# && ros2 launch evo_siemensrob_ctrl agv_control_launch.py 
+	#for automatic launch when container gets started 
+	COPY ./dockerfile_startup.sh dockerfile_startup.sh
+	RUN ["chmod", "+x", "./dockerfile_startup.sh"]
+	CMD ./dockerfile_startup.sh	
 \end{lstlisting}
 
 \paragraph{Starting Ros Application} This step launches the installed ROS2-Application using its launchfile.
-\begin{lstlisting}[language=docker,
-	% caption={Dockerfile}, 
+\begin{lstlisting}[language=bash,
+	% caption={dockerfile_startup}, 
 	label={code:DockerTestumgebung}]
-	RUN ros2 launch evo_siemensrob_ctrl agv_control_launch.py &
+	#!/bin/bash
+
+	nginx
+	. /opt/ros/foxy/setup.sh
+	. /root/colcon_ws/install/setup.sh
+	npm install ros2-web-bridge
+	node node_modules/ros2-web-bridge/bin/rosbridge.js &
+	ros2 launch evo_siemensrob_ctrl agv_control_launch.py 
 \end{lstlisting}
 
+\paragraph{Startup and Build scripts} Hh
 
+% \begin{lstlisting}[language=html,
+% 	caption={build_lifecycle.sh}, 
+% 	label={code:DockerTestumgebung}]
+% 	#!/bin/bash
+% 	docker build . -t ubuntu_foxy:manual_control_rti
+% 	docker run -it --privileged --network host --group-add dialout --ipc="host" --name agv_control_joy_rti ubuntu_foxy:manual_control_rti
+% \end{lstlisting}
+
+\begin{lstlisting}[language=html,
+	% caption={run_lifecycle.sh}, 
+	label={code:DockerTestumgebung}]
+	#!/bin/bash
+	docker start agv_control_joy_rti
+
+	docker exec -it agv_control_joy_rti bash 
+\end{lstlisting}
 
 \section{ROS2 Lifecycle Application}
 \label{Implementierung:ROS2LifecycleApplication} This section describes the details of an example ROS2-Application with managed states and steps necessary to convert a normal ROS2-node into a managed lifecycle node.     
@@ -207,6 +232,369 @@ a working directory for the Vue Application is created, the the package.json is 
 
 \section{Vue based Webinterface}
 \label{Implementierung:VueBasedWebinterface}
+The developed web interface is supposed to be a web version of the lifecycle management CLI. 
+
+
+% usage: ros2 lifecycle get [-h] [--spin-time SPIN_TIME] [--no-daemon][--include-hidden-nodes]                 [node_name]
+
+% usage: ros2 lifecycle set [-h] [--spin-time SPIN_TIME] [--no-daemon]
+%                           [--include-hidden-nodes]
+%                           node_name transition
+
+% Trigger lifecycle state transition
+
+% positional arguments:
+%   node_name             Name of the ROS node
+%   transition            The lifecycle transition
+
+
+%   usage: ros2 lifecycle list [-h] [--spin-time SPIN_TIME] [--no-daemon]
+%   [--include-hidden-nodes] [-a]
+%   node_name
+
+% Output a list of available transitions
+
+% positional arguments:
+% node_name             Name of the ROS node
+
+% ros2 lifecycle nodes [-h] [--spin-time SPIN_TIME] [--no-daemon] [-a]
+%                             [-c]
+
+% Output a list of nodes with lifecycle
+
+
+% # Default values for transitions as described in:
+% # http://design.ros2.org/articles/node_lifecycle.html
+
+% # Reserved [0-9], publicly available transitions.
+% # When a node is in one of these primary states, these transitions can be
+% # invoked.
+
+% # This transition will instantiate the node, but will not run any code beyond
+% # the constructor.
+% uint8 TRANSITION_CREATE = 0
+
+% # The node’s onConfigure callback will be called to allow the node to load its
+% # configuration and conduct any required setup.
+% uint8 TRANSITION_CONFIGURE = 1
+
+% # The node’s callback onCleanup will be called in this transition to allow the
+% # node to load its configuration and conduct any required setup.
+% uint8 TRANSITION_CLEANUP = 2
+
+% # The node's callback onActivate will be executed to do any final preparations
+% # to start executing.
+% uint8 TRANSITION_ACTIVATE = 3
+
+% # The node's callback onDeactivate will be executed to do any cleanup to start
+% # executing, and reverse the onActivate changes.
+% uint8 TRANSITION_DEACTIVATE = 4
+
+% # This signals shutdown during an unconfigured state, the node's callback
+% # onShutdown will be executed to do any cleanup necessary before destruction.
+% uint8 TRANSITION_UNCONFIGURED_SHUTDOWN  = 5
+
+% # This signals shutdown during an inactive state, the node's callback onShutdown
+% # will be executed to do any cleanup necessary before destruction.
+% uint8 TRANSITION_INACTIVE_SHUTDOWN = 6
+
+% # This signals shutdown during an active state, the node's callback onShutdown
+% # will be executed to do any cleanup necessary before destruction.
+% uint8 TRANSITION_ACTIVE_SHUTDOWN = 7
+
+% # This transition will simply cause the deallocation of the node.
+% uint8 TRANSITION_DESTROY = 8
+
+% # Reserved [10-69], private transitions
+% # These transitions are not publicly available and cannot be invoked by a user.
+% # The following transitions are implicitly invoked based on the callback
+% # feedback of the intermediate transition states.
+% uint8 TRANSITION_ON_CONFIGURE_SUCCESS = 10
+% uint8 TRANSITION_ON_CONFIGURE_FAILURE = 11
+% uint8 TRANSITION_ON_CONFIGURE_ERROR = 12
+
+% uint8 TRANSITION_ON_CLEANUP_SUCCESS = 20
+% uint8 TRANSITION_ON_CLEANUP_FAILURE = 21
+% uint8 TRANSITION_ON_CLEANUP_ERROR = 22
+
+% uint8 TRANSITION_ON_ACTIVATE_SUCCESS = 30
+% uint8 TRANSITION_ON_ACTIVATE_FAILURE = 31
+% uint8 TRANSITION_ON_ACTIVATE_ERROR = 32
+
+% uint8 TRANSITION_ON_DEACTIVATE_SUCCESS = 40
+% uint8 TRANSITION_ON_DEACTIVATE_FAILURE = 41
+% uint8 TRANSITION_ON_DEACTIVATE_ERROR = 42
+
+% uint8 TRANSITION_ON_SHUTDOWN_SUCCESS = 50
+% uint8 TRANSITION_ON_SHUTDOWN_FAILURE = 51
+% uint8 TRANSITION_ON_SHUTDOWN_ERROR = 52
+
+% uint8 TRANSITION_ON_ERROR_SUCCESS = 60
+% uint8 TRANSITION_ON_ERROR_FAILURE = 61
+% uint8 TRANSITION_ON_ERROR_ERROR = 62
+
+% # Reserved [90-99]. Transition callback success values.
+% # These return values ought to be set as a return value for each callback.
+% # Depending on which return value, the transition will be executed correctly or
+% # fallback/error callbacks will be triggered.
+
+% # The transition callback successfully performed its required functionality.
+% uint8 TRANSITION_CALLBACK_SUCCESS = 97
+
+% # The transition callback failed to perform its required functionality.
+% uint8 TRANSITION_CALLBACK_FAILURE = 98
+
+% # The transition callback encountered an error that requires special cleanup, if
+% # possible.
+% uint8 TRANSITION_CALLBACK_ERROR = 99
+
+% ##
+% ## Fields
+% ##
+
+% # The transition id from above definitions.
+% uint8 id
+
+% # A text label of the transition.
+% string label
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{"Bilder/webapp-design.png"}
+	\caption{Overview of Lifecycle Management WebApp}
+	\label{fig:Background:WebappDesign}					
+\end{figure}
+
+
+\subsection{ROS2 Message Types/ Javascript Objects}
+
+\subsection{ROS2 Javascript Functions}
+
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	
+	import * as ROSLIB from 'roslib';
+	import { MDBBtn, MDBBtnGroup, MDBInput, MDBContainer, MDBRow, MDBCol } from "mdb-vue-ui-kit";
+
+	export default {
+	
+	name: 'LifecycleManagement',
+	components: {
+		MDBBtn, MDBBtnGroup, MDBInput, MDBContainer, MDBRow, MDBCol
+	},
+	props: {
+		msg: String,
+	},
+	data: function () {
+		return {
+		unsub: false,
+		console_out: [],
+		selected_logger_level: 20,
+		input_node_name:"",
+		added_nodes:["lifecycle_joytovel"],
+		active_node: "lifecycle_joytovel",
+		selected_transition: {},
+		available_states: [],
+		available_transitions: [],
+		current_state: {},
+		ros: new ROSLIB.Ros({
+			url : 'ws://localhost:9090'
+		})
+		}
+	},
+	
+	mounted: function () {
+		var ros = new ROSLIB.Ros({
+			url : 'ws://localhost:9090'
+		});
+
+		ros.on('connection', function() {
+			console.log('Connected to websocket server.');
+		});
+
+		ros.on('error', function(error) {
+			console.log('Error connecting to websocket server: ', error);
+		});
+
+		ros.on('close', function() {
+			console.log('Connection to websocket server closed.');
+		});
+
+		this.update();
+	},
+
+	methods: {
+
+		// Available Services :
+		// /lifecycle_joytovel/change_state
+		// /lifecycle_joytovel/describe_parameters
+		// /lifecycle_joytovel/get_available_states
+		// /lifecycle_joytovel/get_available_transitions
+		// /lifecycle_joytovel/get_parameter_types
+		// /lifecycle_joytovel/get_parameters
+		// /lifecycle_joytovel/get_state
+		// /lifecycle_joytovel/get_transition_graph
+		// /lifecycle_joytovel/list_parameters
+		// /lifecycle_joytovel/set_parameters
+		// /lifecycle_joytovel/set_parameters_atomically
+		clear() {
+			this.available_states = [];
+			this.current_state = [];
+			this.available_transitions = [];
+		},
+		update() {
+			this.srvGetCurrentState()
+			this.srvGetAvailableTransitions()
+			this.srvGetAvailableStates()
+		},
+
+		dynobtn(par){
+		console.log(par);
+		},
+
+		add_node(){
+			if (this.input_node_name !== "") {
+				this.added_nodes.push(this.input_node_name);
+				console.log(this.added_nodes);
+			} 
+		},
+
+		set_active_node(data){
+			this.active_node = data;
+			this.clear();
+			this.update();
+		},
+		
+		srvGetCurrentState() {
+		var lifecycleClient = new ROSLIB.Service({
+			ros : this.ros,
+			// name : `/lifecycle_joytovel/get_state`,
+			name : `/${this.active_node}/get_state`,
+			serviceType : 'lifecycle_msgs/GetState'
+		});
+
+		console.log('Calling Service');
+		var request = new ROSLIB.ServiceRequest({});
+		console.log('Result for service call on '
+			+ lifecycleClient.name
+			+ ': ');
+			lifecycleClient.callService(request, (result) => {
+				console.log(result);
+				this.current_state = result.current_state;
+			})
+		
+		},
+
+		
+		srvGetAvailableStates() {
+		var lifecycleClient = new ROSLIB.Service({
+			ros : this.ros,
+			name : `/${this.active_node}/get_available_states`,
+			// name : '/lifecycle_joytovel/get_available_states', 
+			serviceType : 'lifecycle_msgs/GetAvailableStates'
+		});
+
+		console.log('Calling Service srvGetAvailableStates');
+		var request = new ROSLIB.ServiceRequest({});
+
+		var tempArr = [];
+		lifecycleClient.callService(request, (result) => {
+			console.log(result);
+			result.available_states.forEach(element => {
+				console.log(element);
+				tempArr.push(element);
+			});
+			this.available_states = tempArr;
+		})
+
+		console.log("this.available_states");
+		},
+
+	srvGetAvailableTransitions() {
+		var lifecycleClient = new ROSLIB.Service({
+			ros : this.ros,
+			name : `/${this.active_node}/get_available_transitions`,
+			// name : '/lifecycle_joytovel/get_available_transitions', 
+			serviceType : 'lifecycle_msgs/GetAvailableTransitions'
+		});
+
+		console.log('Calling Service srvGetAvailableTransitions');
+		var request = new ROSLIB.ServiceRequest({});
+
+		var tempArr = [];
+		
+		lifecycleClient.callService(request, (result) => {
+			console.log(result);
+			result.available_transitions.forEach(element => {
+				console.log(element);
+				tempArr.push(element);
+			});
+			this.available_transitions = tempArr;
+		})
+
+		console.log(this.available_transitions);
+		},
+
+		srvChangeState() {
+		var lifecycleClient = new ROSLIB.Service({
+			ros : this.ros,
+			name : `/${this.active_node}/change_state`,
+			// name : '/lifecycle_joytovel/change_state', 
+			serviceType : 'lifecycle_msgs/ChangeState'
+		});
+
+		console.log('Calling Service change_state');
+	
+		var r_id = parseInt(this.selected_transition);
+		console.log(r_id );
+
+		var request = new ROSLIB.ServiceRequest({
+			transition: {id: r_id, label : ""}
+		});
+
+		lifecycleClient.callService(request, function(result) {
+			console.log('Result for service call on '
+			+ lifecycleClient.name);
+			console.log(request);
+			console.log(result);
+		}, function(result) {
+			console.log('Error');
+			console.log(result);
+		});
+		this.update();
+		},
+
+		subscribeToRosOut(){
+		var listener = new ROSLIB.Topic({
+			ros : this.ros,
+			name : '/rosout',
+			messageType : 'rcl_interfaces/msg/Log'
+			});
+			var msg = [];
+			listener.subscribe((msg)=> {
+			this.console_out.push(msg);
+			if (this.console_out.length > 10) {
+				this.console_out.shift();
+			}
+			console.log(msg);
+			if (this.unsub) {
+				listener.unsubscribe();
+			}
+			}) 
+			console.log(msg);
+		},
+
+		mapLogLevel(level){
+		if (level === 30) {
+			return "WARN"
+		} else {
+			return "INFO"
+		}
+
+		}
+	},
+\end{lstlisting}
 
 \begin{figure}[H]
 	\centering
