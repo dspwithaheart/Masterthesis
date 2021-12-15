@@ -25,7 +25,7 @@ They will be explained in detail in the following section.
 In order to develop an Industrial Edge Application, its necessary to pack an application into a Docker Image. Then it can be converted to an IE App using the Industrial Edge App Publisher.
 
 This section describes the Docker image developed for the purposes of this thesis. A Dockerfile is used to define a Docker image. It consists of all the necessary software libraries and third party applications and precise order in which they have to installed. The following section will describe the details of the Dockerfile(structre of the Docker image) step by step.
-
+\subsection{The Dockerfile}
 \paragraph{Settng up the Base-Image} This is the first line in any Dockerfile. In this line the Ubuntu Ros Image to use is specified.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
@@ -225,150 +225,277 @@ a working directory for the Vue Application is created, the the package.json is 
 	docker exec -it agv_control_joy_rti bash 
 \end{lstlisting}
 
+\subsection{Running multiple services in a container}
+The most important running process of a container is the ENTRYPOINT and/or CMD at the end of the Dockerfile. It is generally recommended to separate areas of concern by using one service per container. This service can split into several processes (e.g. the Apache webserver starts several working processes). It is fine to have multiple processes but to get the most benefit from Docker, you should avoid having one container responsible for multiple aspects of your entire application. You can connect multiple containers via custom networks and shared volumes.
+
+The main container process is responsible for managing all the processes it launches. In some cases, the main process is not well thought out and cannot properly terminate child processes when the container is terminated (reaping). If your process falls into this category, you can use the --init option when starting the container. The --init option adds a tiny init process as the main process in the container and takes care of reaping all processes when the container is terminated. Handling such processes is better than using a full-fledged init process like sysvinit, upstart, or systemd to manage the process lifecycle inside your container.
+
+\begin{lstlisting}[language=bash,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	#!/bin/bash
+  
+	# turn on bash's job control
+	set -m
+	
+	# Start the primary process and put it in the background
+	./my_main_process &
+	
+	# Start the helper process
+	./my_helper_process
+	
+	# the my_helper_process might need to know how to wait on the
+	# primary process to start before it does its work and returns
+	
+	
+	# now we bring the primary process back into the foreground
+	# and leave it there
+	fg %1
+	
+\end{lstlisting}
+
+\begin{lstlisting}[language=dockerfile,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	# syntax=docker/dockerfile:1
+	FROM ubuntu:latest
+	COPY my_first_process my_first_process
+	COPY my_second_process my_second_process
+	COPY my_wrapper_script.sh my_wrapper_script.sh
+	CMD ./my_wrapper_script.sh
+	
+	
+\end{lstlisting}
+
+\lstinline{https://docs.docker.com/config/containers/multi-service_container/}
+
 \section{ROS2 Lifecycle Application}
-\label{Implementierung:ROS2LifecycleApplication} This section describes the details of an example ROS2-Application with managed states and steps necessary to convert a normal ROS2-node into a managed lifecycle node.     
+\label{Implementierung:ROS2LifecycleApplication} This section describes the details of an example ROS2-Application with managed states and steps necessary to convert a normal ROS2-node into a managed lifecycle node. 
+   
+
+\subsection{Structure of a normal ros2 publisher node vs lifecycle node}
+To demonstrate the process of developing a managed lifecycle node a JoyToVel publisher node is converted into a lifecycle node in this section. The JoyToVel publisher takes input from a PlayStation4 Controller and publishes velocity and direction commands to \lstinline{\cmd_vel} topic in a ROS2 Network. Any application(node) subscribed to this topic can be controlled using this JoyToVel node.
+
+A normal JoyToVel publisher consists of a constructor, application-specific callback functions and methods, and the main function. The necessary subscribers and publishers are initialized in the constructor. It also includes the application logic. In the main function, the node is started with the specified parameters. No changes to any parameters can be made once the node has been started. If the node crashes for some reason it has to be respawned manually. Since the JoyToVel node is an interface node, it would be beneficial to be able to dynamically reconfigure its different parameters and it demands higher reliability and stability. \\
+A normal ROS2 C++ publisher node has the following structure:   
+\begin{lstlisting}[language=cpp]
+	#include "JoyToVel.hpp"
+	namespace evo {
+		//Constructor
+		JoyToVel::JoyToVel() : Node("joy_to_vel")
+		{
+			// init subscribers
+			...
+			// init publishers
+			...
+		}
+
+		//Callbacks and Methods
+		void JoyToVel::topic_callback(const sensor_msgs::msg::Joy::SharedPtr msg) const
+		{
+			...
+		}
+
+		void JoyToVel::timer_callback()
+		{  
+			...
+		}
+
+		void JoyToVel::publishVel(const sensor_msgs::msg::Joy::SharedPtr msg)
+		{
+			...
+		}
+	}
+
+	int main(int argc, char** argv)
+	{
+		rclcpp::init(argc, argv);
+  
+		rclcpp::spin(std::make_shared<evo::JoyToVel>());
+		rclcpp::shutdown();
+
+		return 0;
+	}
+
+\end{lstlisting}
+
+A lifecycle based ros2 publisher has following structure:
+\begin{lstlisting}[language=cpp]
+namespace evo {
+  class LifecycleTalker : public rclcpp_lifecycle::LifecycleNode
+  {
+  public:
+    /// LifecycleTalker constructor
+    explicit LifecycleTalker(const std::string &node_name, bool intra_process_comms = false)
+        : rclcpp_lifecycle::LifecycleNode(node_name,
+                                          rclcpp::NodeOptions().use_intra_process_comms(intra_process_comms))
+    {
+      // init subscribers
+      ....
+      // init publishers
+      ....
+    }
+  
+    /// Transition callback for state configuring
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_configure(const rclcpp_lifecycle::State &)
+    {
+      // Initialize and configure publishers and timers.
+      pub_ = this->create_publisher<std_msgs::msg::String>("lifecycle_chatter", 10);
+	  timer_ = this->create_wall_timer(
+          1s, std::bind(&evo::LifecycleTalker::timer_callback, this));
+
+      return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    }
+
+    /// Transition callback for state activating
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_activate(const rclcpp_lifecycle::State &)
+    {
+      // Activate the lifecycle publisher.
+      pub_->on_activate();
+
+      // Important tasks in the activating phase.
+	  ....
+ 
+      return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    }
+
+    /// Transition callback for state deactivating
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_deactivate(const rclcpp_lifecycle::State &)
+    {
+      // Deactivate the lifecycle publisher.
+      pub_->on_deactivate();
+
+      return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    }
+
+    /// Transition callback for state cleaningup
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_cleanup(const rclcpp_lifecycle::State &)
+    {
+      // Release the shared pointers to the timer and publisher. 
+      timer_.reset();
+      pub_.reset();
+
+      return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    }
+
+    /// Transition callback for state shutting down
+    rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_shutdown(const rclcpp_lifecycle::State &state)
+    {
+      // Tasks to be performed in shutdown phase
+      ....
+
+      return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+    }
+
+	// Publish method for the publisher
+	void publish()
+    { 
+      ...
+    }
+
+    
+  private:
+    // This is an instance of a lifecycle publisher. This lifecycle publisher
+    // can be activated or deactivated based on state of the lifecycle node
+    std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::String>> pub_;
+
+  };
+
+  // Application specific Callbacks/Methods
+    void evo::LifecycleTalker::topic_callback(const sensor_msgs::msg::Joy::SharedPtr msg) const
+    {
+      	....
+    }
+
+    void evo::LifecycleTalker::timer_callback()
+    {
+		....
+    }
+
+    void evo::LifecycleTalker::joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
+    {
+		....
+    }
+
+    void evo::LifecycleTalker::publishVel(const sensor_msgs::msg::Joy::SharedPtr msg)
+    {
+		....
+    }
+}
+
+int main(int argc, char** argv)
+{
+  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+  rclcpp::init(argc, argv);
+
+  rclcpp::executors::SingleThreadedExecutor exe;
+  std::shared_ptr<evo::LifecycleTalker> lc_node = std::make_shared<evo::LifecycleTalker>("lifecycle_joytovel");
+
+  exe.add_node(lc_node->get_node_base_interface());
+  exe.spin();
+  rclcpp::shutdown();
+
+  return 0;
+}
+
+
+\end{lstlisting}
+
 
 \subsection{Conversion of a node into a Lifecycle Node}
+In order to convert a normal ROS2 node into a lifecycle node following steps need to be taken:
+
+\begin{itemize}
+	\item Import necessary libraries. Following libraries are necessary for a lifecycle node. In order to import these libraries the package \lstinline{rclcpp_lifecycle and lifecycle_msgs} must be installed on the system. \begin{lstlisting}[language=cpp]
+		#include <chrono>
+		#include <thread>
+		#include <utility>
+		#include <numeric>
+
+		#include "lifecycle_msgs/msg/transition.hpp"
+		#include "rclcpp/rclcpp.hpp"
+		#include "rclcpp/publisher.hpp"
+		#include "rclcpp_lifecycle/lifecycle_node.hpp"
+		#include "rclcpp_lifecycle/lifecycle_publisher.hpp"
+
+		#include "rcutils/logging_macros.h"
+
+	\end{lstlisting}
+	\item Encapsulate the node in a class that inherits from class \lstinline{rclcpp_lifecycle::LifecycleNode} This brings in a series of callbacks that are called depending on the current state of the node. Each lifecycle node has a set of services associated with it that make it controllable from the outside.
+	\item Initialize the public and private methods.
+	\item Configure and implement transition callbacks listed in listing \ref{code:TransitionCallbacks}.
+	\item Define appliation specific methods
+	\item Perform necessary setup and initialization in main() function.  
+\end{itemize}
 
 \section{Vue based Webinterface}
 \label{Implementierung:VueBasedWebinterface}
 The developed web interface is supposed to be a web version of the lifecycle management CLI. 
 
+\subsection{Web Application Requirements}
 
-% usage: ros2 lifecycle get [-h] [--spin-time SPIN_TIME] [--no-daemon][--include-hidden-nodes]                 [node_name]
-
-% usage: ros2 lifecycle set [-h] [--spin-time SPIN_TIME] [--no-daemon]
-%                           [--include-hidden-nodes]
-%                           node_name transition
-
-% Trigger lifecycle state transition
-
-% positional arguments:
-%   node_name             Name of the ROS node
-%   transition            The lifecycle transition
-
-
-%   usage: ros2 lifecycle list [-h] [--spin-time SPIN_TIME] [--no-daemon]
-%   [--include-hidden-nodes] [-a]
-%   node_name
-
-% Output a list of available transitions
-
-% positional arguments:
-% node_name             Name of the ROS node
-
-% ros2 lifecycle nodes [-h] [--spin-time SPIN_TIME] [--no-daemon] [-a]
-%                             [-c]
-
-% Output a list of nodes with lifecycle
-
-
-% # Default values for transitions as described in:
-% # http://design.ros2.org/articles/node_lifecycle.html
-
-% # Reserved [0-9], publicly available transitions.
-% # When a node is in one of these primary states, these transitions can be
-% # invoked.
-
-% # This transition will instantiate the node, but will not run any code beyond
-% # the constructor.
-% uint8 TRANSITION_CREATE = 0
-
-% # The node’s onConfigure callback will be called to allow the node to load its
-% # configuration and conduct any required setup.
-% uint8 TRANSITION_CONFIGURE = 1
-
-% # The node’s callback onCleanup will be called in this transition to allow the
-% # node to load its configuration and conduct any required setup.
-% uint8 TRANSITION_CLEANUP = 2
-
-% # The node's callback onActivate will be executed to do any final preparations
-% # to start executing.
-% uint8 TRANSITION_ACTIVATE = 3
-
-% # The node's callback onDeactivate will be executed to do any cleanup to start
-% # executing, and reverse the onActivate changes.
-% uint8 TRANSITION_DEACTIVATE = 4
-
-% # This signals shutdown during an unconfigured state, the node's callback
-% # onShutdown will be executed to do any cleanup necessary before destruction.
-% uint8 TRANSITION_UNCONFIGURED_SHUTDOWN  = 5
-
-% # This signals shutdown during an inactive state, the node's callback onShutdown
-% # will be executed to do any cleanup necessary before destruction.
-% uint8 TRANSITION_INACTIVE_SHUTDOWN = 6
-
-% # This signals shutdown during an active state, the node's callback onShutdown
-% # will be executed to do any cleanup necessary before destruction.
-% uint8 TRANSITION_ACTIVE_SHUTDOWN = 7
-
-% # This transition will simply cause the deallocation of the node.
-% uint8 TRANSITION_DESTROY = 8
-
-% # Reserved [10-69], private transitions
-% # These transitions are not publicly available and cannot be invoked by a user.
-% # The following transitions are implicitly invoked based on the callback
-% # feedback of the intermediate transition states.
-% uint8 TRANSITION_ON_CONFIGURE_SUCCESS = 10
-% uint8 TRANSITION_ON_CONFIGURE_FAILURE = 11
-% uint8 TRANSITION_ON_CONFIGURE_ERROR = 12
-
-% uint8 TRANSITION_ON_CLEANUP_SUCCESS = 20
-% uint8 TRANSITION_ON_CLEANUP_FAILURE = 21
-% uint8 TRANSITION_ON_CLEANUP_ERROR = 22
-
-% uint8 TRANSITION_ON_ACTIVATE_SUCCESS = 30
-% uint8 TRANSITION_ON_ACTIVATE_FAILURE = 31
-% uint8 TRANSITION_ON_ACTIVATE_ERROR = 32
-
-% uint8 TRANSITION_ON_DEACTIVATE_SUCCESS = 40
-% uint8 TRANSITION_ON_DEACTIVATE_FAILURE = 41
-% uint8 TRANSITION_ON_DEACTIVATE_ERROR = 42
-
-% uint8 TRANSITION_ON_SHUTDOWN_SUCCESS = 50
-% uint8 TRANSITION_ON_SHUTDOWN_FAILURE = 51
-% uint8 TRANSITION_ON_SHUTDOWN_ERROR = 52
-
-% uint8 TRANSITION_ON_ERROR_SUCCESS = 60
-% uint8 TRANSITION_ON_ERROR_FAILURE = 61
-% uint8 TRANSITION_ON_ERROR_ERROR = 62
-
-% # Reserved [90-99]. Transition callback success values.
-% # These return values ought to be set as a return value for each callback.
-% # Depending on which return value, the transition will be executed correctly or
-% # fallback/error callbacks will be triggered.
-
-% # The transition callback successfully performed its required functionality.
-% uint8 TRANSITION_CALLBACK_SUCCESS = 97
-
-% # The transition callback failed to perform its required functionality.
-% uint8 TRANSITION_CALLBACK_FAILURE = 98
-
-% # The transition callback encountered an error that requires special cleanup, if
-% # possible.
-% uint8 TRANSITION_CALLBACK_ERROR = 99
-
-% ##
-% ## Fields
-% ##
-
-% # The transition id from above definitions.
-% uint8 id
-
-% # A text label of the transition.
-% string label
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.95\textwidth]{"Bilder/webapp-design.png"}
-	\caption{Overview of Lifecycle Management WebApp}
-	\label{fig:Background:WebappDesign}					
-\end{figure}
-
+\subsection{Web Application Design}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.95\textwidth]{"Bilder/webapp-design.png"}
+		\caption{Overview of Lifecycle Management WebApp}
+		\label{fig:Background:WebappDesign}					
+	\end{figure}
 
 \subsection{ROS2 Message Types/ Javascript Objects}
 
+\subsection{Implementing Automatic State Transitions}
+
+\subsection{Used libraries/ package.json}
+
 \subsection{ROS2 Javascript Functions}
+
+\subsection{Important Functions/ Code Overview}
 
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
@@ -606,9 +733,46 @@ The developed web interface is supposed to be a web version of the lifecycle man
 \section{Integration}
 \label{Implementierung:Integration}
 
+\subsection{Conversion to Industrial Edge App} 
+The Industrial Edge Publisher can be used to import the created docker-compose.yml file. The created images along with their various configurations are recognized by the Industrial Edge environment and automatically applied when the app is installed on the Edge Device. No further configuration is necessary for the Edge App. Once the app has been created, it can be uploaded to the IEM using the Industrial Edge Publisher, where it is available for further distribution.
 
-	
+\subsection{Docker Compose}
+With a docker-compose.yml file, services and configurations can be specified for a Docker container. The application requires several Docker containers to communicate with each other. In addition, a volume is created to store any persistent data that might be useful for the application.
+
+In the Services section of the docker-compose file, the Docker image in the current directory is built. The name of the created Docker image is then specified. Then with the start command a \gls{ROS2} Application with lifecycle node is run. The commands \lstinline{mem_limit: 500mb} and \lstinline{restart: on-failure} are necessary for Industrial Edge. Then the docker volume created in the previous step is mounted. The network to use is specified then the docker container is connected to the network.
+\begin{lstlisting}[language=docker-compose,
+		label={code:Vue}]
+		networks :
+ 			ie-app-network :
+	 			name : ie-app-network
+
+		volumes:
+			lifecycle_edge:
+				name: lifecycle_edge
 		
+		services:
+			ros2-lifecycle:
+				build: ./
+				image: ros2_foxy_lifecycle:1.0
+				command: ros2 launch evo_siemensrob_ctrl agv_control_launch.py 
+				mem_limit: 500mb
+				restart: on-failure
+				volumes:
+					- lifecycle_edge
+				networks:
+					- ie-app-network		
+\end{lstlisting}
+
 		
 	
-	
+\chapter{Test setup}	
+
+To test the Lifecycle Management Interface and showcase a Use case for the Managed Lifecyle nodes a swarm of turtlesim nodes is created and various processes during their lifecycle are contorled (managed) with the help of a web based Lifecycle Management Interface. 
+\subsection{Convertig Turtlesim into a Lifecycle node}
+
+\subsection{Test Steps}
+\begin{itemize}
+	\item Reconfiguring the input sensitivity(in state Configure)
+	\item Respawning on the Fly (transitions create, configure, activate)
+	\item Shuttingdown individual Turtlesim Node (shutdown)
+\end{itemize}

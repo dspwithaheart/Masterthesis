@@ -522,9 +522,9 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	A lifecycle node does not inherit from the regular \lstinline{rclcpp::node::Node} but from\\  \lstinline{rclcpp_lifecycle::LifecycleNode}. Every child of LifecycleNodes has a set of callbacks provided. These callbacks go along with the applied state machine attached to them. These callbacks are:
 
-\begin{lstlisting}[language=c++,
-	% caption={dockerfile_startup}, 
-	label={code:DockerTestumgebung}]
+\begin{lstlisting}[language=cpp,
+	caption={Transition Callbacks}, 
+	label={code:TransitionCallbacks}]
 	rclcpp_lifecycle::node_interfaces::
 	LifecycleNodeInterface::CallbackReturn
 	on_configure(const rclcpp_lifecycle::State & previous_state)
@@ -935,3 +935,6 @@ A router is needed when \gls{URL}s need to be synchronized with the views in an 
 
 
 		
+\chapter{Previous Work}
+
+Masterarbeit von Christoph (Für DDS und Routing service)

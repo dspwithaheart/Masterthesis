@@ -8,6 +8,7 @@
 \documentclass[
     12pt, % Schriftgröße
     DIV=10,
+	nenglish,
     % ngerman, % fürUmlaute, Silbentrennung etc.
     a4paper, % Papierformat
     oneside, % einseitiges Dokument
@@ -24,7 +25,7 @@
     captions=tableheading, % Beschriftung von Tabellen unterhalb ausgeben
     final % Status des Dokuments (final/draft) 
 ]{scrreprt}
-
+\usepackage[english]{babel}
 % Hier sind Metainformationen drinnen
 % Titel, Betreuer, Studiengang etc
 \input{Präambel/Meta}
@@ -101,7 +102,7 @@
 	% Inhalt
 	% Hier wieder umstellen auf arabisches Seitenzählen
 	\pagenumbering{arabic}
-	\ofoot*{{\pagemark} von \pageref{Ende}}
+	\ofoot*{{\pagemark} of \pageref{Ende}}
 	
 	\input{Inhalt/01_Introduction}
 	
@@ -130,7 +131,7 @@
 	\ofoot{\pagemark}
 	
 	% Literaturverzeichnis
-	\printbibliography[title={Literaturverzeichnis}]
+	\printbibliography[title={References}]
 	
 	% Abbildungsverzeichnis
 	\listoffigures 
