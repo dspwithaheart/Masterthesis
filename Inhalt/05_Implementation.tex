@@ -270,10 +270,10 @@ The main container process is responsible for managing all the processes it laun
 \lstinline{https://docs.docker.com/config/containers/multi-service_container/}
 
 \section{ROS2 Lifecycle Application}
-\label{Implementierung:ROS2LifecycleApplication} This section describes the details of an example ROS2-Application with managed states and steps necessary to convert a normal ROS2-node into a managed lifecycle node. 
-   
+\label{Implementierung:ROS2LifecycleApplication} 
+In oder to showcase the capabilities and possible use-cases of the managed lifecycle nodes in ROS2 ecosystem a demonstration application was developed. This appliaction has multiple states which allows for reconfiguration and respawning of the node while it is running. It also is a key part for demonstrating the capabilities of the remote lifecycle management interface described in section \ref{Implementierung:VueBasedWebinterface}. This section describes the details of an example ROS2-Application with managed states and steps necessary to convert a normal ROS2-node into a managed lifecycle node. 
 
-\subsection{Structure of a normal ros2 publisher node vs lifecycle node}
+\subsection{Structure of a normal ROS2 publisher node}
 To demonstrate the process of developing a managed lifecycle node a JoyToVel publisher node is converted into a lifecycle node in this section. The JoyToVel publisher takes input from a PlayStation4 Controller and publishes velocity and direction commands to \lstinline{\cmd_vel} topic in a ROS2 Network. Any application(node) subscribed to this topic can be controlled using this JoyToVel node.
 
 A normal JoyToVel publisher consists of a constructor, application-specific callback functions and methods, and the main function. The necessary subscribers and publishers are initialized in the constructor. It also includes the application logic. In the main function, the node is started with the specified parameters. No changes to any parameters can be made once the node has been started. If the node crashes for some reason it has to be respawned manually. Since the JoyToVel node is an interface node, it would be beneficial to be able to dynamically reconfigure its different parameters and it demands higher reliability and stability. \\
@@ -319,6 +319,7 @@ A normal ROS2 C++ publisher node has the following structure:
 
 \end{lstlisting}
 
+\subsection{Structure of a ROS2 publisher node with managed lifecycle}
 A lifecycle based ros2 publisher has following structure:
 \begin{lstlisting}[language=cpp]
 namespace evo {
@@ -442,8 +443,6 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-
 \end{lstlisting}
 
 
@@ -473,6 +472,10 @@ In order to convert a normal ROS2 node into a lifecycle node following steps nee
 	\item Perform necessary setup and initialization in main() function.  
 \end{itemize}
 
+
+\subsection{A multi node Applicaton}
+A realistic robot consists of several independent components which need to run simultaneously and interact with each other. In order to simulate a system with multiple managed nodes an example multi node ROS2 Application is developed in this section. For demonstration purposes three nodes which depend on each other during different states of their lifecycle is developed. 
+
 \section{Vue based Webinterface}
 \label{Implementierung:VueBasedWebinterface}
 The developed web interface is supposed to be a web version of the lifecycle management CLI. 
@@ -488,7 +491,323 @@ The developed web interface is supposed to be a web version of the lifecycle man
 	\end{figure}
 
 \subsection{ROS2 Message Types/ Javascript Objects}
+This section describes the ROS2 Messages and Services used to communicate with the ROS2 backend application. There was also a need to explore and examine various JavaScript counterparts to these message and service types. Messages and services  used in the developed application are listed below with their definitions. 
 
+\paragraph{Messages:} 
+\begin{itemize}
+	\item \lstinline{lifecycle_msgs/msg/State}
+\begin{lstlisting}[language=msg,
+	caption={Message definition State}]
+	# State definitions
+	uint8 PRIMARY_STATE_UNKNOWN = 0
+	uint8 PRIMARY_STATE_UNCONFIGURED = 1
+	uint8 PRIMARY_STATE_INACTIVE = 2
+	uint8 PRIMARY_STATE_ACTIVE = 3
+	uint8 PRIMARY_STATE_FINALIZED = 4
+
+	uint8 TRANSITION_STATE_CONFIGURING = 10
+	uint8 TRANSITION_STATE_CLEANINGUP = 11
+	uint8 TRANSITION_STATE_SHUTTINGDOWN = 12
+	uint8 TRANSITION_STATE_ACTIVATING = 13
+	uint8 TRANSITION_STATE_DEACTIVATING = 14
+	uint8 TRANSITION_STATE_ERRORPROCESSING = 15
+
+	## Fields
+
+	# The state id value from the above definitions.
+	uint8 id
+	# A text label of the state.
+	string label
+\end{lstlisting}
+
+\item \lstinline{lifecycle_msgs/msg/Transition}
+\begin{lstlisting}[language=msg,
+	caption={Message definition Transition}]
+	# Transition id definitions
+	uint8 TRANSITION_CREATE = 0
+	uint8 TRANSITION_CONFIGURE = 1
+	uint8 TRANSITION_CLEANUP = 2
+	uint8 TRANSITION_ACTIVATE = 3
+	uint8 TRANSITION_DEACTIVATE = 4
+	uint8 TRANSITION_UNCONFIGURED_SHUTDOWN  = 5
+	uint8 TRANSITION_INACTIVE_SHUTDOWN = 6
+	uint8 TRANSITION_ACTIVE_SHUTDOWN = 7
+	uint8 TRANSITION_DESTROY = 8
+	uint8 TRANSITION_ON_CONFIGURE_SUCCESS = 10
+	uint8 TRANSITION_ON_CONFIGURE_FAILURE = 11
+	uint8 TRANSITION_ON_CONFIGURE_ERROR = 12
+	uint8 TRANSITION_ON_CLEANUP_SUCCESS = 20
+	uint8 TRANSITION_ON_CLEANUP_FAILURE = 21
+	uint8 TRANSITION_ON_CLEANUP_ERROR = 22
+	uint8 TRANSITION_ON_ACTIVATE_SUCCESS = 30
+	uint8 TRANSITION_ON_ACTIVATE_FAILURE = 31
+	uint8 TRANSITION_ON_ACTIVATE_ERROR = 32
+	uint8 TRANSITION_ON_DEACTIVATE_SUCCESS = 40
+	uint8 TRANSITION_ON_DEACTIVATE_FAILURE = 41
+	uint8 TRANSITION_ON_DEACTIVATE_ERROR = 42
+	uint8 TRANSITION_ON_SHUTDOWN_SUCCESS = 50
+	uint8 TRANSITION_ON_SHUTDOWN_FAILURE = 51
+	uint8 TRANSITION_ON_SHUTDOWN_ERROR = 52
+	uint8 TRANSITION_ON_ERROR_SUCCESS = 60
+	uint8 TRANSITION_ON_ERROR_FAILURE = 61
+	uint8 TRANSITION_ON_ERROR_ERROR = 62
+	uint8 TRANSITION_CALLBACK_SUCCESS = 97
+	uint8 TRANSITION_CALLBACK_FAILURE = 98
+	uint8 TRANSITION_CALLBACK_ERROR = 99
+	
+	## Fields
+
+	# The transition id from above definitions.
+	uint8 id
+	# A text label of the transition.
+	string label
+\end{lstlisting}
+
+\item \lstinline{lifecycle_msgs/msg/TransitionDescription}
+\begin{lstlisting}[language=msg,
+	caption={Message definition TransitionDescription}]
+	# The transition id and label of this description.
+	Transition transition
+	# The current state from which this transition transitions.
+	State start_state
+	# The desired target state of this transition.
+	State goal_state
+\end{lstlisting}
+
+\item \lstinline{lifecycle_msgs/msg/TransitionEvent}
+\begin{lstlisting}[language=msg,
+	caption={Message definition TransitionEvent}]
+	# The time point at which this event occurred.
+	uint64 timestamp
+	# The id and label of this transition event.
+	Transition transition
+	# The starting state from which this event transitioned.
+	State start_state
+	# The end state of this transition event.
+	State goal_state
+\end{lstlisting}
+
+\item \lstinline{rcl_interfaces/msg/Log}
+\begin{lstlisting}[language=msg,
+	caption={Message definition TransitionEvent}]
+	##
+	## Severity level constants
+	## 
+	## Since there are several other logging enumeration standard for different implementations,
+	## other logging implementations may need to provide level mappings to match their internal implementations.
+	##
+	# Debug is for pedantic information, which is useful when debugging issues.
+	byte DEBUG=10
+	# Info is the standard informational level and is used to report expected
+	# information.
+	byte INFO=20
+	# Warning is for information that may potentially cause issues or possibly unexpected
+	# behavior.
+	byte WARN=30
+	# Error is for information that this node cannot resolve.
+	byte ERROR=40
+	# Information about a impending node shutdown.
+	byte FATAL=50
+	## Fields
+
+	# Timestamp when this message was generated by the node.
+	builtin_interfaces/Time stamp
+	# Corresponding log level, see above definitions.
+	uint8 level
+	# The name representing the logger this message came from.
+	string name
+	# The full log message.
+	string msg
+	# The file the message came from.
+	string file
+	# The function the message came from.
+	string function
+	# The line in the file the message came from.
+	uint32 line
+\end{lstlisting}
+
+\end{itemize}
+
+\paragraph{Services:}
+
+\begin{itemize}
+	\item \lstinline{lifecycle_msgs/srv/ChangeState}
+A ROS2 Service has the following structure:
+\begin{lstlisting}[language=service,
+	caption={Service definition ChangeState}]
+	# The requested transition.
+	Transition transition
+	---
+	# Indicates whether the state transition was successful
+	bool success
+\end{lstlisting}
+
+
+
+\item \lstinline{lifecycle_msgs/srv/GetAvailableStates}
+\begin{lstlisting}[language=service,
+	caption={Service definition GetAvailableStates}]
+	---
+	# Array of possible states that can be transitioned to.
+	State[] available_states
+\end{lstlisting}
+
+\item \lstinline{lifecycle_msgs/srv/GetAvailableTransitions}
+\begin{lstlisting}[language=service,
+	caption={Service definition GetAvailableTransitions}]
+	---
+	# An array of the possible start_state-goal_state transitions
+	TransitionDescription[] available_transitions
+
+\end{lstlisting}
+
+\item \lstinline{lifecycle_msgs/srv/GetState}
+\begin{lstlisting}[language=service,
+	caption={Service definition GetState}]
+	---
+	# The current state-machine state of the node.
+	State current_state
+\end{lstlisting}
+
+\end{itemize}
+
+
+
+ROSLIB.ServiceRequest
+ROSLIB.Service
+ROSLIB.Topic
+
+
+\paragraph{JavaScript Objects}
+\begin{itemize}
+
+\item ROSLIB.Service
+\begin{lstlisting}[language=JavaScript,
+	caption={JavaScript object definition for Service}]
+	{
+		ros : this.ros,
+		name : `/lifecycle_node/get_state`,
+		serviceType : 'lifecycle_msgs/GetState'
+	}
+\end{lstlisting}
+
+\item ROSLIB.ServiceRequest
+\begin{lstlisting}[language=JavaScript,
+	caption={JavaScript object definition for ServiceRequest}]
+	{
+		requestParam1 : {requestObject1},
+		requestParam2 : {requestObject2},
+		...
+    }
+	}
+\end{lstlisting}
+
+
+\item ROSLIB.Topic
+\begin{lstlisting}[language=JavaScript,
+	caption={JavaScript object definition for Topic}]
+	{
+		ros : this.ros,
+		name : '/rosout',
+		messageType : 'rcl_interfaces/msg/Log'
+	}
+\end{lstlisting}
+\end{itemize}
+
+\paragraph{JSON Objects} A Javascript application uses JSON Objects to communicate over a network. A JSON object is returned when a ROS service is called or a topic is subscribed to. It is necessary to parse and process these objects to display or update information on a web page. To parse a JSON object, prior knowledge of its structure is required. \\
+
+ \textit{JSON (JavaScript Object Notation) is a lightweight format for data exchange. Working with it is easy for humans likewise machines. It is based on a subset of the JavaScript Programming Language Standard ECMA-262 3rd Edition - December 1999. JSON is a text format that does not depend on any specific language but uses conventions familiar to the C language family, including} \lstinline{C, C++, C#, Java, JavaScript, Perl, Python}, \textit{and many others. These properties make JSON an ideal language for data exchange.}\cite{jsonDef} \\
+
+ In the following section JSON objects used by the developed application is described in detail.
+\begin{itemize}
+\item  \lstinline{state}
+\begin{lstlisting}[language=json,
+	caption={JavaScript object definition for \lstinline{state}}]
+	{
+		"state": {
+			"id": 1,
+			"label": "unconfigured"
+		}
+	}
+\end{lstlisting}
+
+\item \lstinline{transition}
+\begin{lstlisting}[language=json,
+	caption={JavaScript object definition \lstinline{transition}}]
+	{
+		"transition": {
+			"id": 1,
+			"label": "configure"
+		},
+		"start_state": {
+			"id": 1,
+			"label": "unconfigured"
+		},
+		"goal_state": {
+			"id": 10,
+			"label": "configuring"
+		}
+	}
+\end{lstlisting}
+
+\item \lstinline{available_transitions}
+\begin{lstlisting}[language=json,
+	caption={JavaScript object definition for \lstinline{available_transitions}}]
+	{
+		"available_transitions": [
+		  {
+			"transition": {
+			  "id": 1,
+			  "label": "configure"
+			},
+			"start_state": {
+			  "id": 1,
+			  "label": "unconfigured"
+			},
+			"goal_state": {
+			  "id": 10,
+			  "label": "configuring"
+			}
+		  },
+		  {
+			"transition": {
+			  "id": 5,
+			  "label": "shutdown"
+			},
+			"start_state": {
+			  "id": 1,
+			  "label": "unconfigured"
+			},
+			"goal_state": {
+			  "id": 12,
+			  "label": "shuttingdown"
+			}
+		  }
+		]
+	  }
+\end{lstlisting}
+
+
+
+\item \lstinline{available_states}
+\begin{lstlisting}[language=json,
+	caption={JavaScript object definition \lstinline{available_states}}]
+	{
+		"available_states": [
+			{
+			"id": 0,
+			"label": "unknown"
+			},
+			{
+			"id": 1,
+			"label": "unconfigured"
+			},
+			...
+		]
+	}
+\end{lstlisting}
+
+\end{itemize}
 \subsection{Implementing Automatic State Transitions}
 
 \subsection{Used libraries/ package.json}
