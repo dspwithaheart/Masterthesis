@@ -930,9 +930,20 @@ In a web application, a router is a part that synchronizes the currently display
 A router is needed when \gls{URL}s need to be synchronized with the views in an application. This is a very common need, and all major modern frameworks now allow routing to be managed.   Vue Router is part of the Vue core library and handles route management in a Vue application \cite{VueGuide:Online}.
 
 
-	\section{Nginx}
-	\label{Grundlagen:Nginx}
+\section{Nginx}
+\label{Grundlagen:Nginx}
+Nginx, pronounced like "engine-ex", is an open-source web server that is now also used as a reverse proxy, HTTP cache, and load balancer. It is one of the most used web servers along with the Apache HTTP server.\cite{nginxIntro}
 
+This section describes the basics of NGINX (start, stop reload configuration), the structure of the configuration file and describes the process of setting up NGINX to serve out static content.
+
+\subsection{Starting, Stopping, and Reloading Configuration}
+Nginx has a single master process and several worker processes. The master process reads and evaluates the configuration and manages the worker processes. The worker processes operate the real processing of HTTP requests. Nginx uses an event-based model and operating system-dependent means to efficiently allocate requests among the worker processes. The number of worker processes is set in the configuration file.\cite{nginxIntro}
+
+
+\subsection{Structure of Configuration File }
+The configuration file is named by default nginx.conf and placed in the directory \textit{"/usr/local/nginx/conf", "/etc/nginx", or "/usr/local/etc/nginx"}. Nginx consists of modules that are controlled by directives defined in the configuration file. Directives are split into simple directives and block directives. A simple directive is made up of the name and parameters separated by spaces and ends with a semicolon (;). A block directive ends with a sequence of additional arguments surrounded by curly braces. A block directive that contains other directives inside curly braces, is called a context (examples: events, http, server, and location). Directives that are outside contexts in the configuration file are in the main context. The directives events and http are in the main context. The server directive is inside the http directive and location inside the server. For comments, a hashtag \lstinline{(#)} sign is used.\cite*{nginxIntro}
+
+\subsection{Serving Static Content}
 
 		
 \chapter{Previous Work}

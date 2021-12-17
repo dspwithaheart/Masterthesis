@@ -102,7 +102,7 @@ This section describes the Docker image developed for the purposes of this thesi
 		&& echo "source /root/colcon_ws/install/setup.bash" >> ~/.bashrc
 \end{lstlisting}
 
-\paragraph*{Create and build Ros Workspace} In this step first of all the build workspaceis setup, then the necessary source files are copied from external working directory to the Docker internal workspace and finally built using colcon.
+\paragraph*{Create and build Ros Workspace} In this step first of all the build workspace is setup, then the necessary source files are copied from external working directory to the Docker internal workspace and finally built using colcon.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -166,7 +166,7 @@ a working directory for the Vue Application is created, the the package.json is 
 	RUN npm run build
 \end{lstlisting}
 
-\paragraph{Setting up a Nginx web server} In this step the nginx configuration file is copied from external workspace to the docker enviroment. THe built application consisting of only .html, .css and .js files are copid to a location where nginx can easily find them and use them to start the web-application. Furthermore PORT 80 is exposed and the web-application can thus be accessed on locahost:8080 within the same network where this Docker container is running.
+\paragraph{Setting up a Nginx web server} In this step the nginx configuration file (described in section \ref{Impl:NginxConfig}) is copied from external workspace to the docker enviroment. The built application consisting of only .html, .css and .js files are copid to a location where nginx can easily find them and use them to start the web-application. Furthermore PORT 80 is exposed and the web-application can thus be accessed on locahost:8080 within the same network where this Docker container is running.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -250,8 +250,7 @@ The main container process is responsible for managing all the processes it laun
 	
 	# now we bring the primary process back into the foreground
 	# and leave it there
-	fg %1
-	
+	fg %
 \end{lstlisting}
 
 \begin{lstlisting}[language=dockerfile,
@@ -268,6 +267,49 @@ The main container process is responsible for managing all the processes it laun
 \end{lstlisting}
 
 \lstinline{https://docs.docker.com/config/containers/multi-service_container/}
+
+
+\subsection{Nginx server configuration}
+\label{Impl:NginxConfig}
+Configuring NGINX as a web server is about defining which URLs it processes and how it processes HTTP requests for resources at those URLs. On a deeper level, the configuration defines a set of virtual servers that control the processing of requests for specific domains or IP addresses.
+
+Since the application in this thesis is only supposed to run within a local network (not the internet) the webserver configuration is drastically simplified. The basic HTTP settings can be left to the default configuration. Only the virtual server settings need to be configured. This section describes the configuration used for NGINX to serve static content. This includes the definition of paths searched to find requested files and set up for index files. The following listing shows the most important configurations needed to serve the developed web application on a local network.
+
+\begin{lstlisting}[caption={Nginx configuration file (nginx.conf)}, 
+	label={code:NginxConf}]
+http {
+	# Basic Settings
+	# ...
+	server {
+		# listen 80 default_server;
+		# listen [::]:80 default_server;
+
+		listen       80;
+		listen  [::]:80;
+		server_name  localhost;
+
+		index index.html index.htm index.nginx-debian.html;
+
+		location / {
+			# First attempt to serve request as file, then
+			# as directory, then fall back to displaying a 404.
+			root   /usr/share/nginx/html;
+			index  index.html index.htm;
+			}
+		}
+	}
+\end{lstlisting}
+
+A virtual server is defined by a server directive in the http context in \lstinline{nginx.conf} file. The used directives in the above configuration file are described below:
+
+\paragraph{listen} The server configuration block usually includes a listen directive to specify the IP address and port on which the server listens for requests. Both IPv4 and IPv6 addresses are accepted; IPv6 addresses are enclosed in square brackets. In the above configuration the server listens on IP address 127.0.0.1 (localhost) and port 80.
+
+\paragraph{server name} If there are several servers that match the IP address and port of the request, the request’s Host header field is tested against the \lstinline{server_name} directives in the server blocks. The parameter to \lstinline{server_name} can be a full name, a wildcard, or a regular expression. Since the above configuration has just one virtual server the this parameter is set to localhost.
+
+\paragraph{root} The root directive specifies the root directory to be used to search for a file. To obtain the path of a requested file, NGINX appends the request URI to the path specified by the root directive. The directive can be placed at any level within the http {}, server {} or location {} contexts. In case the root directive is defined for a virtual server. It applies to all location {} blocks that do not contain the root directive to explicitly redefine the root.\cite{nginxCong}
+
+\paragraph{index} If a request ends with a slash, NGINX treats it as a request for a directory and tries to find an index file in that directory. The index directive defines the name of the index file (the default is index.html). If the URI of the request is \lstinline{/some/path/}, based on the above configuration NGINX will return the file \lstinline{/usr/share/nginx/html/some/path/index.html} if it exists. If it does not, NGINX returns the HTTP code 404 (Not Found) by default. Multiple file names can be listed in the index directive. In this case, NGINX searches for the files in the specified order and returns the first file found.
+
 
 \section{ROS2 Lifecycle Application}
 \label{Implementierung:ROS2LifecycleApplication} 
@@ -1053,14 +1095,15 @@ ROSLIB.Topic
 \label{Implementierung:Integration}
 
 \subsection{Conversion to Industrial Edge App} 
-The Industrial Edge Publisher can be used to import the created docker-compose.yml file. The created images along with their various configurations are recognized by the Industrial Edge environment and automatically applied when the app is installed on the Edge Device. No further configuration is necessary for the Edge App. Once the app has been created, it can be uploaded to the IEM using the Industrial Edge Publisher, where it is available for further distribution.
+The Industrial Edge Publisher can be used to convert a docker image into an Industrial Edge Application. The created docker-compose.yml file (listing \ref{Implementation:dockerCompose}) is first imported into the Industrial Edge Publisher. The created images along with their various configurations are recognized by the Industrial Edge environment and these configurations are automatically applied when the app is installed on the Edge Device. No further configuration is necessary for the Edge App. Once the app has been created, it can be uploaded to the IEM using the Industrial Edge Publisher, where it is available for further distribution.
 
-\subsection{Docker Compose}
-With a docker-compose.yml file, services and configurations can be specified for a Docker container. The application requires several Docker containers to communicate with each other. In addition, a volume is created to store any persistent data that might be useful for the application.
+\paragraph{Docker Compose File}
+With a docker-compose.yml file, services and configurations can be specified for a Docker container. This application requires several Docker containers to communicate with each other, for this purpose a seperate network is created in the docker-compose file. In addition, a volume is created to store any persistent data that might be useful for the application.
 
-In the Services section of the docker-compose file, the Docker image in the current directory is built. The name of the created Docker image is then specified. Then with the start command a \gls{ROS2} Application with lifecycle node is run. The commands \lstinline{mem_limit: 500mb} and \lstinline{restart: on-failure} are necessary for Industrial Edge. Then the docker volume created in the previous step is mounted. The network to use is specified then the docker container is connected to the network.
+In the services section of the docker-compose file, the Docker image in the current directory is built. The name of the created Docker image is then specified. Then with the start command a \gls{ROS2} Application with lifecycle node is run. The commands \lstinline{mem_limit: 500mb} and \lstinline{restart: on-failure} are necessary for Industrial Edge. Then the docker volume created in the previous step is mounted. The network to use is specified then the docker container is connected to the network.
 \begin{lstlisting}[language=docker-compose,
-		label={code:Vue}]
+		caption={docker-compose.yaml used by IE Publisher},
+		label={Implementation:dockerCompose}]
 		networks :
  			ie-app-network :
 	 			name : ie-app-network
