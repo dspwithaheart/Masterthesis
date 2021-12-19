@@ -631,7 +631,8 @@ This section describes the ROS2 Messages and Services used to communicate with t
 
 \item \lstinline{rcl_interfaces/msg/Log}
 \begin{lstlisting}[language=msg,
-	caption={Message definition TransitionEvent}]
+	label={code:ROS:Message definition Log},
+	caption={Message definition Log}]
 	##
 	## Severity level constants
 	## 
@@ -676,7 +677,8 @@ This section describes the ROS2 Messages and Services used to communicate with t
 	\item \lstinline{lifecycle_msgs/srv/ChangeState}
 A ROS2 Service has the following structure:
 \begin{lstlisting}[language=service,
-	caption={Service definition ChangeState}]
+	caption={Service definition ChangeState},
+	label={code:ROS:Service definition ChangeState}]
 	# The requested transition.
 	Transition transition
 	---
@@ -688,7 +690,8 @@ A ROS2 Service has the following structure:
 
 \item \lstinline{lifecycle_msgs/srv/GetAvailableStates}
 \begin{lstlisting}[language=service,
-	caption={Service definition GetAvailableStates}]
+	caption={Service definition GetAvailableStates},
+	label={code:ROS:Service definition GetAvailableStates}]
 	---
 	# Array of possible states that can be transitioned to.
 	State[] available_states
@@ -696,7 +699,8 @@ A ROS2 Service has the following structure:
 
 \item \lstinline{lifecycle_msgs/srv/GetAvailableTransitions}
 \begin{lstlisting}[language=service,
-	caption={Service definition GetAvailableTransitions}]
+	caption={Service definition GetAvailableTransitions},
+	label={code:ROS:Service definition GetAvailableTransitions}]
 	---
 	# An array of the possible start_state-goal_state transitions
 	TransitionDescription[] available_transitions
@@ -705,7 +709,8 @@ A ROS2 Service has the following structure:
 
 \item \lstinline{lifecycle_msgs/srv/GetState}
 \begin{lstlisting}[language=service,
-	caption={Service definition GetState}]
+	caption={Service definition GetState},
+	label={code:ROS:Service definition GetState}]
 	---
 	# The current state-machine state of the node.
 	State current_state
@@ -725,6 +730,7 @@ ROSLIB.Topic
 
 \item ROSLIB.Service
 \begin{lstlisting}[language=JavaScript,
+	label={JavsScript:ROSLIB.Service}
 	caption={JavaScript object definition for Service}]
 	{
 		ros : this.ros,
@@ -762,11 +768,12 @@ ROSLIB.Topic
 
  In the following section JSON objects used by the developed application is described in detail.
 \begin{itemize}
-\item  \lstinline{state}
+\item  \lstinline{current_state}
 \begin{lstlisting}[language=json,
+	label={code:ROS:JSON state},
 	caption={JavaScript object definition for \lstinline{state}}]
 	{
-		"state": {
+		"current_state": {
 			"id": 1,
 			"label": "unconfigured"
 		}
@@ -775,6 +782,7 @@ ROSLIB.Topic
 
 \item \lstinline{transition}
 \begin{lstlisting}[language=json,
+	label={code:ROS:JSON transitoin},
 	caption={JavaScript object definition \lstinline{transition}}]
 	{
 		"transition": {
@@ -794,6 +802,7 @@ ROSLIB.Topic
 
 \item \lstinline{available_transitions}
 \begin{lstlisting}[language=json,
+	label={code:ROS:JSON available transitions},
 	caption={JavaScript object definition for \lstinline{available_transitions}}]
 	{
 		"available_transitions": [
@@ -833,6 +842,7 @@ ROSLIB.Topic
 
 \item \lstinline{available_states}
 \begin{lstlisting}[language=json,
+	label={code:ROS:JSON available states},
 	caption={JavaScript object definition \lstinline{available_states}}]
 	{
 		"available_states": [
@@ -850,48 +860,75 @@ ROSLIB.Topic
 \end{lstlisting}
 
 \end{itemize}
-\subsection{Implementing Automatic State Transitions}
 
 \subsection{Used libraries/ package.json}
 
-\subsection{ROS2 Javascript Functions}
+\subsection{Implementing Automatic State Transitions}
 
-\subsection{Important Functions/ Code Overview}
+\subsection{Code Overview} For developing the web appliaction a web framework called VueJS (described in section \ref{Grundlagen:Vue}) is used. This allows the use of various pre-built html components and streamlined application structure with various plugins which in turn makes the UI development structured and easier. The UI part is encapsulatd inside the template tag and the JavaScript part in the script tag of a Vue component(described in section \ref{Vue:Component}). The project structure described in \ref{sec:StructureofVue.jsProject} is used.   
+
+To secure a conection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object needs to be initialized and assigned to a variable that can be accessed by all other functions in the application. This object consists of a url parameter, which will be used to assign the URL of the websocket. The websocket is made availabe by the library ros2-web-bridge. This is our main instance of RosLibJS and the same instance will be used throughout the application for working with a single Lifecycle Node. In case there are multiple Lifecycle nodes added, multiple instances of RosLibJS are created and stored. The details of the JavaScript part of the application is described below:
+
+\paragraph{Library imports} The libraries are imported using the standard ES6 syntax. The libraries including vue-plugins to be installed are listed in the package.json file. This import syntax allows the import of the entire library or only specific components of the library. The following libraries are used:
 
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
 	label={code:Vue}]
-	
 	import * as ROSLIB from 'roslib';
 	import { MDBBtn, MDBBtnGroup, MDBInput, MDBContainer, MDBRow, MDBCol } from "mdb-vue-ui-kit";
+\end{lstlisting}
 
+\paragraph{Vue Component initialization} To be able to use the imported components in the HTML-Layout they need to be initialized. The components to be used must be included within the component deirctive. Also the name of the component is assigned, this name will be used to import this component into any other component. 
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
 	export default {
 	
-	name: 'LifecycleManagement',
-	components: {
-		MDBBtn, MDBBtnGroup, MDBInput, MDBContainer, MDBRow, MDBCol
-	},
-	props: {
-		msg: String,
-	},
+		name: 'LifecycleManagement',
+		components: {
+			MDBBtn, MDBBtnGroup, MDBInput, MDBContainer, MDBRow, MDBCol
+		},
+		....
+	}
+\end{lstlisting}
+
+\paragraph{Declaring global variables} The data directive represents a storage of the necessary attributes for the component. All the global variables are declared in here.The original data object can be accessed with \texttt{\textcolor{purple}{this.data}} directive anywhere inside the component.
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
 	data: function () {
 		return {
-		unsub: false,
-		console_out: [],
-		selected_logger_level: 20,
-		input_node_name:"",
-		added_nodes:["lifecycle_joytovel"],
-		active_node: "lifecycle_joytovel",
-		selected_transition: {},
-		available_states: [],
-		available_transitions: [],
-		current_state: {},
-		ros: new ROSLIB.Ros({
-			url : 'ws://localhost:9090'
-		})
+			unsub: false,
+			console_out: [],
+			selected_logger_level: 20,
+			input_node_name:"",
+			added_nodes:["lifecycle_joytovel"],
+			active_node: "lifecycle_joytovel",
+			selected_transition: {},
+			available_states: [],
+			available_transitions: [],
+			current_state: {},
+			ros: new ROSLIB.Ros({
+				url : 'ws://localhost:9090'
+			})
 		}
 	},
-	
+\end{lstlisting}
+
+\paragraph{Method definitions} All the functions and methods necessary for the application are to be defined inside the methods directive. All the methods used in this application are described in the section \ref{Implementation:ImportantFunctions}.
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	methods: {
+		...
+	},
+\end{lstlisting}
+
+
+\paragraph{Vue instance lifecycle hook mounted} A Vue component has several lifecycle hooks (described in section \ref{Vue:Instancelifecyclehooks}), which lets a developer customize its behaviour at any specific point in its lifecycle. In this application the mounted hook is used to establish a connection to the websocket created by the ROS2-Web-Bridge.
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
 	mounted: function () {
 		var ros = new ROSLIB.Ros({
 			url : 'ws://localhost:9090'
@@ -911,83 +948,80 @@ ROSLIB.Topic
 
 		this.update();
 	},
+\end{lstlisting}
 
-	methods: {
+\subsection{Important Functions/Methods}
+\label{Implementation:ImportantFunctions}
+Using RosLibJS the frontend application can be conected to the backend API(websocket) provided by ROS2-web-bridge. To get the required informaton about the ros2 nodes running inside the backend application several ROS2 services need to called and some ROS2 topics need to be subscribed to. The methods used to realize these functionalities are described below in detail. These methods are all included inside the \textit{methods} directive described in previous section. As described in listing \ref{{JavsScript:ROSLIB.Service} caption} a ROSLIB.Service object needs to be created everytime a service needs to be called. It has a name parameter which has the 
+following syntax: 
+\begin{lstlisting}
+	name: '/<name of the active node>/<name of the service>'
+\end{lstlisting}
+This convention is utilized in all the following methods in this section.
 
-		// Available Services :
-		// /lifecycle_joytovel/change_state
-		// /lifecycle_joytovel/describe_parameters
-		// /lifecycle_joytovel/get_available_states
-		// /lifecycle_joytovel/get_available_transitions
-		// /lifecycle_joytovel/get_parameter_types
-		// /lifecycle_joytovel/get_parameters
-		// /lifecycle_joytovel/get_state
-		// /lifecycle_joytovel/get_transition_graph
-		// /lifecycle_joytovel/list_parameters
-		// /lifecycle_joytovel/set_parameters
-		// /lifecycle_joytovel/set_parameters_atomically
-		clear() {
-			this.available_states = [];
-			this.current_state = [];
-			this.available_transitions = [];
-		},
-		update() {
-			this.srvGetCurrentState()
-			this.srvGetAvailableTransitions()
-			this.srvGetAvailableStates()
-		},
+\paragraph{Methods to add lifecycle nodes and activate it} The \lstinline{add_node} method takes in the name of the lifecycle node provided through the UI and aappends it to an array. Multiple lifecycle nodes can be added to the application using this method. To activate a node the \lstinline{set_active_node} method is called. This selects a node from an array of nodes and sets it as the active node. It also clears all the fields in the UI and updates it based on the data received for the active node. The methods for clearing and updateding the UI are described in listing \ref{Implementation:Auxillary functions}.
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	add_node(){
+	  if (this.input_node_name !== "") {
+		this.added_nodes.push(this.input_node_name);
+		console.log(this.added_nodes);
+	  } 
+	},
 
-		dynobtn(par){
-		console.log(par);
-		},
+	set_active_node(data){
+		this.active_node = data;
+		this.clear();
+		this.update();
+	},
+\end{lstlisting}
 
-		add_node(){
-			if (this.input_node_name !== "") {
-				this.added_nodes.push(this.input_node_name);
-				console.log(this.added_nodes);
-			} 
-		},
 
-		set_active_node(data){
-			this.active_node = data;
-			this.clear();
-			this.update();
-		},
-		
-		srvGetCurrentState() {
+\paragraph{Service to get CurrentState} This method calls a ROS service to get the current state of the active lifecycle node. A new service object is created, as parameters, the global RosLibJS instance, the complete name of the service, and the service type is passed. All the available services for a lifecycle node are listed in listing \ref{code:ROS2:AvailableServices}. According to the service definition in listing \ref{code:ROS:Service definition GetState}, a ROSLIB.ServiceRequest object is created. This ServiceRequest object is then passed as a parameter to the callService function of the Service object created in the previous step.
+The callService function takes three parameters:
+\begin{lstlisting}
+    serviceObject.callService(request, <result_handler>, <error_handler>)
+\end{lstlisting}
+The first parameter is the ServiceRequest object, second and third are JavaScript Arrow Functions to extract the result of the service and error message. The third parameter is optional. The structure of the result object is described in listing \ref{code:ROS:JSON state}. The current state is extracted from the result object and the global currentState variable is updated.
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	srvGetCurrentState() {
 		var lifecycleClient = new ROSLIB.Service({
 			ros : this.ros,
-			// name : `/lifecycle_joytovel/get_state`,
 			name : `/${this.active_node}/get_state`,
 			serviceType : 'lifecycle_msgs/GetState'
 		});
 
-		console.log('Calling Service');
 		var request = new ROSLIB.ServiceRequest({});
-		console.log('Result for service call on '
-			+ lifecycleClient.name
-			+ ': ');
-			lifecycleClient.callService(request, (result) => {
+
+		lifecycleClient.callService(request, 
+			(result) => {
 				console.log(result);
 				this.current_state = result.current_state;
-			})
+			}
+		)
 		
 		},
+\end{lstlisting}
 
-		
-		srvGetAvailableStates() {
-		var lifecycleClient = new ROSLIB.Service({
-			ros : this.ros,
-			name : `/${this.active_node}/get_available_states`,
-			// name : '/lifecycle_joytovel/get_available_states', 
-			serviceType : 'lifecycle_msgs/GetAvailableStates'
-		});
+\paragraph{Service to get all available States} This method calls a ROS service to get the all available states of the active lifecycle node. A new service object is created, similar to the last example. According to the service definition in listing \ref{code:ROS:Service definition GetAvailableStates}, a ROSLIB.ServiceRequest object is created. The structure of the result object is described in listing \ref{code:ROS:JSON available states}. All available states are extracted from the result object, stored in a temporary array and the global availableStates array is updated.
+\begin{lstlisting}[language=JavaScript,
+	caption={Method to get available States}, 
+	label={code:Vue}]
+	srvGetAvailableStates() {
+	  var lifecycleClient = new ROSLIB.Service({
+		ros : this.ros,
+		name : `/${this.active_node}/get_available_states`,
+		serviceType : 'lifecycle_msgs/GetAvailableStates'
+	  });
 
-		console.log('Calling Service srvGetAvailableStates');
 		var request = new ROSLIB.ServiceRequest({});
-
 		var tempArr = [];
-		lifecycleClient.callService(request, (result) => {
+
+		lifecycleClient.callService(request, 
+		  (result) => {
 			console.log(result);
 			result.available_states.forEach(element => {
 				console.log(element);
@@ -995,94 +1029,144 @@ ROSLIB.Topic
 			});
 			this.available_states = tempArr;
 		})
+	},
 
-		console.log("this.available_states");
-		},
+\end{lstlisting}
 
+\paragraph{Service to get AvailableTransitions} This method calls a ROS service to get all available transitions of the active lifecycle node. A new service object is created, similar to the last example. According to the service definition in listing \ref{code:ROS:Service definition GetAvailableTransitions}, a ROSLIB.ServiceRequest object is created. The structure of the result object is described in listing \ref{code:ROS:JSON available transitions}. All available transitions are extracted from the result object, stored in a temporary array and the global availableTransitions array is updated.
+\begin{lstlisting}[language=JavaScript,
+	caption={Method to get available Transitions}, 
+	label={code:Vue}]
 	srvGetAvailableTransitions() {
-		var lifecycleClient = new ROSLIB.Service({
-			ros : this.ros,
-			name : `/${this.active_node}/get_available_transitions`,
-			// name : '/lifecycle_joytovel/get_available_transitions', 
-			serviceType : 'lifecycle_msgs/GetAvailableTransitions'
+	  var lifecycleClient = new ROSLIB.Service({
+		ros : this.ros,
+		name : `/${this.active_node}/get_available_transitions`,
+		serviceType : 'lifecycle_msgs/GetAvailableTransitions'
+	  });
+
+	  var request = new ROSLIB.ServiceRequest({});
+	  var tempArr = [];
+	
+	  lifecycleClient.callService(request, 
+		(result) => {
+		result.available_transitions.forEach(
+			element => {
+			tempArr.push(element);
 		});
+		this.available_transitions = tempArr;
+	  })
+	},
+\end{lstlisting}
 
-		console.log('Calling Service srvGetAvailableTransitions');
-		var request = new ROSLIB.ServiceRequest({});
 
-		var tempArr = [];
-		
-		lifecycleClient.callService(request, (result) => {
-			console.log(result);
-			result.available_transitions.forEach(element => {
-				console.log(element);
-				tempArr.push(element);
-			});
-			this.available_transitions = tempArr;
-		})
-
-		console.log(this.available_transitions);
-		},
-
-		srvChangeState() {
+\paragraph{Service to ChangeState} This method calls a ROS service to change the current state of the active lifecycle node to any valid state. A new service object is created, similar to the last example. According to the service definition in listing \ref{code:ROS:Service definition ChangeState}, a ROSLIB.ServiceRequest object is created. The ServiceRequest object requires a transition parameter, which consist a transition ID and a label. Transition ID can be selected in the UI, the available selections in UI is determined by a automatic state transition logic (described in section \ref{code}). The result in this case is a boolen, which indicates if the transition was succesfull. Then the update method is called.
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	srvChangeState() {
 		var lifecycleClient = new ROSLIB.Service({
 			ros : this.ros,
 			name : `/${this.active_node}/change_state`,
 			// name : '/lifecycle_joytovel/change_state', 
 			serviceType : 'lifecycle_msgs/ChangeState'
 		});
-
-		console.log('Calling Service change_state');
 	
 		var r_id = parseInt(this.selected_transition);
-		console.log(r_id );
 
 		var request = new ROSLIB.ServiceRequest({
 			transition: {id: r_id, label : ""}
 		});
 
 		lifecycleClient.callService(request, function(result) {
-			console.log('Result for service call on '
-			+ lifecycleClient.name);
-			console.log(request);
 			console.log(result);
-		}, function(result) {
-			console.log('Error');
-			console.log(result);
+		}, function(error) {
+			console.log(error);
 		});
 		this.update();
-		},
+	},
+\end{lstlisting}
 
-		subscribeToRosOut(){
+\paragraph{Subscribe to rosout} This method is necessary to implement the logging functionality in the UI. A ROSLIB.Topic object is created, which is used to subscribe to ROS topic \lstinline{\rosout}. The relevant log messages for the active lifecycle node is filtered and stored in a rolling array of a fixed size. This array is used by the logger component to disply log messages in the UI. Structure of the log message is described in listing \ref{code:ROS:Message definition Log}. The desired log level (DEBUG, INFO, WARN, ERROR or FATAL) can be selected using the mapLogLevel method in listing \ref{Implementation:Auxillary functions}. Using a global unsubscribe flag, the logging can be deactivated from the UI. 
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	subscribeToRosOut(){
 		var listener = new ROSLIB.Topic({
 			ros : this.ros,
 			name : '/rosout',
 			messageType : 'rcl_interfaces/msg/Log'
 			});
+
 			var msg = [];
 			listener.subscribe((msg)=> {
-			this.console_out.push(msg);
-			if (this.console_out.length > 10) {
-				this.console_out.shift();
-			}
-			console.log(msg);
-			if (this.unsub) {
-				listener.unsubscribe();
-			}
+				this.console_out.push(msg);
+				if (this.console_out.length > 10) {
+					this.console_out.shift();
+				}
+				
+				if (this.unsub) {
+					listener.unsubscribe();
+				}
 			}) 
 			console.log(msg);
 		},
+\end{lstlisting}
 
-		mapLogLevel(level){
-		if (level === 30) {
-			return "WARN"
-		} else {
+\paragraph{Auxillary Methods/Functions} These are some auxillary methods/functions used in this Vue component.
+\label{Implementation:Auxillary functions}
+\begin{lstlisting}[language=JavaScript,
+	% caption={dockerfile_startup}, 
+	label={code:Vue}]
+	clear() {
+		this.available_states = [];
+		this.current_state = [];
+		this.available_transitions = [];
+	},
+
+	update() {
+		this.srvGetCurrentState()
+		this.srvGetAvailableTransitions()
+		this.srvGetAvailableStates()
+	},
+
+	mapLogLevel(level){
+		if (level === 10) {
+			return "DEBUG"
+		} 
+		else if (level === 20){
 			return "INFO"
 		}
-
+		else if (level === 30){
+			return "WARN"
 		}
-	},
+		else if (level === 40){
+			return "ERROR"
+		}
+		else if (level === 10){
+			return "FATAL"
+		}
+	}
 \end{lstlisting}
+% \begin{lstlisting}[language=JavaScript,
+% 		% caption={dockerfile_startup}, 
+% 		label={code:Vue}]
+		
+% 	methods: {
+% 		// Available Services :
+% 		// /lifecycle_joytovel/change_state
+% 		// /lifecycle_joytovel/describe_parameters
+% 		// /lifecycle_joytovel/get_available_states
+% 		// /lifecycle_joytovel/get_available_transitions
+% 		// /lifecycle_joytovel/get_parameter_types
+% 		// /lifecycle_joytovel/get_parameters
+% 		// /lifecycle_joytovel/get_state
+% 		// /lifecycle_joytovel/get_transition_graph
+% 		// /lifecycle_joytovel/list_parameters
+% 		// /lifecycle_joytovel/set_parameters
+% 		// /lifecycle_joytovel/set_parameters_atomically
+% \end{lstlisting}
+
+\subsection{Lifecycle Dashboard UI}
 
 \begin{figure}[H]
 	\centering

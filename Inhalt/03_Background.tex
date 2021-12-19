@@ -547,21 +547,22 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 \end{lstlisting}
 
-These management services can be implemented via attributes and method calls (for local management) and via ROS messages and topics/services (for remote management). In the case of providing a ROS middleware interface, specific topics placed in a suitable namespace are used. Each possible management transition is provided as a ROS service which can be called directly with the ros2 command-line interface. The service reports whether the transition was completed successfully. Following is a list of available services which maybe called from ros CLI or RosLibJS (ROS2 JavaScript API). 
+These management services can be implemented via attributes and method calls (for local management) and via ROS messages and topics/services (for remote management). In case any another ROS middleware interface is used, specific topics placed in a suitable namespace are used. Each possible management transition is provided as a ROS service which can be called directly with the ROS2 command-line interface. The service reports whether the transition was completed successfully. Following is a list of available services which maybe called from ROS CLI or RosLibJS (ROS2 JavaScript API): 
 
-\begin{lstlisting}[language=JavaScript]
-	// Available Services :
-	// /lifecycle_joytovel/change_state
-	// /lifecycle_joytovel/describe_parameters
-	// /lifecycle_joytovel/get_available_states
-	// /lifecycle_joytovel/get_available_transitions
-	// /lifecycle_joytovel/get_parameter_types
-	// /lifecycle_joytovel/get_parameters
-	// /lifecycle_joytovel/get_state
-	// /lifecycle_joytovel/get_transition_graph
-	// /lifecycle_joytovel/list_parameters
-	// /lifecycle_joytovel/set_parameters
-	// /lifecycle_joytovel/set_parameters_atomically
+\begin{lstlisting}[language=cpp,
+	caption={Available Services for a Lifecycle Node}, 
+	label={code:ROS2:AvailableServices}]
+	/<name_of_lifecycle_node>/change_state
+	/<name_of_lifecycle_node>/describe_parameters
+	/<name_of_lifecycle_node>/get_available_states
+	/<name_of_lifecycle_node>/get_available_transitions
+	/<name_of_lifecycle_node>/get_parameter_types
+	/<name_of_lifecycle_node>/get_parameters
+	/<name_of_lifecycle_node>/get_state
+	/<name_of_lifecycle_node>/get_transition_graph
+	/<name_of_lifecycle_node>/list_parameters
+	/<name_of_lifecycle_node>/set_parameters
+	/<name_of_lifecycle_node>/set_parameters_atomically
 \end{lstlisting}
 
 \subsection{Lifecycle management CLI} ROS2 developers have developed a basic CLI to interact with the lifecycle nodes and control their specific behaviours. 
@@ -826,7 +827,9 @@ In the main.js file, the main Vue component (\texttt{App.vue}) is registered.
 
 \end{lstlisting}
 
-\subsection{Vue Component}The most important criterion for choosing this framework \texttt{(Vue.js)} is the modularity of the individual components. The components are one of the strongest features of \texttt{Vue.js}. They allow basic HTML elements to be extended to encapsulate reusable code. At a high level, components are custom elements to which the \texttt{Vue.js} compiler attaches a specific behavior \cite{Vue019:Intro:Online}. Each component is defined in a file with \texttt{.vue} extension. The definition contains an HTML-based template that specifies the design of the component and the JavaScript code that specifies all other functionality or behavior of the component. Each component is also a Vue instance.
+\subsection{Vue Component}
+\label{Vue:Component}
+The most important criterion for choosing this framework \texttt{(Vue.js)} is the modularity of the individual components. The components are one of the strongest features of \texttt{Vue.js}. They allow basic HTML elements to be extended to encapsulate reusable code. At a high level, components are custom elements to which the \texttt{Vue.js} compiler attaches a specific behavior \cite{Vue019:Intro:Online}. Each component is defined in a file with \texttt{.vue} extension. The definition contains an HTML-based template that specifies the design of the component and the JavaScript code that specifies all other functionality or behavior of the component. Each component is also a Vue instance.
 
 Typically, a Vue.js app is organized in a tree of nested components. For example, it consists of components for a header, sidebar, and content area, each containing other components for navigation links, blog posts, etc. The component architecture simplifies such nesting.
 
@@ -899,7 +902,8 @@ The most important parts of a component are described in the table \ref{tab:tabl
 \end{table}
 
 
-\subsection{instance lifecycle hooks} When created, each Vue instance goes through a series of initialization steps, e.g. it needs to set up data observation, compile the template, including the instance in the DOM and update the DOM when the data changes. In parallel, it also runs functions called lifecycle hooks that allow users to add their functions at certain stages of the instance lifecycle. This allows very precise control of the behavior of individual components.
+\subsection{Instance lifecycle hooks}
+\label{Vue:Instancelifecyclehooks} When created, each Vue instance goes through a series of initialization steps, e.g. it needs to set up data observation, compile the template, including the instance in the DOM and update the DOM when the data changes. In parallel, it also runs functions called lifecycle hooks that allow users to add their functions at certain stages of the instance lifecycle. This allows very precise control of the behavior of individual components.
 
 For example, the \textit{created} hook can be used to execute code after an instance has been created. Other hooks are called at different stages of the instance lifecycle, such as. \textit{mounted}, \textit{updated} and \textit{destroyed}. The figure \ref{fig:OrganisationOfComponents} illustrates the details of the complete lifecycle hook.
 
