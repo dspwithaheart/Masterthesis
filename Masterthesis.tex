@@ -49,8 +49,8 @@
 % Datei einbinden
 \loadglsentries{Inhalt/00_Glossar.tex}
 % Glossar generieren
-\makeglossaries
-
+% \makeglossaries
+\makenoidxglossaries
 % Da Von Römisch - Arabisch - Römisch gewechselt wird, wird ein Speicher benötigt
 \newcounter{SeitenzahlSpeicher}
 
@@ -87,12 +87,15 @@
 	% Alle Einträge ausgeben
 	\glsaddall
 	% Glossar darstellen
-	\printglossary
-	\label{sec:Glossar}
+	% \printglossary
+	% \label{sec:Glossar}
 	
 	% Abkürzungsverzeichnis
-	% \printglossary[type=\acronymtype, title=Abkürzungsverzeichnis, style=mylong]
+	% \printglossary[type=\acronymtype, title=List of Acronyms, style=mylong]
 	% \printglossary
+	% \printglossaries
+
+	\printnoidxglossary[type=\acronymtype,title=List of Acronyms, style=mylong]
 
 	% Aufräumen und Seitenanzahl speichern
    	\clearpage
