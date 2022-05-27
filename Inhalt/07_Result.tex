@@ -1,4 +1,12 @@
 \chapter{Result}
 \label{Result}
+	This thesis demonstrates the development process of a ROS2 based Robot Applications with inbuilt Lifecycle. Furthermore the appliaction is packed into a Docker environment which further simplifies the development process and helps intergate custom ROS2 applications into an existing Siemens Industrial Edge ecosystem. The developed Lifecycle Management Interface serves as a prototype for further development. An agile and modern web framework (VueJS) was used to develop the above mentioned Lifecycle Management Interface which allows for efficient addition of further functionalities to it.  
+
 	
-	
+    The developed Lifecycle Management Interface will help and improve the overall stability of various mobile Robots developed using ROS2. It will further facilitate integration of the newly developed mobile robots into an existing ecosystem. It will also ensure cross compatibility of mobile robots and enable development of application in field of swarm robotics. The potential use cases of this Lifecycle Management Appliation will be discussed in the following chapter in detail.
+    
+
+    Another major part of this thesis is the Dockerisation of ROS2 based Applications. It provides major advantages in the development, deployment and operational cycle of a moblie robot. It is a step towards developing a CI/CD pipeline for the mobile robot development. With intergation of Docker into the system, there is no need to develop a Operating System specific ROS Applications. With Docker multiple Applications with different Operating Systems and OS versions can run seamlessly on a single Computer system. It introduces a concept of microservices from web development into the ROS world. Which further simplifies the Network configuration and communication stability. A dockerised ROS2 application is then converted into Siemens Industrial Edge App. There is an existing ecosystem of IE Apps with an Appstore. After the conversion the ROS2 IE Apps can be downloaded from the IE Appstore and installed on a mobile robot without much hasel. 
+
+    
+    The Web interface for LifecycleManagement allows addition of multiple ROS2 nodes to the dashboard to be tracked and controlled. For a selected node the dashboard shows the current state of the node, availabe transitions and relevant log output to the console. From the dashboard it is possible to change the state of a lifecycle node to any other vialble state. The automatic state transition has been implemented in the dashboard which only shows valid transitions.
