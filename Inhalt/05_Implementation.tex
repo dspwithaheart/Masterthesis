@@ -192,9 +192,11 @@ a working directory for the Vue Application is created, the the package.json is 
 	CMD ./dockerfile_startup.sh	
 \end{lstlisting}
 
-\paragraph{Starting Ros Application} This step launches the installed ROS2-Application using its launchfile.
+\paragraph{Starting Ros Application} 
+The following listing shows the details of the startup file used in the above dockerfile. It is necessary to use this bash script to launch multiple services. The steps for running multiple services is describes in the section \ref*{Implementation:Docker:Multiple Services} in detail.
+This step also launches the installed ROS2-Application using its launchfile.
 \begin{lstlisting}[language=bash,
-	% caption={dockerfile_startup}, 
+	caption={dockerfilestartup.sh}, 
 	label={code:DockerTestumgebung}]
 	#!/bin/bash
 
@@ -216,8 +218,8 @@ a working directory for the Vue Application is created, the the package.json is 
 % 	docker run -it --privileged --network host --group-add dialout --ipc="host" --name agv_control_joy_rti ubuntu_foxy:manual_control_rti
 % \end{lstlisting}
 
-\begin{lstlisting}[language=html,
-	% caption={run_lifecycle.sh}, 
+\begin{lstlisting}[language=bash,
+	caption={runlifecycle.sh}, 
 	label={code:DockerTestumgebung}]
 	#!/bin/bash
 	docker start agv_control_joy_rti
@@ -226,6 +228,7 @@ a working directory for the Vue Application is created, the the package.json is 
 \end{lstlisting}
 
 \subsection{Running multiple services in a container}
+\label{Implementation:Docker:Multiple Services}
 The most important running process of a container is the ENTRYPOINT and/or CMD at the end of the Dockerfile. It is generally recommended to separate areas of concern by using one service per container. This service can split into several processes (e.g. the Apache webserver starts several working processes). It is fine to have multiple processes but to get the most benefit from Docker, you should avoid having one container responsible for multiple aspects of your entire application. You can connect multiple containers via custom networks and shared volumes.
 
 The main container process is responsible for managing all the processes it launches. In some cases, the main process is not well thought out and cannot properly terminate child processes when the container is terminated (reaping). If your process falls into this category, you can use the --init option when starting the container. The --init option adds a tiny init process as the main process in the container and takes care of reaping all processes when the container is terminated. Handling such processes is better than using a full-fledged init process like sysvinit, upstart, or systemd to manage the process lifecycle inside your container.
@@ -254,8 +257,8 @@ The main container process is responsible for managing all the processes it laun
 \end{lstlisting}
 
 \begin{lstlisting}[language=dockerfile,
-	% caption={dockerfile_startup}, 
-	label={code:Vue}]
+	caption={dockerfile startup}, 
+	label={code:Docker}]
 	# syntax=docker/dockerfile:1
 	FROM ubuntu:latest
 	COPY my_first_process my_first_process
@@ -1115,8 +1118,8 @@ The first parameter is the ServiceRequest object, second and third are JavaScrip
 \paragraph{Auxillary Methods/Functions} These are some auxillary methods/functions used in this Vue component.
 \label{Implementation:Auxillary functions}
 \begin{lstlisting}[language=JavaScript,
-	% caption={dockerfile_startup}, 
-	label={code:Vue}]
+	caption={Auxillary functions}, 
+	label={code:Auxillary functions}]
 	clear() {
 		this.available_states = [];
 		this.current_state = [];
@@ -1167,12 +1170,22 @@ The first parameter is the ServiceRequest object, second and third are JavaScrip
 % \end{lstlisting}
 
 \subsection{Lifecycle Dashboard UI}
+The developed user interface is depicted in the figure \ref{fig:Implementation:LifecycleDashboard}. 
+The functionalitiies of the web interface is based on the Lifecycle Management CLI described in section \ref{Lifecycle management CLI}. At the top of the UI there is a textfield that takes the name of the lifecycle node as an input. The button adjacent to it can be pressed in order to add the desired node to the list of added nodes. It is possible to add multiple nodes to the list using this UI component.
+The next UI component is a list of buttons with names of the nodes added to the dashboard. A single node can be selected by pressing the desired button to activate the node. The activated node is shown in the next line along with its current state. The following line consists of a list of buttons to call various functions mentioned in section \ref*{Implementation:ImportantFunctions}.
 
+The next line consists of buttons to enable the console logger and enable state transition. For state transition there is a dropdown list consisiting of valid states to be transition to. From this list the desired transition state can be selected and the state transition button next to it can be pressed to execute the desired transition.
+Below is table with the detail description of the available state transitions. 
+
+There is also a list of all availabe states for the active lifecycle node. Next to it is a console logger which constantly displays the application logs of the currently running lifecycle node. On top of the logger UI component there is a dropdown menu consisiting of different available log levels. The log levels are listed in the listing \ref{code:Auxillary functions} Upon selection of desired log level only the corresponding logs are displayed.  
+At the very bottom of the page there is a button to disable the logger for the active node.
+
+When a new lifecycle node is added to the dashboard or selected, the entire UI resets to the initial condition and the logs are cleared.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.95\textwidth]{"Bilder/lifecycle-dashboard.png"}
 	\caption{Lifecycle Dashboard}
-	\label{fig:Background:LifecycleDashboard}					
+	\label{fig:Implementation:LifecycleDashboard}					
 \end{figure}
 
 \section{Integration}
@@ -1208,8 +1221,6 @@ In the services section of the docker-compose file, the Docker image in the curr
 				networks:
 					- ie-app-network		
 \end{lstlisting}
-
-		
 	
 \chapter{Potential Use Cases}	
 

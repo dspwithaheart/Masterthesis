@@ -96,14 +96,18 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		All these services work together as a swarm, managed by different Managers and workers to manage. Each swarm contains a Docker daemon. These Daemons communicate with each other using the Docker API. A Docker Compose YAML file is used to get all these services running together. together to get them running. 
 
 		\paragraph{Networks}
-
+		One of the reasons Docker containers and services are so substantial is the ability to interconnect them or connect them to non-Docker workloads. Docker containers and services, in general, don't even need to be aware of the fact that they are deployed on Docker, or whether or not their peers are also Docker workloads. Whether the Docker hosts are running on Linux, Windows, or a mix of both, Docker can be used to manage them in a platform-independent way. Docker's network subsystem is extensible using drivers. By default, several drivers provide basic networking functions.\cite{dockerNetwork} 
+		Within the Networks option of a Docker-compose file,  a network to which each service wants to connect can be specified. In addition, a default network to be used for the entire application can be specified. If there is an existing network that the containers should join, this is an option to use the external network.\cite{Kinnary2018}
+		
 		\paragraph{Volumes}
+		Volumes are the preferred storage mechanism for data created and used by Docker containers. Volumes are fully managed by Docker and are independent of the host's directory structure and operating system. Volumes are easier to back up or migrate. They can be managed with Docker CLI commands or the Docker API. Volumes can be safely shared between multiple containers. For new volumes, the content can be pre-populated by a container. In addition, volumes are often a better choice than storing data in a container's writable layer because a volume does not increase the size of the containers that use it, and the contents of the volume exist outside the lifecycle of a particular container. In the Volumes option of a Docker Compose file, the volumes to be mapped from the host machine to the Docker container can be specified for each service.\cite{dockerStorage}
 			
-			
-		\paragraph{Dockerfiles}
+		\subsection{Dockerfiles}
+		\label{Grundlagen:Docker:Dockerfiles}	
 		Dockerfile is a text document that contains a set of instructions or commands for assembling an image that is understood by the build engine. The Dockerfile defines what goes into the environment inside your container. Accessing resources, mapping volumes, passing arguments, copying files that need to be inside your container are defined in this file. According to Dockerfile created, you need to build it to create the image of the container. Create container image. The image is just a snapshot of all the executed statements in the Dockerfile. Once this application image is created, you can expect that it will run on any machine that uses the same kernel. 
 		
-		\paragraph{Docker-Compose}
+		\subsection{Docker-Compose}
+		\label{Grundlagen:Docker:Docker-Compose}	
 		Docker Compose is the tool for running multi-container Docker applications. It is essentially a YAML file that can be thought of as a Compose of multiple Dockerfile containers, which can be used to put commands into a single file. This Docker Compose YAML file contains configurations of multiple services. Then, with a single command, you can run all services to run in Docker containers at the same time.
 		Docker Compose can be used to create a microservices architecture and link the containers together, or it can be used for a single service. In addition, Docker Compose can create images, scale containers, and re-run containers that have been stopped. All of these functions are part of Docker. Docker-compose is just a higher-level abstraction of container execution commands. Everything that a compose file can do, can likewise be performed with simple Docker commands, except that this requires more memory and additional overhead to execute any additional commands, to connect to the network, etc. . Docker-compose helps to simplify this process.
 				
@@ -565,7 +569,9 @@ These management services can be implemented via attributes and method calls (fo
 	/<name_of_lifecycle_node>/set_parameters_atomically
 \end{lstlisting}
 
-\subsection{Lifecycle management CLI} ROS2 developers have developed a basic CLI to interact with the lifecycle nodes and control their specific behaviours. 
+\subsection{Lifecycle management CLI}
+\label{Lifecycle management CLI}
+ ROS2 developers have developed a basic CLI to interact with the lifecycle nodes and control their specific behaviours. 
 It offers following functionalities and can be used as described below.
 \begin{lstlisting}[language=bash,
 	% caption={dockerfile_startup}, 
