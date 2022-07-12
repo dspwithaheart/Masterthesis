@@ -18,25 +18,21 @@
 		\item What problem is to be solved with the help of the application system?
 		\item What do your customers and users want from the system?
 		\item Development enviroment
-		\item Restrictions / Bounding conditions
-		\item Minimum vaible Product
-		\item 
 	\end{itemize}
 
-5.1.2 Functional requirements
-
+\subsection{Functional requirements}
 Functional requirements define the actions and functions that must be performed by the system. The system must implement these requirements to achieve the desired functionality. All individual functions should be listed atomically and should be examinable. The individual requirements are derived from the objective of the project. 
 
 The system must support deployment in different environments. It is also desired that the system uses ROS2 since ROS2 is used in the project group for a large number of applications. This would allow the developed system to be adapted to the existing application ecosystem.
 
 The list below establishes the list of functional requirements for the system to be developed:
+\begin{itemize}
+	\item F1 The application to be developed must be available as an Industrial Edge App which can run on an Industrial Edge Device.
+	\item  	Q10 An extension to the building project must run the task without interruption.
+	\item 	Q11 There must be a user interface
+	\item 	Q12 The user interface must be accessible via the browser.
+	\item 	Q13 The user interface shall list the ROS2 lifecycle nodes found
+	\item 	F15 The user interface shall provide status messages of the triggered process.
+	\item 	F20 ROS2 shall be used as the core framework.
+\end{itemize}
 
-F1 The application to be developed must be available as an Industrial Edge App which can run on an Industrial Edge Device.
-F7 A building project extension must be the compiler.
-F8 A compiler project extension must allow as many projects as necessary to be merged.
-Q10 An extension to the building project must run the task without interruption.
-Q11 There must be a user interface
-Q12 The user interface must be accessible via the browser.
-Q13 The user interface shall list the ROS2 lifecycle nodes found
-F15 The user interface shall provide status messages of the triggered process.
-F20 ROS2 shall be used as the core framework.

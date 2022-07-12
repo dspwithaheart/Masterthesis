@@ -259,7 +259,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\subsection{ROS Middleware Interface}
 	\label{Grundlagen:ROS2:ROSMiddlewareInterface}
-
+	ROS 2 was built on top of an existing middleware solution (namely DDS). The major advantage of this approach is that ROS 2 can leverage an existing and well-developed implementation of this standard. ROS 2 could be built using a particular implementation of DDS. However, there are multiple different implementations, and each has its advantages and disadvantages in terms of supported platforms, programming languages, performance characteristics, memory requirements, dependencies, and licensing. Consequently, ROS supports several DDS implementations, although each of them differs slightly in its exact API. To abstract from the specifics of these APIs, an abstract interface is introduced that can be implemented for different DDS implementations. This middleware interface defines the API between the ROS client library and each specific implementation. The ROS client library does not expose any DDS implementation specifics to the user. This in turn hides the inherent complexity of the DDS specification and its API.\cite{ros2OnMW}
 	
 	\subsection{Important ROS2 Concepts}
 	\label{Grundlagen:ROS2:Concepts}
@@ -278,18 +278,16 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\subsection{ROS2 Web Bridge}
 	\label{Grundlagen:ROS2:2WebBridge}
-		
-	\subsection{roslibjs}
+	Ros2-web-bridge provides a JSON interface to ROS, allowing any client to send JSON to publish or subscribe to ROS topics, call ROS services, and more. It leverages the rclnodejs client and provides a JSON interface to ROS 2 by adopting the rosbridge v2 protocol. Rosbridge v2 protocol supports a variety of transport layers, including WebSockets and TCP. The bridge can process commands through JSON tunneled over WebSockets. It is a part of  Robot Web Tools which is a collection of open-source libraries and tools for building web-based robot apps with ROS.\cite{ros2OnWB}
+
+	\subsection{The Standard ROS JavaScript Library (roslibjs) }
 	\label{Grundlagen:ROS2:RosLibJS}
-	
+	roslibjs is the core JavaScript library for interacting with ROS2 from the browser. It uses WebSockets to connect with rosbridge. It provides most of the essential ROS2 functionalities like publishing, subscribing, service calls, actionlib, etc. This library can be used to build web-based applications to communicate with other ROS2 applications.
 	
 
-	\subsection{DDS}
+	\subsection{DDS (Data Distribution Service)}
 	\label{Grundlagen:DDS}
-		- Grundlage für Kommunikation von ROS2\\
-		- Realisiert die eigentliche Kommunikation\\
-		- Wenn das hier geht, geht auch ROS2!
-		- Verschiedene Systemanbieter, näher wird RTI und Fastrtps untersucht: https://ros.org/reps/rep-2000.html  (Beide TIER 1)
+	DDS is a connectivity framework (standard) designed to enable reliable, high-performance, interoperable, scalable, real-time data exchange using a publish-subscribe pattern. DDS promotes the development of loosely coupled, open architecture modular systems. By supporting well-defined interfaces between components and subsystems, DDS eliminates bottlenecked, closed, and proprietary architectures. This reduces complexity and lowers integration, maintenance, and upgrade costs. This promotes competition at the subsystem and middleware levels and boosts reuse. DDS standardizes powerful messaging semantics that reduces development and integration costs while improving system scalability and robustness.\cite{ros2OnDDSRti}
 		
 	
 	\section{Ros Lifecycle nodes}
@@ -953,9 +951,3 @@ Nginx has a single master process and several worker processes. The master proce
 \subsection{Structure of Configuration File }
 The configuration file is named by default nginx.conf and placed in the directory \textit{"/usr/local/nginx/conf", "/etc/nginx", or "/usr/local/etc/nginx"}. Nginx consists of modules that are controlled by directives defined in the configuration file. Directives are split into simple directives and block directives. A simple directive is made up of the name and parameters separated by spaces and ends with a semicolon (;). A block directive ends with a sequence of additional arguments surrounded by curly braces. A block directive that contains other directives inside curly braces, is called a context (examples: events, http, server, and location). Directives that are outside contexts in the configuration file are in the main context. The directives events and http are in the main context. The server directive is inside the http directive and location inside the server. For comments, a hashtag \lstinline{(#)} sign is used.\cite*{nginxIntro}
 
-\subsection{Serving Static Content}
-
-		
-\chapter{Previous Work}
-
-Masterarbeit von Christoph (Für DDS und Routing service)

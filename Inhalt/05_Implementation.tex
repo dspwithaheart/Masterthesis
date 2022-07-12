@@ -229,27 +229,28 @@ This step also launches the installed ROS2-Application using its launchfile.
 
 \subsection{Running multiple services in a container}
 \label{Implementation:Docker:Multiple Services}
-The most important running process of a container is the ENTRYPOINT and/or CMD at the end of the Dockerfile. It is generally recommended to separate areas of concern by using one service per container. This service can split into several processes (e.g. the Apache webserver starts several working processes). It is fine to have multiple processes but to get the most benefit from Docker, you should avoid having one container responsible for multiple aspects of your entire application. You can connect multiple containers via custom networks and shared volumes.
+The most important running process of a container is the ENTRYPOINT and/or CMD at the end of the Dockerfile. It is generally recommended to separate areas of concern by using one service per container. This service can split into several processes (e.g. a webserver starts several working processes). It is fine to have multiple processes but to get the most benefit from Docker, it is recommended to avoid having one container responsible for multiple aspects of the entire application. Multiple containers can be connected via custom networks and shared volumes.
 
-The main container process is responsible for managing all the processes it launches. In some cases, the main process is not well thought out and cannot properly terminate child processes when the container is terminated (reaping). If your process falls into this category, you can use the --init option when starting the container. The --init option adds a tiny init process as the main process in the container and takes care of reaping all processes when the container is terminated. Handling such processes is better than using a full-fledged init process like sysvinit, upstart, or systemd to manage the process lifecycle inside your container.
+The main container process is responsible for managing all the processes it launches. In some cases, the main process is not well thought out and cannot properly terminate child processes when the container is terminated. For a process falling into this category, the use of the --init option when starting the container is recommended. The --init option adds a tiny init process as the main process in the container and terminates all processes when the container is terminated. Handling such processes is better than using a full-fledged init process like sysvinit, upstart, or systemd to manage the process lifecycle inside a container.\cite{dockerMultipleService}
 
+The following code snippet demonstrates the process of starting multiple services in a container. The first part \ref{code:DockerWrapper} is a wrapper script that will be eventually run from the Dockerfile listed in the listing \ref{code:Docker:MSDockerfile}.
 \begin{lstlisting}[language=bash,
-	% caption={dockerfile_startup}, 
-	label={code:Vue}]
+	caption={Wrapper script \cite{dockerMultipleService}}, 
+	label={code:DockerWrapper}]
 	#!/bin/bash
-  
+	#/my_wrapper_script.sh
+
 	# turn on bash's job control
 	set -m
 	
 	# Start the primary process and put it in the background
-	./my_main_process &
+	./my_first_process &
 	
 	# Start the helper process
-	./my_helper_process
+	./my_second_process
 	
-	# the my_helper_process might need to know how to wait on the
+	# the my_second_process might need to know how to wait on the
 	# primary process to start before it does its work and returns
-	
 	
 	# now we bring the primary process back into the foreground
 	# and leave it there
@@ -257,8 +258,8 @@ The main container process is responsible for managing all the processes it laun
 \end{lstlisting}
 
 \begin{lstlisting}[language=dockerfile,
-	caption={dockerfile startup}, 
-	label={code:Docker}]
+	caption={Example Dockerfile for running multiple services \cite{dockerMultipleService}}, 
+	label={code:Docker:MSDockerfile}]
 	# syntax=docker/dockerfile:1
 	FROM ubuntu:latest
 	COPY my_first_process my_first_process
@@ -266,11 +267,7 @@ The main container process is responsible for managing all the processes it laun
 	COPY my_wrapper_script.sh my_wrapper_script.sh
 	CMD ./my_wrapper_script.sh
 	
-	
 \end{lstlisting}
-
-\lstinline{https://docs.docker.com/config/containers/multi-service_container/}
-
 
 \subsection{Nginx server configuration}
 \label{Impl:NginxConfig}
@@ -517,17 +514,12 @@ In order to convert a normal ROS2 node into a lifecycle node following steps nee
 	\item Perform necessary setup and initialization in main() function.  
 \end{itemize}
 
-
-\subsection{A multi node Applicaton}
-A realistic robot consists of several independent components which need to run simultaneously and interact with each other. In order to simulate a system with multiple managed nodes an example multi node ROS2 Application is developed in this section. For demonstration purposes three nodes which depend on each other during different states of their lifecycle is developed. 
-
 \section{Vue based Webinterface}
 \label{Implementierung:VueBasedWebinterface}
 The developed web interface is supposed to be a web version of the lifecycle management CLI. 
 
-\subsection{Web Application Requirements}
-
 \subsection{Web Application Design}
+The purpose of the developed web application is to be able to communicate with different ROS2 applications running within a specified network. To accomplish this Ros2-Web-Bridge is used to create an interface between the ROS2 DDS network and a web-based client application. The interface is realized in form of a WebSocket on the following URL (ws://localhost:9090). Then a JavaScript client library Roslibjs is utilized to connect the web application to the above-mentioned Websocket. Roslibjs can be imported into a web-application framework like Vue using the standard ES6 import syntax.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.95\textwidth]{"Bilder/webapp-design.png"}
@@ -864,9 +856,6 @@ ROSLIB.Topic
 
 \end{itemize}
 
-\subsection{Used libraries/ package.json}
-
-\subsection{Implementing Automatic State Transitions}
 
 \subsection{Code Overview} For developing the web appliaction a web framework called VueJS (described in section \ref{Grundlagen:Vue}) is used. This allows the use of various pre-built html components and streamlined application structure with various plugins which in turn makes the UI development structured and easier. The UI part is encapsulatd inside the template tag and the JavaScript part in the script tag of a Vue component(described in section \ref{Vue:Component}). The project structure described in \ref{sec:StructureofVue.jsProject} is used.   
 
@@ -1224,12 +1213,14 @@ In the services section of the docker-compose file, the Docker image in the curr
 	
 \chapter{Potential Use Cases}	
 
-To test the Lifecycle Management Interface and showcase a Use case for the Managed Lifecyle nodes a swarm of turtlesim nodes is created and various processes during their lifecycle are contorled (managed) with the help of a web based Lifecycle Management Interface. 
-\subsection{Convertig Turtlesim into a Lifecycle node}
-
-\subsection{Test Steps}
 \begin{itemize}
-	\item Reconfiguring the input sensitivity(in state Configure)
-	\item Respawning on the Fly (transitions create, configure, activate)
-	\item Shuttingdown individual Turtlesim Node (shutdown)
+	\item  Dynamic reconfiguration of various operating parameters of component nodes (applications) within a robot system. For example: reconfiguring the input sensitivity of the joysticks.
+	\item 	Respawning or Restarting various subsystems on the fly.
+	\item 	Allows package updates to be installed without shutting down the entire system. (Modularity/ CI/CD)
+	\item 	Streamlines the debugging and error logging process of subsystem applications.
+	\item 	Simplifies the installation of additional modular components on an existing mobile robot or the sharing of modular components among a group of robots.
+	\item 	Enables active status monitoring of various subsystems for early and efficient maintenance.
+	\item 	Prevents total system failure by loosely coupling different subsystems and avoiding a monolithic architecture.
+	\item 	Provides developers with the freedom to choose from different libraries and frameworks which do not have to be version compatible.
+	\item 	Supports the development of an autonomously operating and updating fleet of mobile robots.
 \end{itemize}
