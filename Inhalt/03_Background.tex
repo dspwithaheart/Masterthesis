@@ -53,7 +53,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\section{Docker}
 	\label{Grundlagen:Docker}
-	\textit{Docker is a person who works at a port whose job is to load goods onto and off container ships.} \cite{docker-definition-english}
+	\textit{Docker is a person who works at a port whose job is to load goods onto and off container ships.} \cite{docker-definition-english}\\
 
 	Software Docker essentially does the same in the software context. Docker is a collection of open-source tools that quickly wraps up any application and all its unique dependencies in a lightweight, portable, self-sufficient container that can run virtually anywhere on any infrastructure.\cite{docker-definition}
 	Docker was launched as an open-source project by dotCloud, Inc. in
@@ -66,7 +66,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\label{Grundlagen:Docker:Docker Engine}
 		The Docker engine is the software for the infrastructure that runs and orchestrates containers. All other Docker, Inc. and third-party products connect to and develop around the Docker Engine. It provides a workflow for building and managing the application stack. It builds and runs containers using other Docker components and services. It consists of the Docker daemon; a REST API that specifies the interfaces that programs can use to communicate with the daemon; and the CLI, the command-line interface that communicates with the Docker daemon via the API. Docker Engine creates and runs the Docker container from the Docker image file.\\
 		\\
-		Following Diagramm illustrates the Docker System Architecture.
+		Following Diagram illustrates the Docker System Architecture.
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.9\textwidth]{"Bilder/DockerArchitecture.png"}
@@ -108,13 +108,14 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		
 		\subsection{Docker-Compose}
 		\label{Grundlagen:Docker:Docker-Compose}	
-		Docker Compose is the tool for running multi-container Docker applications. It is essentially a YAML file that can be thought of as a Compose of multiple Dockerfile containers, which can be used to put commands into a single file. This Docker Compose YAML file contains configurations of multiple services. Then, with a single command, you can run all services to run in Docker containers at the same time.
+		Docker Compose is the tool for running multi-container Docker applications. It is essentially a YAML file that can be thought of as a Compose of multiple Dockerfile containers, which can be used to put commands into a single file. This Docker Compose YAML file contains configurations of multiple services. Then, with a single command, you can run all services to run in Docker containers at the same time.\\
+
 		Docker Compose can be used to create a microservices architecture and link the containers together, or it can be used for a single service. In addition, Docker Compose can create images, scale containers, and re-run containers that have been stopped. All of these functions are part of Docker. Docker-compose is just a higher-level abstraction of container execution commands. Everything that a compose file can do, can likewise be performed with simple Docker commands, except that this requires more memory and additional overhead to execute any additional commands, to connect to the network, etc. . Docker-compose helps to simplify this process.
 				
 	\section{Industrial Edge}
 	\label{Grundlagen:IndustrialEdge}
 		
-	Industrial Edge is a development from Siemens that makes it possible to analyze data generated in various industrial processes on the device itself. It combines local engineering with cloud engineering.\cite{siemensIndustrialEdge}
+	Industrial Edge is a development from Siemens that makes it possible to analyze data generated in various industrial processes on the device itself. It combines local engineering with cloud engineering.\cite{siemensIndustrialEdge}\\
 
 	This eliminates unnecessary data transport between the end device and the server, only processed data is sent to the server. The processing load is in this way directed from the server towards the end device. Edge applications serve this purpose, they contain a fixed set of functions and can be accessed with the edge infrastructure on the respective end device (edge device). These apps are based on Docker technology and run one or more Docker containers in them. Figure \ref{fig:Grundlagen:IndustrialEdge:Ueberblick} shows a typical infrastructure from the top server to the end devices.
 
@@ -131,12 +132,12 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 			
 		\paragraph{Industrial Edge Management System}
 			The \gls{IEM} is a server, which can be operated independently in a local network. It allows the user to create their own server which avoids the transmission of raw sensitive data exchanged between the edge device and the IEM over the Internet.
-
 			In addition, the end(edge) devices can be managed via this server, which includes the installation of apps and software updates and further analysis of individual apps. A self-developed Application can be uploaded to the IEM, which in turn can distribute it to the edge devices.\cite{siemensIndustrialEdge}
 
 		\paragraph{Industrial Edge Hub}
 			The \gls{IEH} 
 			is the top server-level Application hub provided by Siemens. On this platform, Siemens offers applications developed in-house. These can be loaded onto the IEM for a license fee. Any required software packages and documentation can be downloaded from here. This streamlines the development process of custom applications including deployment, and operation on desired IEM.\cite{siemensIndustrialEdge}
+
 		\paragraph{Industrial Edge App}
 			An \gls{IEA} (edge app) is used for the intelligent processing of industrial automation tasks.\cite{siemensIndustrialEdge} It is a Docker-based image, which is runs on the IED. A docker-compose file acts as the top description level file, it specifies various parameters and the sequence in which the Docker images are started. The parameters include network configuration, data storage, and other application-specific configurations. It supports all Docker-compose version 2.4 settings. Modification of this docker-compose file allows configuring any Edge app, even after it has been already downloaded to an edge device. An Edge App can be downloaded to an edge device through the IEM.
 	
@@ -204,7 +205,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\label{Grundlagen:ROS2:CommunicationPatterns}
 
 	The nodes communicate with each other via topics, service calls, and actions. Topic-based Communication is based on a publish-subscribe architecture, where the data generated and published by a node can be subscribed to by more than one node, and likewise, a Topic can produce data for more than one node. 
-	The distributed architecture of the topic topology offers improvements in terms of performance and fault tolerance. Additionally, the extensive quality of service(QoS) features in the DDS middleware layer make ROS-2 architecture more robust and enable developers to use it in an industrial- /real-life application.
+	The distributed architecture of the topic topology offers improvements in terms of performance and fault tolerance. Additionally, the extensive quality of service(QoS) features in the DDS middleware layer make ROS-2 architecture more robust and enable developers to use it in an industrial- /real-life application.\\
 
 	A comprehensive robotic system has several nodes working together in harmony. In ROS 2 a single executable (C++ program, Python program, etc.) can hold one or more nodes in them. This network of ROS 2 elements running simultaneously and processing data is referred to as a ROS graph. It includes all executables and the connections between them.
 
@@ -253,7 +254,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\subsection{ROS2 Client Library}
 	\label{Grundlagen:ROS2:ROS2ClientLibrary}
-	Client libraries are the APIs that users can use to implement their ROS code. Client libraries give users access to ROS concepts such as nodes, themes, services, etc. Client libraries come in a variety of programming languages, so users can write ROS code in the language that best suits their application.
+	Client libraries are the APIs that users can use to implement their ROS code. Client libraries give users access to ROS concepts such as nodes, themes, services, etc. Client libraries come in a variety of programming languages, so users can write ROS code in the language that best suits their application.\\
 
 	Nodes written with different client libraries can exchange messages with each other because all client libraries implement code generators that allow users to interact with ROS interface files in the respective language.
 
@@ -292,22 +293,21 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	
 	\section{Ros Lifecycle nodes}
 	\label{Grundlagen:ROS2:Lifecycle}
-	Having a managed lifecycle for nodes allows for better control over the state of the ROS system. This ensures that in a ROS2 Robotics System all components have been correctly instantiated before allowing a component to perform its behavior. It also allows nodes to be restarted or replaced online.
+	Having a managed lifecycle for nodes allows for better control over the state of the ROS system. This ensures that in a ROS2 Robotics System all components have been correctly instantiated before allowing a component to perform its behavior. It also allows nodes to be restarted or replaced online.\\
 
-	A managed node has a known interface, executes according to a known lifecycle state machine. This allows the application (node) developer to decide how to implement various managed lifecycle functions while securing compatibility with other lifecycle nodes.\\
-	
-	The base functionality of a managed lifecycle node is described using a state machine illustrated in figure \ref*{fig:Background:Ros2LifecycleStateMachine}.\\
+	A managed node has a known interface, executes according to a known lifecycle state machine. This allows the application (node) developer to decide how to implement various managed lifecycle functions while securing compatibility with other lifecycle nodes.	
+	The base functionality of a managed lifecycle node is described using a state machine illustrated in figure \ref{fig:Background:Ros2LifecycleStateMachine}.\\
 
 	\textit{"A state machine is a mathematical abstraction used to design algorithms. A state machine reads a set of inputs and changes to a different state based on those inputs. A state is a description of the status of a system waiting to execute a transition. A transition is a set of actions to execute when a condition is fulfilled or an event received."} \cite*{statemachineDef}\\
 
-	There are 4 primary states (colored blue in figure \ref*{fig:Background:Ros2LifecycleStateMachine}):
+	There are 4 primary states (colored blue in figure \ref{fig:Background:Ros2LifecycleStateMachine}):
 	\begin{itemize}
 		\item Unconfigured
 		\item Inactive
 		\item Active
 		\item Finalized
 	\end{itemize}
-	In addition, there are 6 transition states, which are intermediate states during a requested transition(colored in yellow in figure \ref*{fig:Background:Ros2LifecycleStateMachine} ):
+	In addition, there are 6 transition states, which are intermediate states during a requested transition(colored in yellow in figure \ref{fig:Background:Ros2LifecycleStateMachine} ):
 	\begin{itemize}
 		\item Configuring
 		\item CleaningUp
@@ -320,7 +320,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\begin{table}[H]
 		\centering
 		\rowcolors{1}{}{gray!25}
-		\caption{Availabe Transitions}
+		\caption{Available Transitions}
 		\label{tab:Valid transitions}
 		\begin{tabular}{|p{2cm}|p{9cm}|}
 			\toprule
@@ -340,14 +340,14 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.95\textwidth]{"Bilder/ros_lifecycle.png"}
-		\caption{ROS2 Lifecycle Statemachine \cite{ros-2-lifecycle}}
+		\caption{ROS2 Lifecycle State machine \cite{ros-2-lifecycle}}
 		\label{fig:Background:Ros2LifecycleStateMachine}					
 	\end{figure}
 
 	\subsection{Primary States}	
 	The transition from a primary state requires an action of an external monitoring process, except in the case of an error triggered in the 3rd primary ("active") state.
 	\begin{labeling}{Unconfigured:::::}
-		\item[\textbf{Unconfigured}] This is the starting state of the state machine. When a node is instantiated, it finds itself in this lifecycle state. In case of any unexpected error, a node can be returned to this state. In this state, it is expected that there is no saved state. From this state the following transitions via corresponding transition states are availabe:
+		\item[\textbf{Unconfigured}] This is the starting state of the state machine. When a node is instantiated, it finds itself in this lifecycle state. In case of any unexpected error, a node can be returned to this state. In this state, it is expected that there is no saved state. From this state the following transitions via corresponding transition states are available:
 		\begin{table}[H]
 			\centering
 			% \rowcolors{1}{}{gray!25}
@@ -399,7 +399,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 		\item[\textbf{Finalized}] In this state, the node ends its execution immediately before its deallocation. This state is always final, the only transition from here for a node is to be destroyed and completely removed from the system.
 
-		The main purpose of this state is to support debugging and introspection. A failed node remains visible for introspection in the system and can potentially be examined by debugging tools before being destroyed. If a node is started in a respawn loop or there are known reasons for the cycling into this state, the supervising monitoring process can automatically destroy and recreate the node based on a predefined policy. From this state the following transitions via corresponding transition states are availabe:
+		The main purpose of this state is to support debugging and introspection. A failed node remains visible for introspection in the system and can potentially be examined by debugging tools before being destroyed. If a node is started in a respawn loop or there are known reasons for the cycling into this state, the supervising monitoring process can automatically destroy and recreate the node based on a predefined policy. From this state the following transitions via corresponding transition states are available:
 		\begin{table}[H]
 			\centering
 			% \rowcolors{1}{}{gray!25}
@@ -419,7 +419,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	Application-specific logic is executed in the transition states to determine if the requested transition was successful. The lifecycle management software is notified of success or failure via the lifecycle management interface before transitioning to another state.
 	\begin{labeling}{ErrorProcessing:::::}
 		\item[\textbf{Configuring}] In this transition state, the node's \textit{onConfigure()} callback is invoked to allow the node to load its configuration and make any necessary changes to its settings. Configuring a node typically involves tasks that need to be done once during the node's lifetime, such as allocating permanent memory buffers and setting up topic publications/subscriptions that do not change. The node uses this to set up all the resources it needs to keep throughout its lifetime (whether it is active or inactive). 
-		From this state the following transitions are availabe:
+		From this state the following transitions are available:
 		\begin{table}[H]
 			\flushright
 			% \rowcolors{1}{}{gray!25}
@@ -436,7 +436,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\end{table}
 
 		\item[\textbf{CleaningUp}] In this transition state, the node's \textit{onCleanup()} callback is invoked, which is expected to clear all states and return the node to a functionally equivalent state as when it was first created. If the clean-up cannot be performed successfully, the method moves on to ErrorProcessing.
-		From this state the following transitions are availabe:
+		From this state the following transitions are available:
 		\begin{table}[H]
 			\flushright
 			% \rowcolors{1}{}{gray!25}
@@ -452,7 +452,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\end{table}
 
 		\item[\textbf{Activating}] In this transition state, the node's \textit{onActivate()} callback is invoked to allow the node to make the final preparations before starting execution. This may include obtaining resources necessary when the node is active(e.g. accessing the hardware). Ideally, no time-consuming operations should be made in this callback (e.g. a lengthy hardware initialization).
-		From this state the following transitions are availabe:
+		From this state the following transitions are available:
 		\begin{table}[H]
 			\flushright
 			% \rowcolors{1}{}{gray!25}
@@ -468,7 +468,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\end{table}
 
 		\item[\textbf{Deactivating}] In this transition state, the node's \textit{onDeactivate()} callback is invoked, which is expected to do any cleanup necessary to start execution, and is supposed to reverse the changes made by \textit{onActivate()} callback .
-		From this state the following transitions are availabe:
+		From this state the following transitions are available:
 		\begin{table}[H]
 			\flushright
 			% \rowcolors{1}{}{gray!25}
@@ -484,7 +484,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\end{table}
 
 		\item[\textbf{ShuttingDown}] In this transition state, the node's \textit{onShutdown()} callback is invoked, which is expected to do any cleanup necessary before destruction of the node. It can be transitioned into from any Primary State except Finalized. The originating state is passed to this state as a parameter .
-		From this state the following transitions are availabe:
+		From this state the following transitions are available:
 		\begin{table}[H]
 			\flushright
 			% \rowcolors{1}{}{gray!25}
@@ -499,8 +499,8 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 			\end{tabular}
 		\end{table}
 
-		\item[\textbf{ErrorProcessing}] This state exists in order to be able to clear any unhandled errors.  All error processing functionality should be implemented in this state. This state can be transitioned into from any state where user code is executed. In case of successful error handling, the node can return to the Unconfigured state. If complete clean-up is not possible, the node must fail, and transition to the Finalised state. Transitions to ErrorProcessing can be triggered by errors in callbacks as well as by other methods within a callback or an uncaught exception.
-		From this state the following transitions are availabe:
+		\item[\textbf{ErrorProcessing}] This state exists in order to be able to clear any unhandled errors.  All error processing functionality should be implemented in this state. This state can be transitioned into from any state where user code is executed. In case of successful error handling, the node can return to the Unconfigured state. If complete clean-up is not possible, the node must fail, and transition to the Finalized state. Transitions to ErrorProcessing can be triggered by errors in callbacks as well as by other methods within a callback or an uncaught exception.
+		From this state the following transitions are available:
 		\begin{table}[H]
 			\flushright
 			% \rowcolors{1}{}{gray!25}
@@ -518,9 +518,9 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\end{labeling}
 
 	\subsection{Management Interface}
-	A managed node is exposed to the ROS ecosystem through the following interface. This interface can be used by applications that perform the actual management. This interface is independent of the lifecycle status of individual nodes and is thus not be subject to any communication restrictions.
+	A managed node is exposed to the ROS ecosystem through the following interface. This interface can be used by applications that perform the actual management. This interface is independent of the lifecycle status of individual nodes and is thus not be subject to any communication restrictions.\\
 
-	A managed node or lifecycle node has a common pattern which it inherits from a container class that loads a managed node implementation from a library and, through a plug-in architecture, automatically exposes the required management interface by implementing callback methods. 
+	A managed node or lifecycle node has a common pattern which it inherits from a container class that loads a managed node implementation from a library and, through a plug-in architecture, automatically exposes the required management interface by implementing callback methods.\\ 
 
 	A lifecycle node does not inherit from the regular \lstinline{rclcpp::node::Node} but from\\  \lstinline{rclcpp_lifecycle::LifecycleNode}. Every child of LifecycleNodes has a set of callbacks provided. These callbacks go along with the applied state machine attached to them. These callbacks are:
 
@@ -569,7 +569,7 @@ These management services can be implemented via attributes and method calls (fo
 
 \subsection{Lifecycle management CLI}
 \label{Lifecycle management CLI}
- ROS2 developers have developed a basic CLI to interact with the lifecycle nodes and control their specific behaviours. 
+ ROS2 developers have developed a basic CLI to interact with the lifecycle nodes and control their specific behaviors. 
 It offers following functionalities and can be used as described below.
 \begin{lstlisting}[language=bash,
 	% caption={dockerfile_startup}, 
@@ -701,9 +701,9 @@ Default values for transitions:
 
 	\section{Vue JS}
 	\label{Grundlagen:Vue}
-	Vue is described as a progressive web framework. This means that it adapts to the needs of the developer. While other frameworks require a complete adoption of a technology by a developer or team and often require an existing application to be rewritten because of certain framework-specific conventions. Vue can be introduced to an application with a simple script tag and can grow with requirements, from a small web component to managing the entire view layer. Vue is a scalable JavaScript framework for building user interfaces. Unlike other frameworks, Vue is designed from the ground up to be incrementally customizable. The core library is view-only and easily integrates with other libraries or existing projects. In combination with modern tools and additional libraries, Vue is capable of running sophisticated single-page applications \cite{Vue019:Intro:Online}.
-	It is not necessary to have prior knowledge of Webpack, Babel, npm or the like to get started with Vue. HTML, CSS, and the basics of JavaScript are enough to get started with Vue.
+	Vue is described as a progressive web framework. This means that it adapts to the needs of the developer. While other frameworks require a complete adoption of a technology by a developer or team and often require an existing application to be rewritten because of certain framework-specific conventions. Vue can be introduced to an application with a simple script tag and can grow with requirements, from a small web component to managing the entire view layer. Vue is a scalable JavaScript framework for building user interfaces. Unlike other frameworks, Vue is designed from the ground up to be incrementally customizable. The core library is view-only and easily integrates with other libraries or existing projects. In combination with modern tools and additional libraries, Vue is capable of running sophisticated single-page applications \cite{Vue019:Intro:Online}.\\
 
+	It is not necessary to have prior knowledge of Webpack, Babel, npm or the like to get started with Vue. HTML, CSS, and the basics of JavaScript are enough to get started with Vue.
 	The leap from a pure HTML and CSS-based website to a sophisticated web application is very simple and can be learned during the development process. This is a strong selling point, especially in the current ecosystem of JavaScript front-end frameworks and libraries, which makes newcomers and even experienced developers feel lost in the ocean of possibilities and choices. The goal of Vue is to be able to create reasonable web applications with minimal prior knowledge.
 	
 	\subsection{Main Features of Vue}
@@ -719,7 +719,7 @@ Default values for transitions:
 	\cite{VueGuide:Online}
 
 
-	\subsection{Vue in comparision to Angular und React}
+	\subsection{Vue in comparison to Angular und React}
 	\label{sec:VueAngularReact}
 	Vue borrowed some of the Angular templating syntaxes but removed the complex stack that Angular required. This made it very powerful. Vue took many good ideas from React, especially the virtual DOM.  But Vue implements it with a kind of automatic dependency management that tracks which components are affected by a change in the state so that only those components are re-rendered when the state property changes. In React, on the other hand, if any part of the state that affects a component changes, that component is re-rendered, and thus any associated child components are also re-rendered. This is an advantage for Vue in terms of usability and performance enhancement \cite{VueComparision:Online}.
 
@@ -833,14 +833,14 @@ In the main.js file, the main Vue component (\texttt{App.vue}) is registered.
 
 \subsection{Vue Component}
 \label{Vue:Component}
-The most important criterion for choosing this framework \texttt{(Vue.js)} is the modularity of the individual components. The components are one of the strongest features of \texttt{Vue.js}. They allow basic HTML elements to be extended to encapsulate reusable code. At a high level, components are custom elements to which the \texttt{Vue.js} compiler attaches a specific behavior \cite{Vue019:Intro:Online}. Each component is defined in a file with \texttt{.vue} extension. The definition contains an HTML-based template that specifies the design of the component and the JavaScript code that specifies all other functionality or behavior of the component. Each component is also a Vue instance.
+The most important criterion for choosing this framework \texttt{(Vue.js)} is the modularity of the individual components. The components are one of the strongest features of \texttt{Vue.js}. They allow basic HTML elements to be extended to encapsulate reusable code. At a high level, components are custom elements to which the \texttt{Vue.js} compiler attaches a specific behavior \cite{Vue019:Intro:Online}. Each component is defined in a file with \texttt{.vue} extension. The definition contains an HTML-based template that specifies the design of the component and the JavaScript code that specifies all other functionality or behavior of the component. Each component is also a Vue instance.\\
 
 Typically, a Vue.js app is organized in a tree of nested components. For example, it consists of components for a header, sidebar, and content area, each containing other components for navigation links, blog posts, etc. The component architecture simplifies such nesting.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{Bilder/img/components.png}  
-  \caption{ \textit{Organization of Componenten} \cite{VueComponents:Online}}%
+  \caption{ \textit{Organization of Components} \cite{VueComponents:Online}}%
 \label{fig:OrganisationvonKomponenten}
 \end{figure}
 
@@ -848,7 +848,7 @@ Typically, a Vue.js app is organized in a tree of nested components. For example
 
 The template element contains the HTML template and the script element contains the JavaScript part of the component.
 \begin{labeling}{Template element::}
-	\item [Template element:] The design of the user interface is implemented in this element. Standard HTML and CSS technology are used for this. User-defined HTML elements, as well as HTML elements from external plug-ins, can be integrated very easily. The HTML-based template syntax of Vue.js allows binding the rendered DOM declaratively to the data of the underlying Vue instance. All Vue. js templates are valid HTML.
+	\item [Template element:] The design of the user interface is implemented in this element. Standard HTML and CSS technology are used for this. User-defined HTML elements, as well as HTML elements from external plug-ins, can be integrated very easily. The HTML-based template syntax of Vue.js allows binding the rendered DOM declaratively to the data of the underlying Vue instance. All Vue.js templates are valid HTML.
 	
 	The simplest form of data binding is text interpolation using the \textit{mustache} syntax (double curly braces):
 	\begin{lstlisting}[language=html,label={lst:label}, caption=Templateelement]
@@ -899,7 +899,7 @@ The most important parts of a component are described in the table \ref{tab:tabl
         components & [key: string]: Object &This is a list of custom components to be used. The custom or external components are imported with \texttt{\textcolor{purple}{import}} command to import them from the ES6 specification.\\
 		data & Object or Function & This is a JavaScript object or function that allows the storage of the necessary attributes for the component. Within the component, the original data object can be accessed with \texttt{\textcolor{purple}{this.data}} directive can be accessed.\\
 		props & Array\(<string>\) or Object & This is a list/hash of attributes intended to hold data from the parent component. It has a simple array-based syntax and an alternative object-based syntax that allows advanced configurations such as type checking, custom validation and default values. \\
-        methods & [key: string]: Function & This is a list of methods that allow the realisation of different functionalities of the component.  All methods can be called within the component as a standard JavaScript method.\\
+        methods & [key: string]: Function & This is a list of methods that allow the realization of different functionalities of the component.  All methods can be called within the component as a standard JavaScript method.\\
         computed & [key: string]: Function & This is a list of methods that will be called automatically when the reactive dependencies change. The attributes within these parameters are cached and only recomputed on reactive dependency changes. \\
 		\bottomrule
 	\end{tabular}
@@ -907,7 +907,7 @@ The most important parts of a component are described in the table \ref{tab:tabl
 
 
 \subsection{Instance lifecycle hooks}
-\label{Vue:Instancelifecyclehooks} When created, each Vue instance goes through a series of initialization steps, e.g. it needs to set up data observation, compile the template, including the instance in the DOM and update the DOM when the data changes. In parallel, it also runs functions called lifecycle hooks that allow users to add their functions at certain stages of the instance lifecycle. This allows very precise control of the behavior of individual components.
+\label{Vue:Instancelifecyclehooks} When created, each Vue instance goes through a series of initialization steps, e.g. it needs to set up data observation, compile the template, including the instance in the DOM and update the DOM when the data changes. In parallel, it also runs functions called lifecycle hooks that allow users to add their functions at certain stages of the instance lifecycle. This allows very precise control of the behavior of individual components.\\
 
 For example, the \textit{created} hook can be used to execute code after an instance has been created. Other hooks are called at different stages of the instance lifecycle, such as. \textit{mounted}, \textit{updated} and \textit{destroyed}. The figure \ref{fig:OrganisationOfComponents} illustrates the details of the complete lifecycle hook.
 
@@ -922,9 +922,7 @@ For example, the \textit{created} hook can be used to execute code after an inst
 
 \subsection{Vuex }
 \label{sec:Vuex}
-Vuex is the official state management library for Vue. Its job is to exchange data between components in a Vue application.
-
-Components in a Vue application can have their state. For example, an input field stores the data entered in it locally. Components can be input fields or a whole page. It becomes very costly to exchange state data between nested components.
+Vuex is the official state management library for Vue. Its job is to exchange data between components in a Vue application. Components in a Vue application can have their state. For example, an input field stores the data entered in it locally. Components can be input fields or a whole page. It becomes very costly to exchange state data between nested components.\\
 
 Vuex provides central storage(Vuex store) for the state, and the state can be changed by calling functions defined in the Vuex store.
 Each component that depends on a particular piece of state accesses it via a getter function on the Vuex store, ensuring synchronization of data. Vuex-Store is a kind of temporary database for a particular application session \cite{VueGuide:Online}.
@@ -933,14 +931,12 @@ Each component that depends on a particular piece of state accesses it via a get
 \subsection{Vue Router }
 \label{sec:Vue Router}
 
-In a web application, a router is a part that synchronizes the currently displayed view with the contents of the browser address bar.
-
-A router is needed when \gls{URL}s need to be synchronized with the views in an application. This is a very common need, and all major modern frameworks now allow routing to be managed.   Vue Router is part of the Vue core library and handles route management in a Vue application \cite{VueGuide:Online}.
+In a web application, a router is a part that synchronizes the currently displayed view with the contents of the browser address bar. A router is needed when \gls{URL}s need to be synchronized with the views in an application. This is a very common need, and all major modern frameworks now allow routing to be managed.   Vue Router is part of the Vue core library and handles route management in a Vue application \cite{VueGuide:Online}.
 
 
 \section{Nginx}
 \label{Grundlagen:Nginx}
-Nginx, pronounced like "engine-ex", is an open-source web server that is now also used as a reverse proxy, HTTP cache, and load balancer. It is one of the most used web servers along with the Apache HTTP server.\cite{nginxIntro}
+Nginx, pronounced like "engine-ex", is an open-source web server that is now also used as a reverse proxy, HTTP cache, and load balancer. It is one of the most used web servers along with the Apache HTTP server.\cite{nginxIntro}\\
 
 This section describes the basics of NGINX (start, stop reload configuration), the structure of the configuration file and describes the process of setting up NGINX to serve out static content.
 

@@ -1,7 +1,7 @@
 \chapter{Design and Implementation}
 \label{Implementation}
 
-This chapter describes the Design process and the details of the realised implementation of a Docker based application developed for managing ROS2 Nodes in a local Network over a web interface. Figure \ref*{fig:Background:LifecycleManagement} provides an overview of the Structure of the developed Application. The Application is supposed to have control over all the compatible ROS2 Applications running within a defined Network. It utilizes the ROS2 DDS System (for communication within same LAN) and ROS2 Routing Service (for communication between different Networks). It consists of a customized ROS2 based Docker Containers within which individual ROS2 Apps run and another customized Docker Container running a NodeJS based Web-Application (Lifecycle Management Dashboard).   
+This chapter describes the Design process and the details of the realized implementation of a Docker based application developed for managing ROS2 Nodes in a local Network over a web interface. Figure \ref*{fig:Background:LifecycleManagement} provides an overview of the Structure of the developed Application. The Application is supposed to have control over all the compatible ROS2 Applications running within a defined Network. It utilizes the ROS2 DDS System (for communication within same LAN) and ROS2 Routing Service (for communication between different Networks). It consists of a customized ROS2 based Docker Containers within which individual ROS2 Apps run and another customized Docker Container running a NodeJS based Web-Application (Lifecycle Management Dashboard).   
 
 \begin{figure}[H]
 	\centering
@@ -14,7 +14,7 @@ The application consists of following major parts:
 \begin{itemize}
 	\item The Docker environment
 	\item ROS2 Lifecycle Application
-	\item Vue based Webinterface
+	\item Web-Interface
 	\item Integration
 \end{itemize}
 
@@ -22,11 +22,12 @@ They will be explained in detail in the following section.
 
 \section{The Docker environment}
 \label{Implementierung:DockerEnvironment}
-In order to develop an Industrial Edge Application, its necessary to pack an application into a Docker Image. Then it can be converted to an IE App using the Industrial Edge App Publisher.
+In order to develop an Industrial Edge Application, its necessary to pack an application into a Docker Image. Then it can be converted to an IE App using the Industrial Edge App Publisher.\\
 
-This section describes the Docker image developed for the purposes of this thesis. A Dockerfile is used to define a Docker image. It consists of all the necessary software libraries and third party applications and precise order in which they have to installed. The following section will describe the details of the Dockerfile(structre of the Docker image) step by step.
+This section describes the Docker image developed for the purposes of this thesis. A Dockerfile is used to define a Docker image. It consists of all the necessary software libraries and third party applications and precise order in which they have to installed. The following section will describe the details of the Dockerfile(structure of the Docker image) step by step.
 \subsection{The Dockerfile}
-\paragraph{Settng up the Base-Image} This is the first line in any Dockerfile. In this line the Ubuntu Ros Image to use is specified.
+This section consists of a detailed description of the major blocks of steps performed to create the desired docker image of this application.
+\paragraph{Setting up the Base-Image} This is the first line in any Dockerfile. In this line the Ubuntu Ros Image to use is specified.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -56,7 +57,7 @@ This section describes the Docker image developed for the purposes of this thesi
 
 \end{lstlisting}
 
-\paragraph{Setting up Ros Build environment} The rosdep is initialized and updated before installing any ROS2 Package. Then colcon mixin and metadata are setup and any relataed libraries are updated. Colcon is the default and recommended build system for ROS2. Now ROS2 applications can be built using colcon in the next step.
+\paragraph{Setting up Ros Build environment} The rosdep is initialized and updated before installing any ROS2 Package. Then colcon mixin and metadata are setup and any related libraries are updated. Colcon is the default and recommended build system for ROS2. Now ROS2 applications can be built using colcon in the next step.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -74,7 +75,7 @@ This section describes the Docker image developed for the purposes of this thesi
 		colcon metadata update
 \end{lstlisting}
 
-\paragraph*{Installimg necessary Ros packages} Following ROS2 Packages are instllen in this step: ros-foxy-ros-base=0.9.2-1*, ros-foxy-joy, ros-foxy-diagnostic-updater,ros-foxy-lifecycle. Depending on the type of ROS2 Appliation it might be necessary to install further Packages, which should be done in this to avoid furthr complications. Finally the system is updated to fix any broken installs and install any mising libraries.
+\paragraph*{Installing necessary Ros packages} Following ROS2 Packages are installed in this step: ros-foxy-ros-base=0.9.2-1*, ros-foxy-joy, ros-foxy-diagnostic-updater,ros-foxy-lifecycle. Depending on the type of ROS2 Application it might be necessary to install further Packages, which should be done in this to avoid further complications. Finally the system is updated to fix any broken installs and install any missing libraries.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -125,7 +126,7 @@ This section describes the Docker image developed for the purposes of this thesi
 		&& rm -rf RIBInstall
 \end{lstlisting}
 
-\paragraph{Setup Node enviroment for Vue} This step installs a version of NodeJS in this Docker environment. NodeJS will be necessary to build the Vue-application and run ros2-web-bridge in forthcoming steps. 
+\paragraph{Setup Node environment for Vue} This step installs a version of NodeJS in this Docker environment. NodeJS will be necessary to build the Vue-application and run ros2-web-bridge in forthcoming steps. 
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -146,8 +147,8 @@ This section describes the Docker image developed for the purposes of this thesi
 
 
 
-\paragraph{Copy package.json files to install Node Project dependencies} A package.json file is a standard package specification file for NodeJS applications. It contains all the necessary configurations and list of packages to successfully build a NodeJS aplication. In this step 
-a working directory for the Vue Application is created, the the package.json is copied to the Docker internal workdirectory and finally the project depencencies are downloaded and installed.
+\paragraph{Copy package.json files to install Node Project dependencies} A package.json file is a standard package specification file for NodeJS applications. It contains all the necessary configurations and list of packages to successfully build a NodeJS application. In this step 
+a working directory for the Vue Application is created, the the package.json is copied to the Docker internal work directory and finally the project dependencies are downloaded and installed.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -157,7 +158,7 @@ a working directory for the Vue Application is created, the the package.json is 
 	RUN npm install
 \end{lstlisting}
 
-\paragraph*{Build the web app for production} The project source files for the "Lifecycle management application" are copied from external workspace to the Docker workdirectory and built for production.
+\paragraph*{Build the web app for production} The project source files for the "Lifecycle management application" are copied from external workspace to the Docker work directory and built for production.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -166,7 +167,7 @@ a working directory for the Vue Application is created, the the package.json is 
 	RUN npm run build
 \end{lstlisting}
 
-\paragraph{Setting up a Nginx web server} In this step the nginx configuration file (described in section \ref{Impl:NginxConfig}) is copied from external workspace to the docker enviroment. The built application consisting of only .html, .css and .js files are copid to a location where nginx can easily find them and use them to start the web-application. Furthermore PORT 80 is exposed and the web-application can thus be accessed on locahost:8080 within the same network where this Docker container is running.
+\paragraph{Setting up a Nginx web server} In this step the nginx configuration file (described in section \ref{Impl:NginxConfig}) is copied from external workspace to the docker environment. The built application consisting of only .html, .css and .js files are copied to a location where nginx can easily find them and use them to start the web-application. Furthermore PORT 80 is exposed and the web-application can thus be accessed on localhost:8080 within the same network where this Docker container is running.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -194,7 +195,7 @@ a working directory for the Vue Application is created, the the package.json is 
 
 \paragraph{Starting Ros Application} 
 The following listing shows the details of the startup file used in the above dockerfile. It is necessary to use this bash script to launch multiple services. The steps for running multiple services is describes in the section \ref*{Implementation:Docker:Multiple Services} in detail.
-This step also launches the installed ROS2-Application using its launchfile.
+This step also launches the installed ROS2-Application using its launch file.
 \begin{lstlisting}[language=bash,
 	caption={dockerfilestartup.sh}, 
 	label={code:DockerTestumgebung}]
@@ -229,9 +230,9 @@ This step also launches the installed ROS2-Application using its launchfile.
 
 \subsection{Running multiple services in a container}
 \label{Implementation:Docker:Multiple Services}
-The most important running process of a container is the ENTRYPOINT and/or CMD at the end of the Dockerfile. It is generally recommended to separate areas of concern by using one service per container. This service can split into several processes (e.g. a webserver starts several working processes). It is fine to have multiple processes but to get the most benefit from Docker, it is recommended to avoid having one container responsible for multiple aspects of the entire application. Multiple containers can be connected via custom networks and shared volumes.
+The most important running process of a container is the ENTRYPOINT and/or CMD at the end of the Dockerfile. It is generally recommended to separate areas of concern by using one service per container. This service can split into several processes (e.g. a webserver starts several working processes). It is fine to have multiple processes but to get the most benefit from Docker, it is recommended to avoid having one container responsible for multiple aspects of the entire application. Multiple containers can be connected via custom networks and shared volumes.\\
 
-The main container process is responsible for managing all the processes it launches. In some cases, the main process is not well thought out and cannot properly terminate child processes when the container is terminated. For a process falling into this category, the use of the --init option when starting the container is recommended. The --init option adds a tiny init process as the main process in the container and terminates all processes when the container is terminated. Handling such processes is better than using a full-fledged init process like sysvinit, upstart, or systemd to manage the process lifecycle inside a container.\cite{dockerMultipleService}
+The main container process is responsible for managing all the processes it launches. In some cases, the main process is not well thought out and cannot properly terminate child processes when the container is terminated. For a process falling into this category, the use of the --init option when starting the container is recommended. The --init option adds a tiny init process as the main process in the container and terminates all processes when the container is terminated. Handling such processes is better than using a full-fledged init process like sysvinit, upstart, or systemd to manage the process lifecycle inside a container.\cite{dockerMultipleService}\\
 
 The following code snippet demonstrates the process of starting multiple services in a container. The first part \ref{code:DockerWrapper} is a wrapper script that will be eventually run from the Dockerfile listed in the listing \ref{code:Docker:MSDockerfile}.
 \begin{lstlisting}[language=bash,
@@ -271,7 +272,7 @@ The following code snippet demonstrates the process of starting multiple service
 
 \subsection{Nginx server configuration}
 \label{Impl:NginxConfig}
-Configuring NGINX as a web server is about defining which URLs it processes and how it processes HTTP requests for resources at those URLs. On a deeper level, the configuration defines a set of virtual servers that control the processing of requests for specific domains or IP addresses.
+Configuring NGINX as a web server is about defining which URLs it processes and how it processes HTTP requests for resources at those URLs. On a deeper level, the configuration defines a set of virtual servers that control the processing of requests for specific domains or IP addresses.\\
 
 Since the application in this thesis is only supposed to run within a local network (not the internet) the webserver configuration is drastically simplified. The basic HTTP settings can be left to the default configuration. Only the virtual server settings need to be configured. This section describes the configuration used for NGINX to serve static content. This includes the definition of paths searched to find requested files and set up for index files. The following listing shows the most important configurations needed to serve the developed web application on a local network.
 
@@ -313,10 +314,10 @@ A virtual server is defined by a server directive in the http context in \lstinl
 
 \section{ROS2 Lifecycle Application}
 \label{Implementierung:ROS2LifecycleApplication} 
-In oder to showcase the capabilities and possible use-cases of the managed lifecycle nodes in ROS2 ecosystem a demonstration application was developed. This appliaction has multiple states which allows for reconfiguration and respawning of the node while it is running. It also is a key part for demonstrating the capabilities of the remote lifecycle management interface described in section \ref{Implementierung:VueBasedWebinterface}. This section describes the details of an example ROS2-Application with managed states and steps necessary to convert a normal ROS2-node into a managed lifecycle node. 
+In order to showcase the capabilities and possible use-cases of the managed lifecycle nodes in ROS2 ecosystem a demonstration application was developed. This application has multiple states which allows for reconfiguration and respawning of the node while it is running. It also is a key part for demonstrating the capabilities of the remote lifecycle management interface described in section \ref{Implementierung:VueBasedWebinterface}. This section describes the details of an example ROS2-Application with managed states and steps necessary to convert a normal ROS2-node into a managed lifecycle node. 
 
 \subsection{Structure of a normal ROS2 publisher node}
-To demonstrate the process of developing a managed lifecycle node a JoyToVel publisher node is converted into a lifecycle node in this section. The JoyToVel publisher takes input from a PlayStation4 Controller and publishes velocity and direction commands to \lstinline{\cmd_vel} topic in a ROS2 Network. Any application(node) subscribed to this topic can be controlled using this JoyToVel node.
+To demonstrate the process of developing a managed lifecycle node a JoyToVel publisher node is converted into a lifecycle node in this section. The JoyToVel publisher takes input from a PlayStation4 Controller and publishes velocity and direction commands to \lstinline{\cmd_vel} topic in a ROS2 Network. Any application(node) subscribed to this topic can be controlled using this JoyToVel node.\\
 
 A normal JoyToVel publisher consists of a constructor, application-specific callback functions and methods, and the main function. The necessary subscribers and publishers are initialized in the constructor. It also includes the application logic. In the main function, the node is started with the specified parameters. No changes to any parameters can be made once the node has been started. If the node crashes for some reason it has to be respawned manually. Since the JoyToVel node is an interface node, it would be beneficial to be able to dynamically reconfigure its different parameters and it demands higher reliability and stability. \\
 A normal ROS2 C++ publisher node has the following structure:   
@@ -510,16 +511,16 @@ In order to convert a normal ROS2 node into a lifecycle node following steps nee
 	\item Encapsulate the node in a class that inherits from class \lstinline{rclcpp_lifecycle::LifecycleNode} This brings in a series of callbacks that are called depending on the current state of the node. Each lifecycle node has a set of services associated with it that make it controllable from the outside.
 	\item Initialize the public and private methods.
 	\item Configure and implement transition callbacks listed in listing \ref{code:TransitionCallbacks}.
-	\item Define appliation specific methods
+	\item Define application specific methods
 	\item Perform necessary setup and initialization in main() function.  
 \end{itemize}
 
-\section{Vue based Webinterface}
+\section{Web-Interface}
 \label{Implementierung:VueBasedWebinterface}
 The developed web interface is supposed to be a web version of the lifecycle management CLI. 
 
 \subsection{Web Application Design}
-The purpose of the developed web application is to be able to communicate with different ROS2 applications running within a specified network. To accomplish this Ros2-Web-Bridge is used to create an interface between the ROS2 DDS network and a web-based client application. The interface is realized in form of a WebSocket on the following URL (ws://localhost:9090). Then a JavaScript client library Roslibjs is utilized to connect the web application to the above-mentioned Websocket. Roslibjs can be imported into a web-application framework like Vue using the standard ES6 import syntax.
+The purpose of the developed web application is to be able to communicate with different ROS2 applications running within a specified network. To accomplish this Ros2-Web-Bridge is used to create an interface between the ROS2 DDS network and a web-based client application. The interface is realized in form of a WebSocket on the following URL (ws://localhost:9090). Then a JavaScript client library roslibjs is utilized to connect the web application to the above-mentioned WebSocket. Roslibjs can be imported into a web-application framework like Vue using the standard ES6 import syntax.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.95\textwidth]{"Bilder/webapp-design.png"}
@@ -527,7 +528,7 @@ The purpose of the developed web application is to be able to communicate with d
 		\label{fig:Background:WebappDesign}					
 	\end{figure}
 
-\subsection{ROS2 Message Types/ Javascript Objects}
+\subsection{ROS2 Message Types/ JavaScript Objects}
 This section describes the ROS2 Messages and Services used to communicate with the ROS2 backend application. There was also a need to explore and examine various JavaScript counterparts to these message and service types. Messages and services  used in the developed application are listed below with their definitions. 
 
 \paragraph{Messages:} 
@@ -757,7 +758,7 @@ ROSLIB.Topic
 \end{lstlisting}
 \end{itemize}
 
-\paragraph{JSON Objects} A Javascript application uses JSON Objects to communicate over a network. A JSON object is returned when a ROS service is called or a topic is subscribed to. It is necessary to parse and process these objects to display or update information on a web page. To parse a JSON object, prior knowledge of its structure is required. \\
+\paragraph{JSON Objects} A JavaScript application uses JSON Objects to communicate over a network. A JSON object is returned when a ROS service is called or a topic is subscribed to. It is necessary to parse and process these objects to display or update information on a web page. To parse a JSON object, prior knowledge of its structure is required. \\
 
  \textit{JSON (JavaScript Object Notation) is a lightweight format for data exchange. Working with it is easy for humans likewise machines. It is based on a subset of the JavaScript Programming Language Standard ECMA-262 3rd Edition - December 1999. JSON is a text format that does not depend on any specific language but uses conventions familiar to the C language family, including} \lstinline{C, C++, C#, Java, JavaScript, Perl, Python}, \textit{and many others. These properties make JSON an ideal language for data exchange.}\cite{jsonDef} \\
 
@@ -857,11 +858,12 @@ ROSLIB.Topic
 \end{itemize}
 
 
-\subsection{Code Overview} For developing the web appliaction a web framework called VueJS (described in section \ref{Grundlagen:Vue}) is used. This allows the use of various pre-built html components and streamlined application structure with various plugins which in turn makes the UI development structured and easier. The UI part is encapsulatd inside the template tag and the JavaScript part in the script tag of a Vue component(described in section \ref{Vue:Component}). The project structure described in \ref{sec:StructureofVue.jsProject} is used.   
+\subsection{Code Overview} For developing the web application a web framework called VueJS (described in section \ref{Grundlagen:Vue}) is used. This allows the use of various pre-built html components and streamlined application structure with various plugins which in turn makes the UI development structured and easier. The UI part is encapsulated inside the template tag and the JavaScript part in the script tag of a Vue component(described in section \ref{Vue:Component}). The project structure described in \ref{sec:StructureofVue.jsProject} is used.   
+\\
 
-To secure a conection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object needs to be initialized and assigned to a variable that can be accessed by all other functions in the application. This object consists of a url parameter, which will be used to assign the URL of the websocket. The websocket is made availabe by the library ros2-web-bridge. This is our main instance of RosLibJS and the same instance will be used throughout the application for working with a single Lifecycle Node. In case there are multiple Lifecycle nodes added, multiple instances of RosLibJS are created and stored. The details of the JavaScript part of the application is described below:
+To secure a connection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object needs to be initialized and assigned to a variable that can be accessed by all other functions in the application. This object consists of a URL parameter, which will be used to assign the URL of the WebSocket. The WebSocket is made available by the library ros2-web-bridge. This is our main instance of RosLibJS and the same instance will be used throughout the application for working with a single Lifecycle Node. In case there are multiple Lifecycle nodes added, multiple instances of RosLibJS are created and stored. The details of the JavaScript part of the application is described below:
 
-\paragraph{Library imports} The libraries are imported using the standard ES6 syntax. The libraries including vue-plugins to be installed are listed in the package.json file. This import syntax allows the import of the entire library or only specific components of the library. The following libraries are used:
+\paragraph{Library imports} The libraries are imported using the standard ES6 syntax. The libraries including Vue-plugins to be installed are listed in the package.json file. This import syntax allows the import of the entire library or only specific components of the library. The following libraries are used:
 
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
@@ -870,7 +872,7 @@ To secure a conection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object n
 	import { MDBBtn, MDBBtnGroup, MDBInput, MDBContainer, MDBRow, MDBCol } from "mdb-vue-ui-kit";
 \end{lstlisting}
 
-\paragraph{Vue Component initialization} To be able to use the imported components in the HTML-Layout they need to be initialized. The components to be used must be included within the component deirctive. Also the name of the component is assigned, this name will be used to import this component into any other component. 
+\paragraph{Vue Component initialization} To be able to use the imported components in the HTML-Layout they need to be initialized. The components to be used must be included within the component directive. Also the name of the component is assigned, this name will be used to import this component into any other component. 
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
 	label={code:Vue}]
@@ -917,7 +919,7 @@ To secure a conection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object n
 \end{lstlisting}
 
 
-\paragraph{Vue instance lifecycle hook mounted} A Vue component has several lifecycle hooks (described in section \ref{Vue:Instancelifecyclehooks}), which lets a developer customize its behaviour at any specific point in its lifecycle. In this application the mounted hook is used to establish a connection to the websocket created by the ROS2-Web-Bridge.
+\paragraph{Vue instance lifecycle hook mounted} A Vue component has several lifecycle hooks (described in section \ref{Vue:Instancelifecyclehooks}), which lets a developer customize its behavior at any specific point in its lifecycle. In this application the mounted hook is used to establish a connection to the WebSocket created by the ROS2-Web-Bridge.
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
 	label={code:Vue}]
@@ -944,14 +946,14 @@ To secure a conection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object n
 
 \subsection{Important Functions/Methods}
 \label{Implementation:ImportantFunctions}
-Using RosLibJS the frontend application can be conected to the backend API(websocket) provided by ROS2-web-bridge. To get the required informaton about the ros2 nodes running inside the backend application several ROS2 services need to called and some ROS2 topics need to be subscribed to. The methods used to realize these functionalities are described below in detail. These methods are all included inside the \textit{methods} directive described in previous section. As described in listing \ref{{JavsScript:ROSLIB.Service} caption} a ROSLIB.Service object needs to be created everytime a service needs to be called. It has a name parameter which has the 
+Using RosLibJS the frontend application can be connected to the backend API(websocket) provided by ROS2-web-bridge. To get the required information about the ros2 nodes running inside the backend application several ROS2 services need to called and some ROS2 topics need to be subscribed to. The methods used to realize these functionalities are described below in detail. These methods are all included inside the \textit{methods} directive described in previous section. As described in listing \ref{{JavsScript:ROSLIB.Service} caption} a ROSLIB.Service object needs to be created every time a service needs to be called. It has a name parameter which has the 
 following syntax: 
 \begin{lstlisting}
 	name: '/<name of the active node>/<name of the service>'
 \end{lstlisting}
 This convention is utilized in all the following methods in this section.
 
-\paragraph{Methods to add lifecycle nodes and activate it} The \lstinline{add_node} method takes in the name of the lifecycle node provided through the UI and aappends it to an array. Multiple lifecycle nodes can be added to the application using this method. To activate a node the \lstinline{set_active_node} method is called. This selects a node from an array of nodes and sets it as the active node. It also clears all the fields in the UI and updates it based on the data received for the active node. The methods for clearing and updateding the UI are described in listing \ref{Implementation:Auxillary functions}.
+\paragraph{Methods to add lifecycle nodes and activate it} The \lstinline{add_node} method takes in the name of the lifecycle node provided through the UI and appends it to an array. Multiple lifecycle nodes can be added to the application using this method. To activate a node the \lstinline{set_active_node} method is called. This selects a node from an array of nodes and sets it as the active node. It also clears all the fields in the UI and updates it based on the data received for the active node. The methods for clearing and updating the UI are described in listing \ref{Implementation:Auxillary functions}.
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
 	label={code:Vue}]
@@ -1051,7 +1053,7 @@ The first parameter is the ServiceRequest object, second and third are JavaScrip
 \end{lstlisting}
 
 
-\paragraph{Service to ChangeState} This method calls a ROS service to change the current state of the active lifecycle node to any valid state. A new service object is created, similar to the last example. According to the service definition in listing \ref{code:ROS:Service definition ChangeState}, a ROSLIB.ServiceRequest object is created. The ServiceRequest object requires a transition parameter, which consist a transition ID and a label. Transition ID can be selected in the UI, the available selections in UI is determined by a automatic state transition logic (described in section \ref{code}). The result in this case is a boolen, which indicates if the transition was succesfull. Then the update method is called.
+\paragraph{Service to ChangeState} This method calls a ROS service to change the current state of the active lifecycle node to any valid state. A new service object is created, similar to the last example. According to the service definition in listing \ref{code:ROS:Service definition ChangeState}, a ROSLIB.ServiceRequest object is created. The ServiceRequest object requires a transition parameter, which consist a transition ID and a label. Transition ID can be selected in the UI, the available selections in UI is determined by a automatic state transition logic. The result in this case is a Boolean, which indicates if the transition was successful. Then the update method is called.
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
 	label={code:Vue}]
@@ -1078,7 +1080,7 @@ The first parameter is the ServiceRequest object, second and third are JavaScrip
 	},
 \end{lstlisting}
 
-\paragraph{Subscribe to rosout} This method is necessary to implement the logging functionality in the UI. A ROSLIB.Topic object is created, which is used to subscribe to ROS topic \lstinline{\rosout}. The relevant log messages for the active lifecycle node is filtered and stored in a rolling array of a fixed size. This array is used by the logger component to disply log messages in the UI. Structure of the log message is described in listing \ref{code:ROS:Message definition Log}. The desired log level (DEBUG, INFO, WARN, ERROR or FATAL) can be selected using the mapLogLevel method in listing \ref{Implementation:Auxillary functions}. Using a global unsubscribe flag, the logging can be deactivated from the UI. 
+\paragraph{Subscribe to rosout} This method is necessary to implement the logging functionality in the UI. A ROSLIB.Topic object is created, which is used to subscribe to ROS topic \lstinline{\rosout}. The relevant log messages for the active lifecycle node is filtered and stored in a rolling array of a fixed size. This array is used by the logger component to display log messages in the UI. Structure of the log message is described in listing \ref{code:ROS:Message definition Log}. The desired log level (DEBUG, INFO, WARN, ERROR or FATAL) can be selected using the mapLogLevel method in listing \ref{Implementation:Auxillary functions}. Using a global unsubscribe flag, the logging can be deactivated from the UI. 
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
 	label={code:Vue}]
@@ -1104,7 +1106,7 @@ The first parameter is the ServiceRequest object, second and third are JavaScrip
 		},
 \end{lstlisting}
 
-\paragraph{Auxillary Methods/Functions} These are some auxillary methods/functions used in this Vue component.
+\paragraph{Auxiliary Methods/Functions} These are some auxiliary methods/functions used in this Vue component.
 \label{Implementation:Auxillary functions}
 \begin{lstlisting}[language=JavaScript,
 	caption={Auxillary functions}, 
@@ -1160,14 +1162,15 @@ The first parameter is the ServiceRequest object, second and third are JavaScrip
 
 \subsection{Lifecycle Dashboard UI}
 The developed user interface is depicted in the figure \ref{fig:Implementation:LifecycleDashboard}. 
-The functionalitiies of the web interface is based on the Lifecycle Management CLI described in section \ref{Lifecycle management CLI}. At the top of the UI there is a textfield that takes the name of the lifecycle node as an input. The button adjacent to it can be pressed in order to add the desired node to the list of added nodes. It is possible to add multiple nodes to the list using this UI component.
+The functionalities of the web interface is based on the Lifecycle Management CLI described in section \ref{Lifecycle management CLI}. At the top of the UI there is a text field that takes the name of the lifecycle node as an input. The button adjacent to it can be pressed in order to add the desired node to the list of added nodes. It is possible to add multiple nodes to the list using this UI component.
 The next UI component is a list of buttons with names of the nodes added to the dashboard. A single node can be selected by pressing the desired button to activate the node. The activated node is shown in the next line along with its current state. The following line consists of a list of buttons to call various functions mentioned in section \ref*{Implementation:ImportantFunctions}.
+\\
 
-The next line consists of buttons to enable the console logger and enable state transition. For state transition there is a dropdown list consisiting of valid states to be transition to. From this list the desired transition state can be selected and the state transition button next to it can be pressed to execute the desired transition.
-Below is table with the detail description of the available state transitions. 
+The next line consists of buttons to enable the console logger and enable state transition. For state transition there is a dropdown list consisting of valid states to be transition to. From this list the desired transition state can be selected and the state transition button next to it can be pressed to execute the desired transition. Below is table with the detail description of the available state transitions. 
+\\
 
-There is also a list of all availabe states for the active lifecycle node. Next to it is a console logger which constantly displays the application logs of the currently running lifecycle node. On top of the logger UI component there is a dropdown menu consisiting of different available log levels. The log levels are listed in the listing \ref{code:Auxillary functions} Upon selection of desired log level only the corresponding logs are displayed.  
-At the very bottom of the page there is a button to disable the logger for the active node.
+There is also a list of all available states for the active lifecycle node. Next to it is a console logger which constantly displays the application logs of the currently running lifecycle node. On top of the logger UI component there is a dropdown menu consisting of different available log levels. The log levels are listed in the listing \ref{code:Auxillary functions} Upon selection of desired log level only the corresponding logs are displayed. At the very bottom of the page there is a button to disable the logger for the active node.
+\\
 
 When a new lifecycle node is added to the dashboard or selected, the entire UI resets to the initial condition and the logs are cleared.
 \begin{figure}[H]
@@ -1179,12 +1182,16 @@ When a new lifecycle node is added to the dashboard or selected, the entire UI r
 
 \section{Integration}
 \label{Implementierung:Integration}
+The developed application consists of different software components from several different open source organizations and Siemens. These components use different programming languages and it is necessary to connect them using the required interfaces. They must all work together to have a properly functioning application. To run the complete application several software components need to be started in the correct order depending on their interdependency. First of all the native ROS2 Application is built and started, then the ros2-web-bridge interface is started, and finally, a web application(Lifecycle management interface) is built and a web server(nginx) is started to run the Lifecycle management Interface. The application is containerized as described in section \ref{Implementierung:DockerEnvironment}, and most of the integration and cross-communication between the components is achieved within the aforementioned Dockerfile. 
+\\ 
 
+Furthermore, the application needs to be integrated into the Siemens Industrial Edge ecosystem, which is described in the following section.
 \subsection{Conversion to Industrial Edge App} 
 The Industrial Edge Publisher can be used to convert a docker image into an Industrial Edge Application. The created docker-compose.yml file (listing \ref{Implementation:dockerCompose}) is first imported into the Industrial Edge Publisher. The created images along with their various configurations are recognized by the Industrial Edge environment and these configurations are automatically applied when the app is installed on the Edge Device. No further configuration is necessary for the Edge App. Once the app has been created, it can be uploaded to the IEM using the Industrial Edge Publisher, where it is available for further distribution.
 
 \paragraph{Docker Compose File}
-With a docker-compose.yml file, services and configurations can be specified for a Docker container. This application requires several Docker containers to communicate with each other, for this purpose a seperate network is created in the docker-compose file. In addition, a volume is created to store any persistent data that might be useful for the application.
+With a docker-compose.yml file, services and configurations can be specified for a Docker container. This application requires several Docker containers to communicate with each other, for this purpose a separate network is created in the docker-compose file. In addition, a volume is created to store any persistent data that might be useful for the application.
+\\
 
 In the services section of the docker-compose file, the Docker image in the current directory is built. The name of the created Docker image is then specified. Then with the start command a \gls{ROS2} Application with lifecycle node is run. The commands \lstinline{mem_limit: 500mb} and \lstinline{restart: on-failure} are necessary for Industrial Edge. Then the docker volume created in the previous step is mounted. The network to use is specified then the docker container is connected to the network.
 \begin{lstlisting}[language=docker-compose,
@@ -1211,16 +1218,3 @@ In the services section of the docker-compose file, the Docker image in the curr
 					- ie-app-network		
 \end{lstlisting}
 	
-\chapter{Potential Use Cases}	
-
-\begin{itemize}
-	\item  Dynamic reconfiguration of various operating parameters of component nodes (applications) within a robot system. For example: reconfiguring the input sensitivity of the joysticks.
-	\item 	Respawning or Restarting various subsystems on the fly.
-	\item 	Allows package updates to be installed without shutting down the entire system. (Modularity/ CI/CD)
-	\item 	Streamlines the debugging and error logging process of subsystem applications.
-	\item 	Simplifies the installation of additional modular components on an existing mobile robot or the sharing of modular components among a group of robots.
-	\item 	Enables active status monitoring of various subsystems for early and efficient maintenance.
-	\item 	Prevents total system failure by loosely coupling different subsystems and avoiding a monolithic architecture.
-	\item 	Provides developers with the freedom to choose from different libraries and frameworks which do not have to be version compatible.
-	\item 	Supports the development of an autonomously operating and updating fleet of mobile robots.
-\end{itemize}
