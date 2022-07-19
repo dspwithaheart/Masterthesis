@@ -3,21 +3,21 @@
 
 	\section{Motivation}
 	\label{Introduction:Motivation}
-	Modern robotic Systems are made up of several individual and independent components. As systems grow in size and become more complex and sophisticated it becomes more and more difficult to have a proper overview of the complete system and at the same time the troubleshooting, debugging and streamlined operation becomes more challenging. To solve this problem there is a need for a solution that helps to improve the overall system stability and facilitates system Integration. In this thesis a ros2 system with managed lifecycle nodes which run inside a docker environment and a management interface for these lifecycle nodes is developed. Furthermore the docker based application is converted to a Siemens Industrial Edge Application which helps to streamline the delivery and deployment of the developed application within the Siemens industrial edge infrastructure.
+	Modern robotic Systems are made up of several individual and independent components. As systems grow in size and become more complex and sophisticated it becomes more and more difficult to have a proper overview of the complete system and at the same time the troubleshooting, debugging and streamlined operation becomes more challenging. To solve this problem there is a need for a solution that helps to improve the overall system stability and facilitates system Integration. In this thesis a ROS2 system with managed lifecycle nodes which run inside a docker environment and a management interface for these lifecycle nodes are developed. Furthermore the docker based application is converted to a Siemens Industrial Edge Application which helps to streamline the delivery and deployment of the developed application within the Siemens industrial edge infrastructure.
 	
 	\section{Problem Statement}
 	\label{Introduction:Problem Statement}
-	In a current ROS2 based robotic system (AGV) there are several subsystems running simultaneously in order to operate seamlessly. If any of these independent systems fail the whole system fails and a developer must work on the AGV to troubleshoot and fix the problem. This entire process is very tedious, time consuming and not efficient. If these problems could be debugged and solved from a remote (web) Interface, that would offer huge benefits to the overall system. So each individual systems will be packaged as a ROS2 lifecycle nodes with custom lifecycle behaviors, which would allow a user to dynamically reconfigure individual nodes, restart or respawn the nodes remotely and get the debug and other operational information through a remote logger.\\
+	In a current ROS2 based robotic system (AGV) there are several subsystems running simultaneously in order to operate seamlessly. If any of these independent systems fail the whole system fails and a developer must work on the AGV to troubleshoot and fix the problem. This entire process is very tedious, time consuming and inefficient. If these problems could be debugged and solved from a remote (web) interface, that would offer huge benefits to the overall system. So each individual systems will be packaged as a ROS2 lifecycle nodes with custom lifecycle behaviors, which would allow a user to dynamically reconfigure individual nodes, restart or respawn the nodes remotely and get the debug and other operational information through a remote logger.\\
 
-	Another problem is the delivery and deployment, currently all the installation process needs to be done manually, i.e a developer has to login to a specific AGV install each library and dependencies necessary for a specific application. This process can be streamlined and made way more efficient by introducing a docker based application that can be installed using the Siemens industrial edge infrastructure. Another major task of this thesis is to utilize the DDS offered by ROS2 and operate a Lifecycle management Interface within a Local network. This amplifies the efficiency of the system drastically and offers new opportunities to control a swarm of robots through a single unified Web-interface.
+	Another problem is the delivery and deployment, currently all the installation process needs to be done manually, i.e a developer has to login to a specific AGV, install each library and dependency necessary for a specific application. This process can be streamlined and made way more efficient by introducing a docker based application that can be installed using the Siemens industrial edge infrastructure. Another major task of this thesis is to utilize the DDS offered by ROS2 and operate a Lifecycle Management Interface within a local network. This amplifies the efficiency of the system drastically and offers new opportunities to control a swarm of robots through a single unified Web-interface.
 	
 	\section{Requirements}
-	According to \cite{Koubaa2021}, the following questions must be answerable after the analysis phase of the software development process:
+	The following questions must be answerable after the analysis phase of the software development process:
 	\begin{itemize}
 		\item What are the crucial requirements for the software to be created?
 		\item What problem is to be solved with the help of the application system?
-		\item What do your customers and users want from the system?
-		\item Development environment
+		\item What do the end users want from the system?
+		\item What kind of development environment is to be used?
 	\end{itemize}
 
 \subsection{Functional requirements}
@@ -25,14 +25,16 @@ Functional requirements define the actions and functions that must be performed 
 
 The system must support deployment in different environments. It is also desired that the system uses ROS2 since ROS2 is used in the project group for a large number of applications. This would allow the developed system to be adapted to the existing application ecosystem.\\
 
-The list below establishes the list of functional requirements for the system to be developed:
+The list below establishes the functional requirements of the system to be developed:
 \begin{itemize}
-	\item F1 The application to be developed must be available as an Industrial Edge App which can run on an Industrial Edge Device.
-	\item  	Q10 An extension to the building project must run the task without interruption.
-	\item 	Q11 There must be a user interface
-	\item 	Q12 The user interface must be accessible via the browser.
-	\item 	Q13 The user interface shall list the ROS2 lifecycle nodes found
-	\item 	F15 The user interface shall provide status messages of the triggered process.
-	\item 	F20 ROS2 shall be used as the core framework.
+	\item 	F1 The application to be developed must be available as an Industrial Edge Application which can run on an Industrial Edge Device
+	\item 	F2 ROS2 shall be used as the core framework
+	\item  	F3 Develop ROS2 application with managed lifecycle
+	\item 	F4 Expose the ROS2 backed API to web application
+	\item 	F5 The user interface must be accessible via a web-browser
+	\item 	F6 The user interface shall list all available ROS2 lifecycle nodes in the local network
+	\item 	F7  The user interface must provide status messages of the triggered process
+	\item 	F8 The user interface must allow lifecycle state transitions
+	\item 	F9 It must be possible to manage lifecycle of multiple ROS2 based applications 
 \end{itemize}
 

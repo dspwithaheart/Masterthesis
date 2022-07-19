@@ -8,12 +8,12 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	The concept of container technology uses the same model as shipping containers in transportation. The idea is that before the invention of shipping containers, manufacturers had to ship goods in a variety of fashions which included ships, trains, airplanes, or trucks, all with different sized containers and packaging.
 	With the standardization of shipping containers, products could be transported seamlessly without further preparation using different shipping methods. Before the arrival of this standard, shipping anything in volume was a complex, laborious process. The motivation behind software containers is the same. \cite[P.~1]{Kinnary2018}\\
 
-	Instead of shipping a complete operating system (OS) and the software (with necessary dependencies), we pack our code and dependencies into an image that can run anywhere. Furthermore,  it enables the packaging of clusters of containers onto a single computer. In other words, a container consists of an entire runtime environment: an application, plus all the dependencies, libraries, and other binaries, and configuration files needed to run it, bundled into one package.
-	The ability to have software code packaged in pre-built software containers means that code can be pushed to run on servers running different Linux kernels or be connected to run a distributed app in the cloud. This approach also has the advantage of speeding up the testing process and creating large, scalable cloud applications. This approach has been in software development communities for several years. It has recently gained in popularity with the growth of Linux and cloud computing. \cite[P.~2]{Kinnary2018}\\
+	Instead of shipping a complete operating system (OS) and the software (with necessary dependencies), source code and dependencies are packed into an image that can run anywhere. Furthermore,  it enables the packaging of clusters of containers onto a single computer. In other words, a container consists of an entire runtime environment: an application, plus all the dependencies, libraries, and other binaries, and configuration files needed to run it, bundled into one package.
+	The ability to have software code packaged in pre-built software containers means that code can be pushed to run on servers running different Linux kernels or be connected to run a distributed application in the cloud. This approach also has the advantage of speeding up the testing process and creating large, scalable cloud applications. This approach has been in software development communities for several years. It has recently gained in popularity with the growth of Linux and cloud computing. \cite[P.~2]{Kinnary2018}\\
 	
 	% \newpage
 	\subsection{Containerization vs Virtualization}
-	Linux containers and virtual machines (VMs) are both package-based computing environments that combine several IT system components and keep them isolated from the rest of the system. Their main distinguishing features are scalability and portability. Containers are usually measured in megabytes, whereas VMs in gigabytes.
+	Linux containers and Virtual Machines (VMs) are both package-based computing environments that combine several IT-system components and keep them isolated from the rest of the system. Their main distinguishing features are scalability and portability. Containers are usually measured in megabytes, whereas VMs in gigabytes.
 	\cite{containersRedHat}
 	\begin{figure}[H]
 		\centering
@@ -24,9 +24,9 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\end{figure}
 
 	\paragraph*{Containerization} is an alternative to standard virtualization that encapsulates an application in a container with its executing environment.
-	Containers hold an application and everything it needs to run. Everything within a container is maintained on an image—a code-based file that includes all libraries and dependencies. These files are similar to a Linux distribution installation. An image comes with RPM packages and configuration files. Containers are so small compared to VMs, there are usually hundreds of them loosely coupled together.\cite{containersRedHat}
+	Containers hold an application and everything it needs to run. Everything within a container is maintained on an image, a code-based file that includes all libraries and dependencies. These files are similar to a Linux distribution installation. An image comes with RPM packages and configuration files. Containers are so small compared to VMs, there are usually hundreds of them loosely coupled together.\cite{containersRedHat}
 	
-	\paragraph*{Virtualization} is a way of sharing a single physical instance of a resource or an application to multiple organizations and clients. It utilizes software called a hypervisor that separates resources from their physical devices. It enables the partitioning of the resources and assigned to individual VMs. When a user issues a VM instruction that requires additional resources from the physical environment, the hypervisor sends the request to the physical system and saves the changes. VMs look and act like physical servers, which can multiply the drawbacks of application dependencies and large OS footprints—a footprint that's often not required to run a single app or microservice.\cite{containersRedHat} \\
+	\paragraph*{Virtualization} is a way of sharing a single physical instance of a resource or an application to multiple organizations and clients. It utilizes software called a hypervisor that separates resources from their physical devices. It enables the partitioning of the resources and assigned to individual VMs. When a user issues a VM instruction that requires additional resources from the physical environment, the hypervisor sends the request to the physical system and saves the changes. VMs look and act like physical servers, which can multiply the drawbacks of application dependencies and large OS footprints, a footprint that's often not required to run a single application or microservice.\cite{containersRedHat} \\
 
 	Table \ref{tab:container_vs_vms} illustrates the key differences between the above two approaches concerning package-based computing environments.
 	\begin{table}[H]
@@ -37,7 +37,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
             Parameters & Virtualization & Containerization\\
             \midrule
             Isolation & Provides complete isolation from the host operating system and the other VMs & Provides lightweight isolation from the host and other containers, but doesn’t provide a strict security boundary as a VM \\
-            Operating System & Runs a complete operating system including the kernel, thus requiring more system resources such as CPU, memory, and storage & Runs the user-mode portion of an operating system, and can be customized to include just the required services for your app utilizing fewer system resources \\
+            Operating System & Runs a complete operating system including the kernel, thus requiring more system resources such as CPU, memory, and storage & Runs the user-mode portion of an operating system, and can be customized to include just the required services for an application utilizing fewer system resources \\
             Compatibility & Runs just about any operating system inside the virtual machine & Runs on the same operating system version as the host\\
             Deployment  & Deploys individual VMs by using Hypervisor & Deploys single container by using Docker or deploy multiple containers by using an orchestrator such as Kubernetes\\
             Persistent storage  & Uses a Virtual Hard Disk (VHD) for local storage for a single VM or a Server Message Block (SMB) file share for storage shared by multiple servers & Uses local disks for local storage for a single node or SMB for storage shared by multiple nodes or servers\\
@@ -49,22 +49,22 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\label{tab:container_vs_vms}
     \end{table}
 
-	The use of containers can decrease the required time for developing, testing, and deploying applications. It makes testing and fault detection less complex as there is no difference between running your application on a test environment and in production. It provides a cost-effective solution and can help reduce operational and development expenses. In most use-cases, container-based virtualization offers several advantages over traditional Virtual Machine based virtualization.
+	The use of containers can decrease the required time for developing, testing, and deploying applications. It makes testing and fault detection less complex as there is no difference between running an application in a test environment and in production. It provides a cost-effective solution and can help reduce operational and development expenses. In most use-cases, container-based virtualization offers several advantages over traditional Virtual Machine based virtualization.
 
 	\section{Docker}
 	\label{Grundlagen:Docker}
-	\textit{Docker is a person who works at a port whose job is to load goods onto and off container ships.} \cite{docker-definition-english}\\
+	\textit{Docker is a person who works at a port, whose job is to load goods onto and off container ships.} \cite{docker-definition-english}\\
 
 	Software Docker essentially does the same in the software context. Docker is a collection of open-source tools that quickly wraps up any application and all its unique dependencies in a lightweight, portable, self-sufficient container that can run virtually anywhere on any infrastructure.\cite{docker-definition}
 	Docker was launched as an open-source project by dotCloud, Inc. in
-	2013. it relies heavily on namespaces and cgroups to provide resource isolation and to package an application along with its dependencies. This bundling of dependencies into one package allows an application to run across different platforms and still support a level of portability. This provides flexibility to developers to develop in the desired language and platform. It has drawn a lot of interest in recent years.\cite[P.~10]{Kinnary2018}
+	2013. It relies heavily on \textit{namespaces} and \textit{cgroups} to provide resource isolation and to package an application along with its dependencies. This bundling of dependencies into one package allows an application to run across different platforms and still support a level of portability. This provides flexibility to developers to develop in the desired language and platform. It has drawn a lot of interest in recent years.\cite[P.~10]{Kinnary2018}
 
 	Docker consists of several parts. The following section gives an overview of the main components of Docker.
 
 
 		\subsection{The Docker Runtime and Orchestration Engine (Docker Engine)} 
 		\label{Grundlagen:Docker:Docker Engine}
-		The Docker engine is the software for the infrastructure that runs and orchestrates containers. All other Docker, Inc. and third-party products connect to and develop around the Docker Engine. It provides a workflow for building and managing the application stack. It builds and runs containers using other Docker components and services. It consists of the Docker daemon; a REST API that specifies the interfaces that programs can use to communicate with the daemon; and the CLI, the command-line interface that communicates with the Docker daemon via the API. Docker Engine creates and runs the Docker container from the Docker image file.\\
+		The Docker engine is the software for the infrastructure that runs and orchestrates containers. All other Docker, Inc. and third-party products connect to and develop around the Docker Engine. It provides a workflow for building and managing the application stack. It builds and runs containers using other Docker components and services. It consists of the Docker daemon; a REST API that specifies the interfaces that programs can use to communicate with the daemon; and the CLI, the Command Line Interface that communicates with the Docker daemon via the API. Docker Engine creates and runs the Docker container from the Docker image file.\\
 		\\
 		Following Diagram illustrates the Docker System Architecture.
 		\begin{figure}[H]
@@ -76,48 +76,48 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 		\paragraph{Docker daemon (dockerd)}  is a server process that runs
 		in the background. It continuously listens to the REST API interface
-		and listens for incoming requests and manages Docker objects (images, containers, networks, and volumes).  A daemon also has the ability to communicate with other daemons to manage Docker services.\cite{dockerOverwiew}
+		and for incoming requests and manages Docker objects (images, containers, networks, and volumes).  A daemon also has the ability to communicate with other daemons to manage Docker services.\cite{dockerOverwiew}
 
-		\paragraph{Docker client} represents the primary means for most users to interface with Docker. The commands run through the command-line interface are sent to the Docker daemon through the Docker API interface. The Docker daemon(dockerd) then executes these commands. The Docker client has the ability to connect with multiple Docker daemons.\cite[P.~32]{Kinnary2018}
+		\paragraph{Docker client} represents the primary means for most users to interface with Docker. The commands run through the command-line interface are sent to the Docker daemon(dockerd) through the Docker API interface. The Docker daemon then executes these commands. The Docker client has the ability to connect with multiple Docker daemons.\cite[P.~32]{Kinnary2018}
 		
 		\paragraph{Docker registry} The images created by the Docker daemon are stored in the Docker registry. Docker looks for images in the Docker Hub by default, but it is possible to have a self hosted private registry. Docker Hub is a public registry and is freely accessible.\cite[P.~33]{Kinnary2018}
 			
 		\subsection{Docker Objects}
 		\label{Grundlagen:Docker:Docker Objects}
 		\paragraph{Images}
-		A Docker image is a read-only file system that contains instructions to create a container in which an application can run. In most cases, a Docker Image is based on another image and is customized. You can either use existing images published in public repositories such as Docker Hub or Create your image.
-		A Dockerfile is used to create a Docker image. A Dockerfile contains simple instructions that can be understood by the Docker daemon to	create the image and run it. Docker images are layers that correspond to each instruction in the Dockerfile. Part of what makes a Docker image super easy is that when you change a part of the Dockerfile, only that layer is changed, and not the entire image.
+		A Docker image is a read-only file system that contains instructions to create a container in which an application can run. In most cases, a Docker Image is based on another image and is customized. It is possible to either use existing images published in public repositories such as Docker Hub or create custom image.
+		A Dockerfile is used to create a Docker image. A Dockerfile contains simple instructions that can be understood by the Docker daemon to	create the image and run it. Docker images are layers that correspond to each instruction in the Dockerfile. Part of what makes a Docker image super easy is that when a part of the Dockerfile is changed, only that layer is changed, and not the entire image.\cite[P.~34]{Kinnary2018}
 
 		\paragraph{Containers}
-		A Docker container is an instance of an image. An image runs inside a container. You can manage a container with the stop, start, and delete commands to manage it. Multiple containers can be connected over a network. They can be connected to the memory, and they can also communicate with each other. Containers are much more lightweight than VMs because their startup times are very fast. To create a container, in addition to the container's configuration and settings, you also create an image Configuration and settings an image is created. When a container is deleted everything related to the container is also deleted, including state and memory.
+		A Docker container is an instance of an image. An image runs inside a container. A container can be managed with the stop, start, and delete commands to manage it. Multiple containers can be connected over a network. They can be connected to the memory, and they can also communicate with each other. Containers are much more lightweight than VMs because their startup times are very fast. To create a container, in addition to the container's configuration and settings,  also an image configuration and settings is specified. When a container is deleted everything related to the container is also deleted, including state and memory.\cite[P.~34]{Kinnary2018}
 
 		\paragraph{Services}
-		In a distributed application, different functionalities of the app provide different services. For example, if you are building an application that suggestions based on keywords that the user enters, you might want to have A front-end service that takes the word and sends it to the service that will Verifies the legitimacy of the word. This in turn could be sent to another service that runs an algorithm to generate the suggestions, etc., which are then returned to the service. These are all different services on different Docker containers, sitting Sit behind different Docker daemons. These Docker daemons are all connected over the network and interact with each other.
-		All these services work together as a swarm, managed by different Managers and workers to manage. Each swarm contains a Docker daemon. These Daemons communicate with each other using the Docker API. A Docker Compose YAML file is used to get all these services running together. together to get them running. 
+		In a distributed application, different functionalities of the application provide different services. For example, in an application that provides suggestions based on keywords entered by the user , having a front-end service that takes the word and sends it to the service that will verify the legitimacy of the word, would be wise. This in turn could be sent to another service that runs an algorithm to generate the suggestions, etc., which are then returned to the service. These are all different services on different Docker containers, sitting behind different Docker daemons. These Docker daemons are all connected over the network and interact with each other.
+		All these services work together as a swarm, managed by different Managers and workers to manage. Each swarm contains a Docker daemon. These Daemons communicate with each other using the Docker API. A Docker-compose YAML file is used to get all these services to run together.\cite[P.~35]{Kinnary2018}
 
 		\paragraph{Networks}
 		One of the reasons Docker containers and services are so substantial is the ability to interconnect them or connect them to non-Docker workloads. Docker containers and services, in general, don't even need to be aware of the fact that they are deployed on Docker, or whether or not their peers are also Docker workloads. Whether the Docker hosts are running on Linux, Windows, or a mix of both, Docker can be used to manage them in a platform-independent way. Docker's network subsystem is extensible using drivers. By default, several drivers provide basic networking functions.\cite{dockerNetwork} 
-		Within the Networks option of a Docker-compose file,  a network to which each service wants to connect can be specified. In addition, a default network to be used for the entire application can be specified. If there is an existing network that the containers should join, this is an option to use the external network.\cite{Kinnary2018}
+		Within the networks option of a Docker-compose file,  a network to which each service wants to connect can be specified. In addition, a default network to be used for the entire application can be specified. If there is an existing network that the containers should join, this option should be used the external network.\cite{Kinnary2018}
 		
 		\paragraph{Volumes}
-		Volumes are the preferred storage mechanism for data created and used by Docker containers. Volumes are fully managed by Docker and are independent of the host's directory structure and operating system. Volumes are easier to back up or migrate. They can be managed with Docker CLI commands or the Docker API. Volumes can be safely shared between multiple containers. For new volumes, the content can be pre-populated by a container. In addition, volumes are often a better choice than storing data in a container's writable layer because a volume does not increase the size of the containers that use it, and the contents of the volume exist outside the lifecycle of a particular container. In the Volumes option of a Docker Compose file, the volumes to be mapped from the host machine to the Docker container can be specified for each service.\cite{dockerStorage}
+		Volumes are the preferred storage mechanism for data created and used by Docker containers. Volumes are fully managed by Docker and are independent of the host's directory structure and operating system. Volumes are easier to back up or migrate. They can be managed with Docker CLI commands or the Docker API. Volumes can be safely shared between multiple containers. For new volumes, the content can be pre-populated by a container. In addition, volumes are often a better choice than storing data in a container's writable layer because a volume does not increase the size of the containers that use it, and the contents of the volume exist outside the lifecycle of a particular container. In the volumes option of a Docker-compose file, the volumes to be mapped from the host machine to the Docker container can be specified for each service.\cite{dockerStorage}
 			
 		\subsection{Dockerfiles}
 		\label{Grundlagen:Docker:Dockerfiles}	
-		Dockerfile is a text document that contains a set of instructions or commands for assembling an image that is understood by the build engine. The Dockerfile defines what goes into the environment inside your container. Accessing resources, mapping volumes, passing arguments, copying files that need to be inside your container are defined in this file. According to Dockerfile created, you need to build it to create the image of the container. Create container image. The image is just a snapshot of all the executed statements in the Dockerfile. Once this application image is created, you can expect that it will run on any machine that uses the same kernel. 
+		Dockerfile is a text document that contains a set of instructions or commands for assembling an image that is understood by the build engine. The Dockerfile defines what goes into the environment inside a container. Accessing resources, mapping volumes, passing arguments, copying files that need to be inside a container are defined in this file. The Dockerfile created, needs to be built it to create the image of the container. The image is just a snapshot of all the executed statements in the Dockerfile. Once this application image is created, it will run on any machine that uses the same kernel. \cite[P.~56]{Kinnary2018}
 		
 		\subsection{Docker-Compose}
 		\label{Grundlagen:Docker:Docker-Compose}	
-		Docker Compose is the tool for running multi-container Docker applications. It is essentially a YAML file that can be thought of as a Compose of multiple Dockerfile containers, which can be used to put commands into a single file. This Docker Compose YAML file contains configurations of multiple services. Then, with a single command, you can run all services to run in Docker containers at the same time.\\
+		Docker-compose is the tool for running multi-container Docker applications. It is essentially a YAML file that can be thought of as a compose of multiple Dockerfile containers, which can be used to put commands into a single file. This Docker-compose YAML file contains configurations of multiple services. Then, with a single command, all services can be executed to run simultaneously in Docker containers.\cite[P.~77-79]{Kinnary2018}\\
 
-		Docker Compose can be used to create a microservices architecture and link the containers together, or it can be used for a single service. In addition, Docker Compose can create images, scale containers, and re-run containers that have been stopped. All of these functions are part of Docker. Docker-compose is just a higher-level abstraction of container execution commands. Everything that a compose file can do, can likewise be performed with simple Docker commands, except that this requires more memory and additional overhead to execute any additional commands, to connect to the network, etc. . Docker-compose helps to simplify this process.
+		Docker-compose can be used to create a microservices architecture and link the containers together, or it can be used for a single service. In addition, Docker-compose can create images, scale containers, and re-run containers that have been stopped. All of these functions are part of Docker. Docker-compose is just a higher-level abstraction of container execution commands. Everything that a compose file can do, can likewise be performed with simple Docker commands, except that this requires more memory and additional overhead to execute any additional commands, to connect to the network, etc. . Docker-compose helps to simplify this process.\cite[P.~80]{Kinnary2018}
 				
 	\section{Industrial Edge}
 	\label{Grundlagen:IndustrialEdge}
 		
 	Industrial Edge is a development from Siemens that makes it possible to analyze data generated in various industrial processes on the device itself. It combines local engineering with cloud engineering.\cite{siemensIndustrialEdge}\\
 
-	This eliminates unnecessary data transport between the end device and the server, only processed data is sent to the server. The processing load is in this way directed from the server towards the end device. Edge applications serve this purpose, they contain a fixed set of functions and can be accessed with the edge infrastructure on the respective end device (edge device). These apps are based on Docker technology and run one or more Docker containers in them. Figure \ref{fig:Grundlagen:IndustrialEdge:Ueberblick} shows a typical infrastructure from the top server to the end devices.
+	This eliminates unnecessary data transport between the end device and the server, only processed data is sent to the server. The processing load is in this way directed from the server towards the end device. Edge applications serve this purpose. They contain a fixed set of functions and can be accessed with the edge infrastructure on the respective end device (edge device). These applications are based on Docker technology and run one or more Docker containers in them. Figure \ref{fig:Grundlagen:IndustrialEdge:Ueberblick} shows a typical infrastructure from the top server to the end devices.
 
 		\begin{figure}[h]
 			\centering
@@ -131,31 +131,31 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		%- Graphen die das IE-Hub, IEM, Docker Device erklärt\\
 			
 		\paragraph{Industrial Edge Management System}
-			The \gls{IEM} is a server, which can be operated independently in a local network. It allows the user to create their own server which avoids the transmission of raw sensitive data exchanged between the edge device and the IEM over the Internet.
-			In addition, the end(edge) devices can be managed via this server, which includes the installation of apps and software updates and further analysis of individual apps. A self-developed Application can be uploaded to the IEM, which in turn can distribute it to the edge devices.\cite{siemensIndustrialEdge}
+			The \gls{IEM} is a server, which can be operated independently in a local network. It allows the user to create their own server, which avoids the transmission of raw sensitive data exchanged between the edge device and the IEM over the Internet.
+			In addition, the end(edge) devices can be managed via this server, which includes the installation of applications and software updates and further analysis of individual applications. A self-developed application can be uploaded to the IEM, which in turn can distribute it to the edge devices.\cite{siemensIndustrialEdge}
 
 		\paragraph{Industrial Edge Hub}
 			The \gls{IEH} 
-			is the top server-level Application hub provided by Siemens. On this platform, Siemens offers applications developed in-house. These can be loaded onto the IEM for a license fee. Any required software packages and documentation can be downloaded from here. This streamlines the development process of custom applications including deployment, and operation on desired IEM.\cite{siemensIndustrialEdge}
+			is the top server-level application hub provided by Siemens. On this platform, Siemens offers applications developed in-house. These can be loaded onto the IEM for a license fee. Any required software packages and documentation can be downloaded from here. This streamlines the development process of custom applications including deployment, and operation on desired IEM.\cite{siemensIndustrialEdge}
 
 		\paragraph{Industrial Edge App}
-			An \gls{IEA} (edge app) is used for the intelligent processing of industrial automation tasks.\cite{siemensIndustrialEdge} It is a Docker-based image, which is runs on the IED. A docker-compose file acts as the top description level file, it specifies various parameters and the sequence in which the Docker images are started. The parameters include network configuration, data storage, and other application-specific configurations. It supports all Docker-compose version 2.4 settings. Modification of this docker-compose file allows configuring any Edge app, even after it has been already downloaded to an edge device. An Edge App can be downloaded to an edge device through the IEM.
+			An \gls{IEA} (edge app) is used for the intelligent processing of industrial automation tasks.\cite{siemensIndustrialEdge} It is a Docker-based image, which runs on the IED(Industrial Edge Device). A Docker-compose file acts as the top description level file, it specifies various parameters and the sequence in which the Docker images are started. The parameters include network configuration, data storage, and other application-specific configurations. It supports all Docker-compose version 2.4 settings. Modification of this Docker-compose file allows configuring any Edge app, even after it has been already downloaded to an edge device. An Edge Application can be downloaded to an edge device through the IEM.
 	
-		\paragraph{Edge Device}
-		Edge devices are required in order to run individual edge apps. The edge device is a custom Linux Machine running the Industrial Edge OS. For test and simulation purposes it can also be run in a Virtual machine(VM). Edge devices can save automation data locally and retrieve it when required. In addition, edge devices can upload this data into the cloud infrastructure and retrieve it at any moment. After proper configuration and connection,  an Edge Device can be activated through IEM using an Edge Device configuration file.
+		\paragraph{Industrial Edge Device}
+		Edge devices are required in order to run individual edge applications. The edge device is a custom Linux machine running the Industrial Edge OS. For test and simulation purposes, it can also be run in a Virtual machine(VM). Edge devices can save automation data locally and retrieve it when required. In addition, edge devices can upload this data into the cloud infrastructure and retrieve it at any moment. After proper configuration and connection,  an Edge Device can be activated through IEM using an Edge Device configuration file.
 			
 		\paragraph{Industrial Edge Publisher}
-		The Industrial Edge Publishers is a tool that converts Docker images into Edge Apps and uploads them to the IEM. It can also be used to manage, modify or delete apps that have already been created.\cite{siemensIE_App} A prerequisite for creating an app is a docker-compose file, which contains the startup parameters of a Docker container. These parameters can also be configured through a menu within the Edge Publisher.
+		The Industrial Edge Publishers is a tool that converts Docker images into Edge Apps and uploads them to the IEM. It can also be used to manage, modify or delete applications that have already been created.\cite{siemensIE_App} A prerequisite for creating an application is a Docker-compose file, which contains the startup parameters of a Docker container. These parameters can also be configured through a menu within the Edge Publisher.
 			
 
 	
 	\section{ROS}
 	\label{Grundlagen:ROS2}		
-	This chapter covers the basics of the robot operating system (ROS) and all the tools necessary to create, debug, and understand robot applications. This chapter describes some high-level concepts and low-level API commands which enable developers to develop, maintain and support multi-robot applications. \\
+	This chapter covers the basics of the Robot Operating System (ROS) and all the tools necessary to create, debug, and understand robot applications. This chapter describes some high-level concepts and low-level API commands which enable developers to develop, maintain and support multi-robot applications. \\
 	
 	The software stack of a typical robot system requires several software tools which include hardware drivers, network modules, communication architecture, and several application-specific algorithms. ROS provides these tools in one package, which saves developers a lot of time and redundant work. ROS includes several sub-packages for robot navigation, vision, control, simulation.\\
 	
-	The Robot Operating System (ROS) has long been one of the most widely used middleware for robotic. The large open-source robotics community has contributed to a lot of new features since the introduction of ROS 1 in 2007, limitations of ROS1 have led to the development of ROS2.\cite{ros2Basic}\\
+	The Robot Operating System (ROS) has long been one of the most widely used middleware for robotics. The large open-source robotics community has contributed to a lot of new features since the introduction of ROS 1 in 2007, limitations of ROS1 have led to the development of ROS2.\cite{ros2Basic}\\
 
 	\subsection{ROS2} 
 	\label{Grundlagen:ROS:ROs2}
@@ -169,7 +169,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
             \toprule
             Parameters & ROS1 & ROS2\\
             \midrule
-            Networking & Utilizes the TCPROS communication protocol & Uses DDS (Data Distribution System) for communication.\\
+            Networking & Utilizes the TCPROS communication protocol & Uses DDS (Data Distribution Service) for communication.\\
             ROS Master & Uses ROS Master for centralized discovery and registration. The whole communication system fails if the master fails. & Uses the distributed DDS discovery. ROS 2 provides a custom API to get all information about nodes and topics. \\
             Compatibility & ROS runs only in Ubuntu. & ROS 2 is compatible with Ubuntu, Windows 10, and OS X.\\
             Programming language  & Uses C++ 03 and Python2. & Uses C++ 11 and Python3.\\
@@ -185,7 +185,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\subsection{ROS2 Structure}
 	\label{Grundlagen:ROS2:ROS2_Structure}
-	The key ROS2 feature is that it uses DDS (Data Distribution System) for communication. It eliminates ROS Master and utilizes distributed DDS discovery.	A set of related nodes located on the same computer are called a hub, where one or more hubs can be present on the same computer. ROS hubs are considered to have an accompanying set of bridging nodes that pass messages between ROS and ROS2.\cite*[P.7]{Koubaa2021}
+	The key ROS2 feature is that it uses DDS for communication. It eliminates ROS Master and utilizes distributed DDS discovery.	A set of related nodes located on the same computer are called a hub, where one or more hubs can be present on the same computer. ROS hubs are considered to have an accompanying set of bridging nodes that pass messages between ROS and ROS2.\cite*[P.7]{Koubaa2021}
 	\begin{figure}[H]
 		\centering
 		% \input{"Bilder/tikz/Grundlagen/docker-types-of-mounts.tex"}
@@ -197,15 +197,15 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\subsection{ROS2 Nodes (Application layer)}
 	\label{Grundlagen:ROS2:ROS2Nodes}
 
-	In ROS distributed applications are typically designed as entities referred to as nodes. Each Node in ROS is supposed to be responsible for a single, modular function. In a Robotic Control System, sensors (lidar, camera), motion controllers (motors for movement), and algorithm components (route planners) can each be nodes.  A node can send and receive data to and from other nodes via topics, services, actions, or parameters.
+	In ROS distributed applications are typically designed as entities referred to as nodes. Each node in ROS is supposed to be responsible for a single, modular function. In a robotic control system, sensors (lidar, camera), motion controllers (motors for movement), and algorithm components (route planners) can each be nodes.  A node can send and receive data to and from other nodes via topics, services, actions, or parameters.
 	ROS 2 separates the node concept from the process structure at the operating system level. Multiple nodes can be created within a process as desired, and these nodes can independently interact with other nodes. All nodes in the system can run on a single computer or they can be distributed and run on multiple computers.
 
 
 	\paragraph[ROS2]{ROS2 Communication Patterns}
 	\label{Grundlagen:ROS2:CommunicationPatterns}
 
-	The nodes communicate with each other via topics, service calls, and actions. Topic-based Communication is based on a publish-subscribe architecture, where the data generated and published by a node can be subscribed to by more than one node, and likewise, a Topic can produce data for more than one node. 
-	The distributed architecture of the topic topology offers improvements in terms of performance and fault tolerance. Additionally, the extensive quality of service(QoS) features in the DDS middleware layer make ROS-2 architecture more robust and enable developers to use it in an industrial- /real-life application.\\
+	The nodes communicate with each other via topics, service calls, and actions. Topic-based communication is based on a publish-subscribe architecture, where the data generated and published by a node can be subscribed to by more than one node, and likewise, a topic can produce data for more than one node. 
+	The distributed architecture of the topic topology offers improvements in terms of performance and fault tolerance. Additionally, the extensive Quality of Service(QoS) features in the DDS middleware layer make ROS-2 architecture more robust and enable developers to use it in an industrial- /real-life application.\\
 
 	A comprehensive robotic system has several nodes working together in harmony. In ROS 2 a single executable (C++ program, Python program, etc.) can hold one or more nodes in them. This network of ROS 2 elements running simultaneously and processing data is referred to as a ROS graph. It includes all executables and the connections between them.
 
@@ -220,10 +220,10 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\begin{labeling}{Messages:}
 		\item [Messages:] 
-		A message is a data file that is sent via a communication channel called. Messages in ROS 2 are of great importance for interoperability. A publisher sends its message to a specific topic. This topic can be subscribed to by one or more subscribers. Several publishers can send messages to a topic and several subscribers can receive them. The communication in messages is unidirectional. A topic must use a message type that is known to all participants. There are predefined standard message types that are supplied with the ROS2 installation. Custom message types can be defined in a .msg- file. A message can contain other message definitions and can be extended using this pattern.\cite*{ros2Tutorials}
+		A message is a data file that is sent via a communication channel. Messages in ROS 2 are of great importance for interoperability. A publisher sends its message to a specific topic. This topic can be subscribed to by one or more subscribers. Several publishers can send messages to a topic and several subscribers can receive them. The communication in messages is unidirectional. A topic must use a message type that is known to all participants. There are predefined standard message types that are supplied with the ROS2 installation. Custom message types can be defined in a .msg- file. A message can contain other message definitions and can be extended using this pattern.\cite*{ros2Tutorials}
 		
 		\item [Topics:] 
-		Topics act as virtual communication channels (bus) through which data is moved between nodes and consequently between various components of the system. Topics aren't just one-to-one connections moreover, they can be many-to-one, one-to-many, and many-to-many connections. Topics are a key element in realizing Publish-Subscribe architecture.
+		Topics act as virtual communication channels (bus) through which data is moved between nodes and consequently between various components of the system. Topics aren't just one-to-one connections, moreover, they can be many-to-one, one-to-many, and many-to-many connections. Topics are a key element in realizing Publish-Subscribe architecture.
 		Topics define the name and data structure used. Each topic in ROS2 is also an instance that can store historical message data in that topic.
 
 		\item [Service:] 
@@ -248,7 +248,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 			\label{fig:Background:Ros2Actions}					
 		\end{figure}
 
-		Figure \ref{fig:Background:Ros2Actions} gives an overview of the inner workings of an Action. The action client makes a Goal Request, which after processing can either be accepted or rejected by the action server. In case, the Goal Request is accepted it is forwarded to the action client. Then a user-defined function is called that executes the desired task of the action server. This Function continuously sends its current status or other custom information as feedback to the action client. Upon completion of the task and achievement of the defined goal, the action server sends the corresponding result response. Within an action communication channel, there can be several action clients, but only one action server. The action message type used must be recognized by all the participants in advance. Own action message types can be defined with a .action file. This contains the definition of Goal, Request, and Feedback. Other message definitions can be used from an existing action definition.		
+		Figure \ref{fig:Background:Ros2Actions} gives an overview of the inner workings of an Action. The action client makes a Goal Request, which after processing can either be accepted or rejected by the action server. In case, the Goal Request is accepted it is forwarded to the action client. Then a user-defined function is called that executes the desired task of the action server. This function continuously sends its current status or other custom information as feedback to the action client. Upon completion of the task and achievement of the defined goal, the action server sends the corresponding result response. Within an action communication channel, there can be several action clients, but only one action server. The action message type used must be recognized by all the participants in advance. Own action message types can be defined with a .action file. This contains the definition of Goal, Request, and Feedback. Other message definitions can be used from an existing action definition.		
 		
 	\end{labeling}
 
@@ -262,24 +262,10 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	\label{Grundlagen:ROS2:ROSMiddlewareInterface}
 	ROS 2 was built on top of an existing middleware solution (namely DDS). The major advantage of this approach is that ROS 2 can leverage an existing and well-developed implementation of this standard. ROS 2 could be built using a particular implementation of DDS. However, there are multiple different implementations, and each has its advantages and disadvantages in terms of supported platforms, programming languages, performance characteristics, memory requirements, dependencies, and licensing. Consequently, ROS supports several DDS implementations, although each of them differs slightly in its exact API. To abstract from the specifics of these APIs, an abstract interface is introduced that can be implemented for different DDS implementations. This middleware interface defines the API between the ROS client library and each specific implementation. The ROS client library does not expose any DDS implementation specifics to the user. This in turn hides the inherent complexity of the DDS specification and its API.\cite{ros2OnMW}
 	
-	\subsection{Important ROS2 Concepts}
-	\label{Grundlagen:ROS2:Concepts}
-
-		
-		The \text{ROS DOMAIN ID}\\
-		About different ROS 2 DDS/RTPS vendors\\	
-		About logging and logger configuration\\
-		About ROS 2 client libraries\\
-		About ROS 2 interfaces\\
-		About parameters in ROS 2\\
-		About topic statistics\\
-		Introspection with command line tools\\
-		About Composition\\
-		On the mixing of ament and catkin (catment)\\
 
 	\subsection{ROS2 Web Bridge}
 	\label{Grundlagen:ROS2:2WebBridge}
-	Ros2-web-bridge provides a JSON interface to ROS, allowing any client to send JSON to publish or subscribe to ROS topics, call ROS services, and more. It leverages the rclnodejs client and provides a JSON interface to ROS 2 by adopting the rosbridge v2 protocol. Rosbridge v2 protocol supports a variety of transport layers, including WebSockets and TCP. The bridge can process commands through JSON tunneled over WebSockets. It is a part of  Robot Web Tools which is a collection of open-source libraries and tools for building web-based robot apps with ROS.\cite{ros2OnWB}
+	Ros2-web-bridge provides a JSON interface to ROS, allowing any client to send JSON to publish or subscribe to ROS topics, call ROS services, and more. It leverages the rclnodejs client and provides a JSON interface to ROS 2 by adopting the rosbridge v2 protocol. Rosbridge v2 protocol supports a variety of transport layers, including WebSockets and TCP. The bridge can process commands through JSON tunneled over WebSockets. It is a part of  Robot Web Tools which is a collection of open-source libraries and tools for building web-based robot applications with ROS.\cite{ros2OnWB}
 
 	\subsection{The Standard ROS JavaScript Library (roslibjs) }
 	\label{Grundlagen:ROS2:RosLibJS}
@@ -291,7 +277,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 	DDS is a connectivity framework (standard) designed to enable reliable, high-performance, interoperable, scalable, real-time data exchange using a publish-subscribe pattern. DDS promotes the development of loosely coupled, open architecture modular systems. By supporting well-defined interfaces between components and subsystems, DDS eliminates bottlenecked, closed, and proprietary architectures. This reduces complexity and lowers integration, maintenance, and upgrade costs. This promotes competition at the subsystem and middleware levels and boosts reuse. DDS standardizes powerful messaging semantics that reduces development and integration costs while improving system scalability and robustness.\cite{ros2OnDDSRti}
 		
 	
-	\section{Ros Lifecycle nodes}
+	\section{ROS2 Lifecycle Nodes}
 	\label{Grundlagen:ROS2:Lifecycle}
 	Having a managed lifecycle for nodes allows for better control over the state of the ROS system. This ensures that in a ROS2 Robotics System all components have been correctly instantiated before allowing a component to perform its behavior. It also allows nodes to be restarted or replaced online.\\
 
@@ -300,6 +286,7 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\textit{"A state machine is a mathematical abstraction used to design algorithms. A state machine reads a set of inputs and changes to a different state based on those inputs. A state is a description of the status of a system waiting to execute a transition. A transition is a set of actions to execute when a condition is fulfilled or an event received."} \cite*{statemachineDef}\\
 
+	\vspace{1cm}
 	There are 4 primary states (colored blue in figure \ref{fig:Background:Ros2LifecycleStateMachine}):
 	\begin{itemize}
 		\item Unconfigured
@@ -307,6 +294,8 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 		\item Active
 		\item Finalized
 	\end{itemize}
+	\vspace{1cm}
+
 	In addition, there are 6 transition states, which are intermediate states during a requested transition(colored in yellow in figure \ref{fig:Background:Ros2LifecycleStateMachine} ):
 	\begin{itemize}
 		\item Configuring
@@ -517,11 +506,12 @@ This chapter gives an outline of the concepts and a detailed explanation of the 
 
 	\end{labeling}
 
+	
 	\subsection{Management Interface}
 	A managed node is exposed to the ROS ecosystem through the following interface. This interface can be used by applications that perform the actual management. This interface is independent of the lifecycle status of individual nodes and is thus not be subject to any communication restrictions.\\
 
 	A managed node or lifecycle node has a common pattern which it inherits from a container class that loads a managed node implementation from a library and, through a plug-in architecture, automatically exposes the required management interface by implementing callback methods.\\ 
-
+	\newpage
 	A lifecycle node does not inherit from the regular \lstinline{rclcpp::node::Node} but from\\  \lstinline{rclcpp_lifecycle::LifecycleNode}. Every child of LifecycleNodes has a set of callbacks provided. These callbacks go along with the applied state machine attached to them. These callbacks are:
 
 \begin{lstlisting}[language=cpp,
@@ -567,6 +557,7 @@ These management services can be implemented via attributes and method calls (fo
 	/<name_of_lifecycle_node>/set_parameters_atomically
 \end{lstlisting}
 
+\newpage
 \subsection{Lifecycle management CLI}
 \label{Lifecycle management CLI}
  ROS2 developers have developed a basic CLI to interact with the lifecycle nodes and control their specific behaviors. 
@@ -585,7 +576,7 @@ It offers following functionalities and can be used as described below.
 		set    Trigger lifecycle state transition
 \end{lstlisting}
 
-Get current lifecycle state
+Get current lifecycle state:
 \begin{lstlisting}[language=bash,
 	% caption={dockerfile_startup}, 
 	label={code:DockerTestumgebung}]
@@ -598,7 +589,7 @@ Get current lifecycle state
 	node_name             Name of the ROS node
 \end{lstlisting}
 
-Trigger lifecycle state transition
+Trigger lifecycle state transition:
 \begin{lstlisting}[language=bash,
 	% caption={dockerfile_startup}, 
 	label={code:DockerTestumgebung}]
@@ -612,7 +603,7 @@ Trigger lifecycle state transition
 	transition            The lifecycle transition
 \end{lstlisting}
 
-Output a list of available transitions
+Output a list of available transitions:
 \begin{lstlisting}[language=bash,
 	% caption={dockerfile_startup}, 
 	label={code:DockerTestumgebung}]
@@ -698,7 +689,7 @@ Default values for transitions:
 			
 \end{lstlisting}
 
-
+\newpage
 	\section{Vue JS}
 	\label{Grundlagen:Vue}
 	Vue is described as a progressive web framework. This means that it adapts to the needs of the developer. While other frameworks require a complete adoption of a technology by a developer or team and often require an existing application to be rewritten because of certain framework-specific conventions. Vue can be introduced to an application with a simple script tag and can grow with requirements, from a small web component to managing the entire view layer. Vue is a scalable JavaScript framework for building user interfaces. Unlike other frameworks, Vue is designed from the ground up to be incrementally customizable. The core library is view-only and easily integrates with other libraries or existing projects. In combination with modern tools and additional libraries, Vue is capable of running sophisticated single-page applications \cite{Vue019:Intro:Online}.\\
@@ -792,7 +783,7 @@ A typical Vue project with Vue-Router and Vuex has the following structure:
 		\toprule
 		Files/Folders & Description\\
 		\midrule
-    	public/index.html & This is the main app file loaded by the browser. The file contains only a simple HTML tag in the body: \texttt{ \textcolor{red}{<div id=app> </div>}}. 
+    	public/index.html & This is the main application file loaded by the browser. The file contains only a simple HTML tag in the body: \texttt{ \textcolor{red}{<div id=app> </div>}}. 
 		This is the element that attaches the Vue application to the DOM. \\
 		\hline
 		src/main.js & This is the JavaScript file responsible for configuring the Vue.js application. It is also used to register all third-party packages. \\
@@ -835,7 +826,7 @@ In the main.js file, the main Vue component (\texttt{App.vue}) is registered.
 \label{Vue:Component}
 The most important criterion for choosing this framework \texttt{(Vue.js)} is the modularity of the individual components. The components are one of the strongest features of \texttt{Vue.js}. They allow basic HTML elements to be extended to encapsulate reusable code. At a high level, components are custom elements to which the \texttt{Vue.js} compiler attaches a specific behavior \cite{Vue019:Intro:Online}. Each component is defined in a file with \texttt{.vue} extension. The definition contains an HTML-based template that specifies the design of the component and the JavaScript code that specifies all other functionality or behavior of the component. Each component is also a Vue instance.\\
 
-Typically, a Vue.js app is organized in a tree of nested components. For example, it consists of components for a header, sidebar, and content area, each containing other components for navigation links, blog posts, etc. The component architecture simplifies such nesting.
+Typically, a Vue.js application is organized in a tree of nested components. For example, it consists of components for a header, sidebar, and content area, each containing other components for navigation links, blog posts, etc. The component architecture simplifies such nesting.
 
 \begin{figure}[H]
   \centering

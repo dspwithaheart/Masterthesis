@@ -1,7 +1,7 @@
 \chapter{Design and Implementation}
 \label{Implementation}
 
-This chapter describes the Design process and the details of the realized implementation of a Docker based application developed for managing ROS2 Nodes in a local Network over a web interface. Figure \ref*{fig:Background:LifecycleManagement} provides an overview of the Structure of the developed Application. The Application is supposed to have control over all the compatible ROS2 Applications running within a defined Network. It utilizes the ROS2 DDS System (for communication within same LAN) and ROS2 Routing Service (for communication between different Networks). It consists of a customized ROS2 based Docker Containers within which individual ROS2 Apps run and another customized Docker Container running a NodeJS based Web-Application (Lifecycle Management Dashboard).   
+This chapter describes the Design process and the details of the realized implementation of a Docker based application developed for managing ROS2 nodes in a local Network over a web interface. Figure \ref*{fig:Background:LifecycleManagement} provides an overview of the Structure of the developed application. The application is supposed to have control over all the compatible ROS2 Applications running within a defined network. It utilizes the ROS2 DDS System (for communication within same LAN) and ROS2 Routing Service (for communication between different Networks). It consists of a customized ROS2 based Docker Containers within which individual ROS2 applications run and another customized Docker Container running a NodeJS based Web-Application (Lifecycle Management Dashboard).   
 
 \begin{figure}[H]
 	\centering
@@ -19,15 +19,15 @@ The application consists of following major parts:
 \end{itemize}
 
 They will be explained in detail in the following section.
-
+\newpage
 \section{The Docker environment}
 \label{Implementierung:DockerEnvironment}
-In order to develop an Industrial Edge Application, its necessary to pack an application into a Docker Image. Then it can be converted to an IE App using the Industrial Edge App Publisher.\\
+In order to develop an Industrial Edge Application, its necessary to pack an application into a Docker Image. Then it can be converted to an Industrial Edge Application using the Industrial Edge Application Publisher.\\
 
 This section describes the Docker image developed for the purposes of this thesis. A Dockerfile is used to define a Docker image. It consists of all the necessary software libraries and third party applications and precise order in which they have to installed. The following section will describe the details of the Dockerfile(structure of the Docker image) step by step.
 \subsection{The Dockerfile}
 This section consists of a detailed description of the major blocks of steps performed to create the desired docker image of this application.
-\paragraph{Setting up the Base-Image} This is the first line in any Dockerfile. In this line the Ubuntu Ros Image to use is specified.
+\paragraph{Setting up the Base-Image} This is the first line in any Dockerfile. In this line the Ubuntu ROS Image to use is specified.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -57,7 +57,7 @@ This section consists of a detailed description of the major blocks of steps per
 
 \end{lstlisting}
 
-\paragraph{Setting up Ros Build environment} The rosdep is initialized and updated before installing any ROS2 Package. Then colcon mixin and metadata are setup and any related libraries are updated. Colcon is the default and recommended build system for ROS2. Now ROS2 applications can be built using colcon in the next step.
+\paragraph{Setting up ROS Build environment} The rosdep is initialized and updated before installing any ROS2 Package. Then colcon mixin and metadata are setup and any related libraries are updated. Colcon is the default and recommended build system for ROS2. Now ROS2 applications can be built using colcon in the next step.\newpage
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -75,11 +75,11 @@ This section consists of a detailed description of the major blocks of steps per
 		colcon metadata update
 \end{lstlisting}
 
-\paragraph*{Installing necessary Ros packages} Following ROS2 Packages are installed in this step: ros-foxy-ros-base=0.9.2-1*, ros-foxy-joy, ros-foxy-diagnostic-updater,ros-foxy-lifecycle. Depending on the type of ROS2 Application it might be necessary to install further Packages, which should be done in this to avoid further complications. Finally the system is updated to fix any broken installs and install any missing libraries.
+\paragraph*{Installing necessary ROS packages} Following ROS2 Packages are installed in this step: ros-foxy-ros-base=0.9.2-1*, ros-foxy-joy, ros-foxy-diagnostic-updater,ros-foxy-lifecycle. Depending on the type of ROS2 application it might be necessary to install further Packages, which should be done in this to avoid further complications. Finally, the system is updated to fix any broken installs and install any missing libraries.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
-	# install ros2 packages
+	# install ROS2 packages
 	RUN apt-get update && apt-get install -y --no-install-recommends \
 		ros-foxy-ros-base=0.9.2-1* \
 		ros-foxy-joy \
@@ -94,7 +94,7 @@ This section consists of a detailed description of the major blocks of steps per
 \end{lstlisting}
 
 
-\paragraph*{Sourcing Ros2} Sourcing is a common term among UNIX users. In order to make the desired changes applicable to the current shell , it is necessary to "source" the file. Furthermore adding sources to .bashrc files preconfigures any new shell opened. In this step ROS2 setup files are sourced so that other ROS2 commands can be run from the command line. 
+\paragraph*{Sourcing ROS2} Sourcing is a common term among UNIX users. In order to make the desired changes applicable to the current shell , it is necessary to "source" the file. Furthermore adding sources to .bashrc files preconfigures any new shell opened. In this step ROS2 setup files are sourced so that other ROS2 commands can be run from the command line. 
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -103,7 +103,7 @@ This section consists of a detailed description of the major blocks of steps per
 		&& echo "source /root/colcon_ws/install/setup.bash" >> ~/.bashrc
 \end{lstlisting}
 
-\paragraph*{Create and build Ros Workspace} In this step first of all the build workspace is setup, then the necessary source files are copied from external working directory to the Docker internal workspace and finally built using colcon.
+\paragraph*{Create and build ROS Workspace} In this step, first of all the build workspace is setup, then the necessary source files are copied from external working directory to the Docker internal workspace and finally built using colcon.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -126,7 +126,7 @@ This section consists of a detailed description of the major blocks of steps per
 		&& rm -rf RIBInstall
 \end{lstlisting}
 
-\paragraph{Setup Node environment for Vue} This step installs a version of NodeJS in this Docker environment. NodeJS will be necessary to build the Vue-application and run ros2-web-bridge in forthcoming steps. 
+\paragraph{Setup NodeJS environment for Vue} This step installs a version of NodeJS in this Docker environment. NodeJS will be necessary to build the Vue-application and run ros2-web-bridge in forthcoming steps. 
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -147,7 +147,7 @@ This section consists of a detailed description of the major blocks of steps per
 
 
 
-\paragraph{Copy package.json files to install Node Project dependencies} A package.json file is a standard package specification file for NodeJS applications. It contains all the necessary configurations and list of packages to successfully build a NodeJS application. In this step 
+\paragraph{Copy package.json files to install NodeJS project dependencies} A package.json file is a standard package specification file for NodeJS applications. It contains all the necessary configurations and list of packages to successfully build a NodeJS application. In this step 
 a working directory for the Vue Application is created, the the package.json is copied to the Docker internal work directory and finally the project dependencies are downloaded and installed.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
@@ -158,7 +158,7 @@ a working directory for the Vue Application is created, the the package.json is 
 	RUN npm install
 \end{lstlisting}
 
-\paragraph*{Build the web app for production} The project source files for the "Lifecycle management application" are copied from external workspace to the Docker work directory and built for production.
+\paragraph*{Build the web application for production} The project source files for the "Lifecycle management application" are copied from external workspace to the Docker work directory and built for production.
 \begin{lstlisting}[language=docker,
 	% caption={Dockerfile}, 
 	label={code:DockerTestumgebung}]
@@ -193,8 +193,8 @@ a working directory for the Vue Application is created, the the package.json is 
 	CMD ./dockerfile_startup.sh	
 \end{lstlisting}
 
-\paragraph{Starting Ros Application} 
-The following listing shows the details of the startup file used in the above dockerfile. It is necessary to use this bash script to launch multiple services. The steps for running multiple services is describes in the section \ref*{Implementation:Docker:Multiple Services} in detail.
+\paragraph{Starting ROS Application} 
+The following listing shows the details of the startup file used in the above dockerfile. It is necessary to use this bash script to launch multiple services. The steps for running multiple services is described in the section \ref*{Implementation:Docker:Multiple Services} in detail.
 This step also launches the installed ROS2-Application using its launch file.
 \begin{lstlisting}[language=bash,
 	caption={dockerfilestartup.sh}, 
@@ -209,16 +209,7 @@ This step also launches the installed ROS2-Application using its launch file.
 	ros2 launch evo_siemensrob_ctrl agv_control_launch.py 
 \end{lstlisting}
 
-\paragraph{Startup and Build scripts} Hh
-
-% \begin{lstlisting}[language=html,
-% 	caption={build_lifecycle.sh}, 
-% 	label={code:DockerTestumgebung}]
-% 	#!/bin/bash
-% 	docker build . -t ubuntu_foxy:manual_control_rti
-% 	docker run -it --privileged --network host --group-add dialout --ipc="host" --name agv_control_joy_rti ubuntu_foxy:manual_control_rti
-% \end{lstlisting}
-
+\paragraph{Startup and Build scripts} The following bash script is used to run the lifecycle application inside the Docker container. 
 \begin{lstlisting}[language=bash,
 	caption={runlifecycle.sh}, 
 	label={code:DockerTestumgebung}]
@@ -363,7 +354,7 @@ A normal ROS2 C++ publisher node has the following structure:
 \end{lstlisting}
 
 \subsection{Structure of a ROS2 publisher node with managed lifecycle}
-A lifecycle based ros2 publisher has following structure:
+A lifecycle based ROS2 publisher has following structure:
 \begin{lstlisting}[language=cpp]
 namespace evo {
   class LifecycleTalker : public rclcpp_lifecycle::LifecycleNode
@@ -520,7 +511,7 @@ In order to convert a normal ROS2 node into a lifecycle node following steps nee
 The developed web interface is supposed to be a web version of the lifecycle management CLI. 
 
 \subsection{Web Application Design}
-The purpose of the developed web application is to be able to communicate with different ROS2 applications running within a specified network. To accomplish this Ros2-Web-Bridge is used to create an interface between the ROS2 DDS network and a web-based client application. The interface is realized in form of a WebSocket on the following URL (ws://localhost:9090). Then a JavaScript client library roslibjs is utilized to connect the web application to the above-mentioned WebSocket. Roslibjs can be imported into a web-application framework like Vue using the standard ES6 import syntax.
+The purpose of the developed web application is to be able to communicate with different ROS2 applications running within a specified network. To accomplish this ros2-Web-Bridge is used to create an interface between the ROS2 DDS network and a web-based client application. The interface is realized in form of a WebSocket on the following URL (ws://localhost:9090). Then a JavaScript client library roslibjs is utilized to connect the web application to the above-mentioned WebSocket. Roslibjs can be imported into a web-application framework like Vue using the standard ES6 import syntax.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.95\textwidth]{"Bilder/webapp-design.png"}
@@ -775,7 +766,7 @@ ROSLIB.Topic
 		}
 	}
 \end{lstlisting}
-
+\newpage
 \item \lstinline{transition}
 \begin{lstlisting}[language=json,
 	label={code:ROS:JSON transitoin},
@@ -861,7 +852,7 @@ ROSLIB.Topic
 \subsection{Code Overview} For developing the web application a web framework called VueJS (described in section \ref{Grundlagen:Vue}) is used. This allows the use of various pre-built html components and streamlined application structure with various plugins which in turn makes the UI development structured and easier. The UI part is encapsulated inside the template tag and the JavaScript part in the script tag of a Vue component(described in section \ref{Vue:Component}). The project structure described in \ref{sec:StructureofVue.jsProject} is used.   
 \\
 
-To secure a connection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object needs to be initialized and assigned to a variable that can be accessed by all other functions in the application. This object consists of a URL parameter, which will be used to assign the URL of the WebSocket. The WebSocket is made available by the library ros2-web-bridge. This is our main instance of RosLibJS and the same instance will be used throughout the application for working with a single Lifecycle Node. In case there are multiple Lifecycle nodes added, multiple instances of RosLibJS are created and stored. The details of the JavaScript part of the application is described below:
+To secure a connection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object needs to be initialized and assigned to a variable that can be accessed by all other functions in the application. This object consists of a URL parameter, which will be used to assign the URL of the WebSocket. The WebSocket is made available by the library ros2-web-bridge. This is our main instance of RosLibJS and the same instance will be used throughout the application for working with a single Lifecycle Node. In the case where multiple lifecycle nodes are added, multiple instances of RosLibJS are created and stored. The details of the JavaScript part of the application is described below:
 
 \paragraph{Library imports} The libraries are imported using the standard ES6 syntax. The libraries including Vue-plugins to be installed are listed in the package.json file. This import syntax allows the import of the entire library or only specific components of the library. The following libraries are used:
 
@@ -918,8 +909,8 @@ To secure a connection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object 
 	},
 \end{lstlisting}
 
-
-\paragraph{Vue instance lifecycle hook mounted} A Vue component has several lifecycle hooks (described in section \ref{Vue:Instancelifecyclehooks}), which lets a developer customize its behavior at any specific point in its lifecycle. In this application the mounted hook is used to establish a connection to the WebSocket created by the ROS2-Web-Bridge.
+\newpage
+\paragraph{Vue instance lifecycle hook (mounted)} A Vue component has several lifecycle hooks (described in section \ref{Vue:Instancelifecyclehooks}), which lets a developer customize its behavior at any specific point in its lifecycle. In this application the mounted hook is used to establish a connection to the WebSocket created by the ROS2-Web-Bridge.
 \begin{lstlisting}[language=JavaScript,
 	% caption={dockerfile_startup}, 
 	label={code:Vue}]
@@ -946,7 +937,7 @@ To secure a connection to the ROS2 backend through RosLibJS a ROSLIB.Ros Object 
 
 \subsection{Important Functions/Methods}
 \label{Implementation:ImportantFunctions}
-Using RosLibJS the frontend application can be connected to the backend API(websocket) provided by ROS2-web-bridge. To get the required information about the ros2 nodes running inside the backend application several ROS2 services need to called and some ROS2 topics need to be subscribed to. The methods used to realize these functionalities are described below in detail. These methods are all included inside the \textit{methods} directive described in previous section. As described in listing \ref{{JavsScript:ROSLIB.Service} caption} a ROSLIB.Service object needs to be created every time a service needs to be called. It has a name parameter which has the 
+Using RosLibJS the frontend application can be connected to the backend API(websocket) provided by ROS2-web-bridge. To get the required information about the ROS2 nodes running inside the backend application several ROS2 services need to called and some ROS2 topics need to be subscribed to. The methods used to realize these functionalities are described below in detail. These methods are all included inside the \textit{methods} directive described in previous section. As described in listing \ref{{JavsScript:ROSLIB.Service} caption} a ROSLIB.Service object needs to be created every time a service needs to be called. It has a name parameter which has the 
 following syntax: 
 \begin{lstlisting}
 	name: '/<name of the active node>/<name of the service>'
@@ -1162,7 +1153,7 @@ The first parameter is the ServiceRequest object, second and third are JavaScrip
 
 \subsection{Lifecycle Dashboard UI}
 The developed user interface is depicted in the figure \ref{fig:Implementation:LifecycleDashboard}. 
-The functionalities of the web interface is based on the Lifecycle Management CLI described in section \ref{Lifecycle management CLI}. At the top of the UI there is a text field that takes the name of the lifecycle node as an input. The button adjacent to it can be pressed in order to add the desired node to the list of added nodes. It is possible to add multiple nodes to the list using this UI component.
+The functionalities of the web interface is based on the Lifecycle Management CLI described in section \ref{Lifecycle management CLI}. At the top of the UI there is a text-field that takes the name of the lifecycle node as an input. The button adjacent to it can be pressed in order to add the desired node to the list of added nodes. It is possible to add multiple nodes to the list using this UI component.
 The next UI component is a list of buttons with names of the nodes added to the dashboard. A single node can be selected by pressing the desired button to activate the node. The activated node is shown in the next line along with its current state. The following line consists of a list of buttons to call various functions mentioned in section \ref*{Implementation:ImportantFunctions}.
 \\
 
@@ -1173,27 +1164,34 @@ There is also a list of all available states for the active lifecycle node. Next
 \\
 
 When a new lifecycle node is added to the dashboard or selected, the entire UI resets to the initial condition and the logs are cleared.
+
+\vspace{5cm}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\textwidth]{"Bilder/lifecycle-dashboard.png"}
+	\includegraphics[width=0.99\textwidth]{"Bilder/lifecycle-dashboard.png"}
 	\caption{Lifecycle Dashboard}
 	\label{fig:Implementation:LifecycleDashboard}					
 \end{figure}
 
+\newpage
+\vspace*{1cm}
 \section{Integration}
 \label{Implementierung:Integration}
-The developed application consists of different software components from several different open source organizations and Siemens. These components use different programming languages and it is necessary to connect them using the required interfaces. They must all work together to have a properly functioning application. To run the complete application several software components need to be started in the correct order depending on their interdependency. First of all the native ROS2 Application is built and started, then the ros2-web-bridge interface is started, and finally, a web application(Lifecycle management interface) is built and a web server(nginx) is started to run the Lifecycle management Interface. The application is containerized as described in section \ref{Implementierung:DockerEnvironment}, and most of the integration and cross-communication between the components is achieved within the aforementioned Dockerfile. 
+The developed application consists of different software components from several different open source organizations and Siemens. These components use different programming languages and it is necessary to connect them using the required interfaces. They must all work together to have a properly functioning application. To run the complete application several software components need to be started in the correct order depending on their interdependency. First of all the native ROS2 application is built and started, then the ros2-web-bridge interface is started, and finally, a web application(Lifecycle management interface) is built and a web server(nginx) is started to run the Lifecycle Management Interface. The application is containerized as described in section \ref{Implementierung:DockerEnvironment}, and most of the integration and cross-communication between the components is achieved within the aforementioned Dockerfile. 
 \\ 
 
 Furthermore, the application needs to be integrated into the Siemens Industrial Edge ecosystem, which is described in the following section.
-\subsection{Conversion to Industrial Edge App} 
-The Industrial Edge Publisher can be used to convert a docker image into an Industrial Edge Application. The created docker-compose.yml file (listing \ref{Implementation:dockerCompose}) is first imported into the Industrial Edge Publisher. The created images along with their various configurations are recognized by the Industrial Edge environment and these configurations are automatically applied when the app is installed on the Edge Device. No further configuration is necessary for the Edge App. Once the app has been created, it can be uploaded to the IEM using the Industrial Edge Publisher, where it is available for further distribution.
+\vspace{1cm}
+\subsection{Conversion to Industrial Edge Application} 
+The Industrial Edge Publisher can be used to convert a docker image into an Industrial Edge Application. The created docker-compose.yml file (listing \ref{Implementation:dockerCompose}) is first imported into the Industrial Edge Publisher. The created images along with their various configurations are recognized by the Industrial Edge environment and these configurations are automatically applied when the application is installed on the Edge Device. No further configuration is necessary for the Edge App. Once the application has been created, it can be uploaded to the IEM using the Industrial Edge Publisher, where it is available for further distribution.
 
 \paragraph{Docker Compose File}
 With a docker-compose.yml file, services and configurations can be specified for a Docker container. This application requires several Docker containers to communicate with each other, for this purpose a separate network is created in the docker-compose file. In addition, a volume is created to store any persistent data that might be useful for the application.
 \\
 
+
 In the services section of the docker-compose file, the Docker image in the current directory is built. The name of the created Docker image is then specified. Then with the start command a \gls{ROS2} Application with lifecycle node is run. The commands \lstinline{mem_limit: 500mb} and \lstinline{restart: on-failure} are necessary for Industrial Edge. Then the docker volume created in the previous step is mounted. The network to use is specified then the docker container is connected to the network.
+\vspace*{2cm}
 \begin{lstlisting}[language=docker-compose,
 		caption={docker-compose.yaml used by IE Publisher},
 		label={Implementation:dockerCompose}]
@@ -1218,3 +1216,4 @@ In the services section of the docker-compose file, the Docker image in the curr
 					- ie-app-network		
 \end{lstlisting}
 	
+The complete source code of this application is available on GitHub under following link: \url{https://github.com/dspwithaheart/ROS2Lifecycle.git}
